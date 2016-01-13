@@ -1,0 +1,10 @@
+<Keyboard xmlns:android="http://schemas.android.com/apk/res/android"
+    android:keyWidth="100%p"
+    android:horizontalGap="0px"
+    android:verticalGap="0px"  
+    android:keyHeight="90%p">
+    
+    <Row>
+        <Key android:codes="0x0905" android:keyLabel="\u0905" />
+    </Row>
+</Keyboard>

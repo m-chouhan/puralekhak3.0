@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<keys>
+    <vowels>
+        0985-098C,
+        098F-0990,
+        0993-0994       
+    </vowels>
+    
+    <diacritics>
+        09BE-09C4,
+        09C7-09C8,
+        09CB-09CC,
+        0980-0983
+    </diacritics>
+    
+    <consonants>
+       0995-09A8,
+       09AA-09B0,
+       09B2,
+       09B6-09B9
+    </consonants>
+    <digits>
+      0BE6-0BEF  
+    </digits>
+    
+</keys>

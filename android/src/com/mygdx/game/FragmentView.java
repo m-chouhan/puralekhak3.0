@@ -14,6 +14,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
+import org.opencv.android.CameraBridgeViewBase;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -26,7 +27,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
-
+import android.view.SurfaceView;
 
 /* CC:F7:26:3A:00:3E:36:50:B5:3A:B5:40:EE:DC:80:21:68:15:1E:94
  * API_KEY:AIzaSyDjmrjBEPvgPlXtT18BQgl9GOYR3vzf304
@@ -75,19 +76,15 @@ public class FragmentView extends Fragment {
 					});
 	    			break;
 	        case 2:
-					view = inflater.inflate(R.layout.receiver_view, container, false);
-					I = (ImageButton) view.findViewById(R.id.submit_location);
-	    			I.setOnClickListener(new View.OnClickListener() {
-						
-						@Override
-						public void onClick(View v) {
-							HandleGet(getView());
-						}
-					});
-
-	        		break;
+					view = inflater.inflate(R.layout.keyboard_view, container, false);
+					break;
 	        case 1:
-					view = inflater.inflate(R.layout.main_view, container, false);
+					view = inflater.inflate(R.layout.cv_main, container, false);
+
+                    CameraBridgeViewBase mOpenCvCameraView = (CameraBridgeViewBase) view.findViewById(R.id.HelloOpenCvView);
+					mOpenCvCameraView.setVisibility(SurfaceView.VISIBLE);
+					//mOpenCvCameraView.setCvCameraViewListener(this);
+					mOpenCvCameraView.enableView();
 	        		break;
         }
 

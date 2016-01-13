@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<keys>
+    <vowels>
+        0C85-0C8C,
+        0C8E-0C90,
+        0C92-0C94   
+    </vowels>
+    
+    <diacritics>
+        0CBE-0CC4,
+        0CC6-0CC8,
+        0CCA-0CCC,
+        0C81-0C83
+    </diacritics>
+    
+    <consonants>
+       0C95-0CA8,
+       0CAA-0CB3,
+       0CB5-0CB9
+    </consonants>
+    <digits>
+      0CE6-0CEF  
+    </digits>
+    
+</keys>

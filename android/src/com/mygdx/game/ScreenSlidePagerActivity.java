@@ -7,13 +7,23 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 
-public class ScreenSlidePagerActivity extends FragmentActivity {
+import org.opencv.android.CameraBridgeViewBase;
+import org.opencv.android.OpenCVLoader;
+import org.opencv.core.Mat;
+
+public class ScreenSlidePagerActivity extends FragmentActivity implements CameraBridgeViewBase.CvCameraViewListener2 {
     /**
      * The number of pages (wizard steps) to show in this demo.
      */
     private static final int NUM_PAGES = 3;
-
+    static {
+        if (!OpenCVLoader.initDebug()) {
+            // Handle initialization error
+            Log.d("OpenCV","Unable to Load");
+        }
+    }
     /**
      * The pager widget, which handles animation and allows swiping horizontally to access previous
      * and next wizard steps.
@@ -24,6 +34,7 @@ public class ScreenSlidePagerActivity extends FragmentActivity {
      * The pager adapter, which provides the pages to the view pager widget.
      */
     private PagerAdapter mPagerAdapter;
+    private CameraBridgeViewBase mOpenCvCameraView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +46,12 @@ public class ScreenSlidePagerActivity extends FragmentActivity {
         mPagerAdapter = new ScreenSlidePagerAdapter(getSupportFragmentManager());
         mPager.setAdapter(mPagerAdapter);
         mPager.setCurrentItem(1);
+        /*
+        mOpenCvCameraView = (CameraBridgeViewBase) mPager.findViewById(R.id.HelloOpenCvView);
+        mOpenCvCameraView.setVisibility(SurfaceView.VISIBLE);
+        mOpenCvCameraView.setCvCameraViewListener(this);
+        mOpenCvCameraView.enableView();
+        */
     }
 
     @Override
@@ -48,6 +65,17 @@ public class ScreenSlidePagerActivity extends FragmentActivity {
 	    	case 1:	super.onBackPressed();
 	    			break;
     	}
+    }
+
+    @Override
+    public void onCameraViewStarted(int width, int height) { }
+
+    @Override
+    public void onCameraViewStopped() { }
+
+    @Override
+    public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
+        return inputFrame.gray();
     }
 
     /**
