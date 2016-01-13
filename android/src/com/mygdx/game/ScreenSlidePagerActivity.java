@@ -8,6 +8,8 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
 import com.badlogic.gdx.backends.android.AndroidFragmentApplication;
 
@@ -39,7 +41,12 @@ public class ScreenSlidePagerActivity extends FragmentActivity
     /**The pager adapter, which provides the pages to the view pager widget.*/
     private PagerAdapter mPagerAdapter;
     private CameraBridgeViewBase mOpenCvCameraView;
-
+    private String navigationListElements[] = {
+            "This",
+            "Is",
+            "A",
+            "Test"
+    };
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,8 +56,11 @@ public class ScreenSlidePagerActivity extends FragmentActivity
         mPager = (ViewPager) findViewById(R.id.vpager);
         mPagerAdapter = new ScreenSlidePagerAdapter(getSupportFragmentManager());
         mPager.setAdapter(mPagerAdapter);
-        mPager.setCurrentItem(2);
+        mPager.setCurrentItem(0);
 
+        ListView navigation_list = (ListView) findViewById(R.id.navigation_list);
+        navigation_list.setAdapter(new ArrayAdapter<String>
+                (this,R.layout.navigation_list,R.id.text_element,navigationListElements));
     }
 
     @Override

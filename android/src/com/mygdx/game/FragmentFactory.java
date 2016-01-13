@@ -20,12 +20,11 @@ import android.view.ViewGroup.LayoutParams;
 
 public class FragmentFactory extends Fragment {
 
-    public static final int WORKER_COUNT = 4;
+    public static final int WORKER_COUNT = 2;
     private final String TAG = "FragmentFactory";
 
     private static Fragment libgdxFragment = null;
-    private static Fragment keyboardFragment = null,keyf = null;
-    private static Fragment testFragment = null;
+    private static Fragment keyboardFragment = null;
     // Store instance variables
     private int ID;
 
@@ -42,17 +41,11 @@ public class FragmentFactory extends Fragment {
         switch (position) {
 
             case 0:
-                    if(testFragment == null ) testFragment = newInstance(0);
-                    return testFragment;
+                    if(libgdxFragment == null ) libgdxFragment = new LibgdxFragment();//newInstance(0);
+                    return libgdxFragment;
             case 1:
                     if(keyboardFragment == null) keyboardFragment = newInstance(1);
                     return keyboardFragment;
-            case 2:
-                    if(libgdxFragment == null ) libgdxFragment = new LibgdxFragment();//newInstance(0);
-                    return libgdxFragment;
-            case 3:
-                    if( keyf == null ) keyf = newInstance(1);
-                    return keyf;
         }
         return null;
     }

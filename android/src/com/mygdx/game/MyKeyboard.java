@@ -22,11 +22,12 @@ import java.util.List;
  */
 public class MyKeyboard extends KeyboardView  {
 
+    private final String TAG = "KeyboardView";
+
     private final Context ApplicationContext ;
     private ParseKeyboard MyKeyboard;
     private EditText ET = null;
-
-    private String TAG = "CUSTOMKEYBOARD";
+    private int DataId;
 
     private List<Keyboard.Key> keylist;
     
@@ -121,24 +122,21 @@ public class MyKeyboard extends KeyboardView  {
         }
     };
     
-	private int DataId;
 
     public MyKeyboard(Context context, AttributeSet attrs) {
         super(context, attrs);
         
         ApplicationContext = context;                
         ET =  (EditText) ((Activity)ApplicationContext).findViewById(R.id.unicodeedit);                
-        if( ET == null ) Log.d(TAG,"ET is null");
-        
+
     }
     
     public MyKeyboard(Context context,int dataId) {
-    	super(context,null);
+        super(context,null);
     	ApplicationContext = context;
     	DataId = dataId;
         ET = (EditText) ((Activity)ApplicationContext).findViewById(R.id.unicodeedit);                
-        if( ET == null ) Log.d(TAG,"ET is null");
-        Log.d(TAG, "New Instance");
+
         DisplayMetrics displaymetrics = new DisplayMetrics();
         ((Activity) getContext()).getWindowManager()
                 .getDefaultDisplay()
@@ -146,11 +144,9 @@ public class MyKeyboard extends KeyboardView  {
         Log.d(TAG,"Size"+displaymetrics.widthPixels+displaymetrics.heightPixels);
 
         MyKeyboard = new ParseKeyboard(ApplicationContext, DataId,
-                displaymetrics.widthPixels, (int)(displaymetrics.heightPixels*0.85));
+                displaymetrics.widthPixels, (int)(displaymetrics.heightPixels*0.7));
         setKeyboard(MyKeyboard);
         setOnKeyboardActionListener(KeyBindings);
         keylist = MyKeyboard.getKeys();
     }
-
-
 }

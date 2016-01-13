@@ -54,8 +54,7 @@ public class ParseKeyboard extends Keyboard{
 		keylist.clear();
 		
         mDisplayWidth = width;
-        mDisplayHeight = (int)(height*0.7f);
-
+        mDisplayHeight = height;
 		mykeyparser = context.getResources().getXml(dataId);	
 
 		try {
