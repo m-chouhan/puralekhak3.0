@@ -8,7 +8,7 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
-
+import android.view.SurfaceView;
 import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.android.OpenCVLoader;
 import org.opencv.core.Mat;
@@ -47,11 +47,11 @@ public class ScreenSlidePagerActivity extends FragmentActivity implements Camera
         mPager.setAdapter(mPagerAdapter);
         mPager.setCurrentItem(1);
         /*
-        mOpenCvCameraView = (CameraBridgeViewBase) mPager.findViewById(R.id.HelloOpenCvView);
+        mOpenCvCameraView = (CameraBridgeViewBase) mPager.findViewWithTag("1");
         mOpenCvCameraView.setVisibility(SurfaceView.VISIBLE);
         mOpenCvCameraView.setCvCameraViewListener(this);
         mOpenCvCameraView.enableView();
-        */
+        /**/
     }
 
     @Override
