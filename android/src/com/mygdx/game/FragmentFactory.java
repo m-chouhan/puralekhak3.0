@@ -20,12 +20,12 @@ import android.view.ViewGroup.LayoutParams;
 
 public class FragmentFactory extends Fragment {
 
-    public static final int WORKER_COUNT = 2;
+    public static final int WORKER_COUNT = 4;
     private final String TAG = "FragmentFactory";
 
     private static Fragment libgdxFragment = null;
-    private static Fragment keyboardFragment = null;
-
+    private static Fragment keyboardFragment = null,keyf = null;
+    private static Fragment testFragment = null;
     // Store instance variables
     private int ID;
 
@@ -40,13 +40,19 @@ public class FragmentFactory extends Fragment {
     public static Fragment getInstance(int position) {
 
         switch (position) {
-            case 0:
-                    if(libgdxFragment == null ) libgdxFragment = new LibgdxFragment();//newInstance(0);
-                    return libgdxFragment;
 
+            case 0:
+                    if(testFragment == null ) testFragment = newInstance(0);
+                    return testFragment;
             case 1:
                     if(keyboardFragment == null) keyboardFragment = newInstance(1);
                     return keyboardFragment;
+            case 2:
+                    if(libgdxFragment == null ) libgdxFragment = new LibgdxFragment();//newInstance(0);
+                    return libgdxFragment;
+            case 3:
+                    if( keyf == null ) keyf = newInstance(1);
+                    return keyf;
         }
         return null;
     }
@@ -69,7 +75,7 @@ public class FragmentFactory extends Fragment {
 					view = inflater.inflate(R.layout.keyboard_view, container, false);
                     /*Keyboard view */
                     LinearLayout.LayoutParams parameters =
-                            new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.WRAP_CONTENT);
+                            new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.MATCH_PARENT);
                     KeyboardView kv = new MyKeyboard(getActivity(),R.xml.keyboard_hindi);
                     kv.setLayoutParams(parameters);
                     LinearLayout keyboardlayout = (LinearLayout) view.findViewById(R.id.keyboardLayout);

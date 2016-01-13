@@ -2,9 +2,12 @@ package com.mygdx.game;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Canvas;
+import android.graphics.Rect;
 import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
 import android.util.AttributeSet;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.inputmethod.InputConnection;
@@ -132,24 +135,22 @@ public class MyKeyboard extends KeyboardView  {
     public MyKeyboard(Context context,int dataId) {
     	super(context,null);
     	ApplicationContext = context;
-    	
     	DataId = dataId;
-    	
         ET = (EditText) ((Activity)ApplicationContext).findViewById(R.id.unicodeedit);                
         if( ET == null ) Log.d(TAG,"ET is null");
+        Log.d(TAG, "New Instance");
+        DisplayMetrics displaymetrics = new DisplayMetrics();
+        ((Activity) getContext()).getWindowManager()
+                .getDefaultDisplay()
+                .getMetrics(displaymetrics);
+        Log.d(TAG,"Size"+displaymetrics.widthPixels+displaymetrics.heightPixels);
 
-    }
-    
-    @Override
-    public void onSizeChanged(int w, int h, int oldw, int oldh) {
-        
-    	super.onSizeChanged(w, h, oldw, oldh);
-    	Log.d(TAG,"SizeChangedTo:"+w+"-"+h);
-        MyKeyboard = new ParseKeyboard(ApplicationContext, DataId,w,h);
-    	setKeyboard(MyKeyboard);
+        MyKeyboard = new ParseKeyboard(ApplicationContext, DataId,
+                displaymetrics.widthPixels, (int)(displaymetrics.heightPixels*0.85));
+        setKeyboard(MyKeyboard);
         setOnKeyboardActionListener(KeyBindings);
         keylist = MyKeyboard.getKeys();
     }
-    
+
 
 }

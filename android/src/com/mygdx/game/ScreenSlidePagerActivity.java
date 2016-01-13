@@ -49,7 +49,7 @@ public class ScreenSlidePagerActivity extends FragmentActivity
         mPager = (ViewPager) findViewById(R.id.vpager);
         mPagerAdapter = new ScreenSlidePagerAdapter(getSupportFragmentManager());
         mPager.setAdapter(mPagerAdapter);
-        mPager.setCurrentItem(0);
+        mPager.setCurrentItem(2);
 
     }
 
