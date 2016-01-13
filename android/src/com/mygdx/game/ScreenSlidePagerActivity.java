@@ -8,16 +8,23 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
-import android.view.SurfaceView;
+
+import com.badlogic.gdx.backends.android.AndroidFragmentApplication;
+
 import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.android.OpenCVLoader;
 import org.opencv.core.Mat;
 
-public class ScreenSlidePagerActivity extends FragmentActivity implements CameraBridgeViewBase.CvCameraViewListener2 {
-    /**
-     * The number of pages (wizard steps) to show in this demo.
-     */
-    private static final int NUM_PAGES = 3;
+/**
+ * TODO: Should serve as main entry point for our app
+ * TODO: rename Activity
+ * TODO: add navigation drawer and implement ViewControllerInterface
+ *
+ */
+
+public class ScreenSlidePagerActivity extends FragmentActivity
+        implements CameraBridgeViewBase.CvCameraViewListener2,AndroidFragmentApplication.Callbacks {
+
     static {
         if (!OpenCVLoader.initDebug()) {
             // Handle initialization error
@@ -26,13 +33,10 @@ public class ScreenSlidePagerActivity extends FragmentActivity implements Camera
     }
     /**
      * The pager widget, which handles animation and allows swiping horizontally to access previous
-     * and next wizard steps.
-     */
+     * and next fragments.*/
     private ViewPager mPager;
 
-    /**
-     * The pager adapter, which provides the pages to the view pager widget.
-     */
+    /**The pager adapter, which provides the pages to the view pager widget.*/
     private PagerAdapter mPagerAdapter;
     private CameraBridgeViewBase mOpenCvCameraView;
 
@@ -45,13 +49,8 @@ public class ScreenSlidePagerActivity extends FragmentActivity implements Camera
         mPager = (ViewPager) findViewById(R.id.vpager);
         mPagerAdapter = new ScreenSlidePagerAdapter(getSupportFragmentManager());
         mPager.setAdapter(mPagerAdapter);
-        mPager.setCurrentItem(1);
-        /*
-        mOpenCvCameraView = (CameraBridgeViewBase) mPager.findViewWithTag("1");
-        mOpenCvCameraView.setVisibility(SurfaceView.VISIBLE);
-        mOpenCvCameraView.setCvCameraViewListener(this);
-        mOpenCvCameraView.enableView();
-        /**/
+        mPager.setCurrentItem(0);
+
     }
 
     @Override
@@ -59,10 +58,9 @@ public class ScreenSlidePagerActivity extends FragmentActivity implements Camera
     	
     	switch( mPager.getCurrentItem()) {
     		
-	    	case 0:
-	    	case 2:	mPager.setCurrentItem(1);
-	    			break;
-	    	case 1:	super.onBackPressed();
+	    	case 0: super.onBackPressed();
+                    break;
+	    	case 1:	mPager.setCurrentItem(0);
 	    			break;
     	}
     }
@@ -78,23 +76,21 @@ public class ScreenSlidePagerActivity extends FragmentActivity implements Camera
         return inputFrame.gray();
     }
 
-    /**
-     * A simple pager adapter that represents 5 ScreenSlidePageFragment objects, in
-     * sequence.
-     */
+    @Override
+    public void exit() { }
+
     private class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {
+
         public ScreenSlidePagerAdapter(FragmentManager fm) {
             super(fm);
         }
 
         @Override
         public Fragment getItem(int position) {
-            return FragmentView.newInstance(position);
+            return FragmentFactory.getInstance(position);
         }
 
         @Override
-        public int getCount() {
-            return NUM_PAGES;
-        }
+        public int getCount() { return FragmentFactory.WORKER_COUNT;}
     }
 }

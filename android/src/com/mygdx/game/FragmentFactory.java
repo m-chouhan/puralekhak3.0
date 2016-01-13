@@ -1,47 +1,56 @@
 package com.mygdx.game;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.opencv.android.CameraBridgeViewBase;
 
-import android.app.ActionBar;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.Spinner;
-import android.widget.TextView;
 import android.view.SurfaceView;
 import android.inputmethodservice.KeyboardView;
 import android.view.ViewGroup.LayoutParams;
 
-/* CC:F7:26:3A:00:3E:36:50:B5:3A:B5:40:EE:DC:80:21:68:15:1E:94
- * API_KEY:AIzaSyDjmrjBEPvgPlXtT18BQgl9GOYR3vzf304
+/**
+ * Generates Fragment View for PagerActivity
+ * TODO:Add libgdx fragment
  * */
 
-public class FragmentView extends Fragment {
+public class FragmentFactory extends Fragment {
+
+    public static final int WORKER_COUNT = 2;
+    private final String TAG = "FragmentFactory";
+
+    private static Fragment libgdxFragment = null;
+    private static Fragment keyboardFragment = null;
+
     // Store instance variables
     private int ID;
-    private final String TAG = "FRAGEMENTVIEW";
 
-    public static FragmentView newInstance(int id) {
-        FragmentView fragmentFirst = new FragmentView();
+    private static FragmentFactory newInstance(int id) {
+        FragmentFactory fragmentFirst = new FragmentFactory();
         Bundle args = new Bundle();
         args.putInt("someInt", id);
         fragmentFirst.setArguments(args);
         return fragmentFirst;
     }
 
- 
+    public static Fragment getInstance(int position) {
+
+        switch (position) {
+            case 0:
+                    if(libgdxFragment == null ) libgdxFragment = new LibgdxFragment();//newInstance(0);
+                    return libgdxFragment;
+
+            case 1:
+                    if(keyboardFragment == null) keyboardFragment = newInstance(1);
+                    return keyboardFragment;
+        }
+        return null;
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,10 +64,8 @@ public class FragmentView extends Fragment {
     	
         View view = null;
         switch(ID) {
-	        case 0:
-	    			view = inflater.inflate(R.layout.donor_view, container, false);
-	    			break;
-	        case 2:
+
+	        case 1:
 					view = inflater.inflate(R.layout.keyboard_view, container, false);
                     /*Keyboard view */
                     LinearLayout.LayoutParams parameters =
@@ -67,17 +74,20 @@ public class FragmentView extends Fragment {
                     kv.setLayoutParams(parameters);
                     LinearLayout keyboardlayout = (LinearLayout) view.findViewById(R.id.keyboardLayout);
                     keyboardlayout.addView(kv);
+                    Log.d(TAG,"Keyboard Inflated");
                     break;
-	        case 1:
+	        case 0:
 					view = inflater.inflate(R.layout.cv_main, container, false);
                     view.setTag("1");
                     CameraBridgeViewBase mOpenCvCameraView = (CameraBridgeViewBase) view.findViewById(R.id.HelloOpenCvView);
 					mOpenCvCameraView.setVisibility(SurfaceView.VISIBLE);
 					mOpenCvCameraView.setCvCameraViewListener((CameraBridgeViewBase.CvCameraViewListener2) getActivity());
 					//mOpenCvCameraView.enableView();
-	        		break;
+                    Log.d(TAG,"cv_main Inflated");
+                    break;
         }
 
 		return view;
     }
+
 }
