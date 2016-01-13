@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="18dp"
+        android:text="Please donate"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+	<Spinner
+	    android:id="@+id/item_category"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:background="@android:drawable/btn_dropdown"
+	    android:layout_below="@id/textView1"
+	    android:spinnerMode="dropdown" />
+
+	<EditText
+	    android:id="@+id/edit_name"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_below="@+id/item_category"
+	    android:layout_centerHorizontal="true"
+	    android:ems="10"
+	    android:hint="Name of Item"
+	    android:inputType="textPersonName" >
+
+	    <requestFocus />
+	</EditText>
+
+	<EditText
+	    android:id="@+id/edit_sub_category"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_below="@+id/edit_name"
+	    android:layout_centerHorizontal="true"
+	    android:ems="10"
+	    android:hint="Sub_Category" />
+
+	<EditText
+	    android:id="@+id/edit_author"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_below="@+id/edit_sub_category"
+	    android:layout_centerHorizontal="true"
+	    android:ems="10"
+	    android:hint="Book_Author" />
+
+	<EditText
+	    android:id="@+id/edit_tags"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_below="@+id/edit_author"
+	    android:layout_centerHorizontal="true"
+	    android:ems="10"
+	    android:hint="tags ( seperate by commas )" />
+
+	<EditText
+	    android:id="@+id/edit_number"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_below="@+id/edit_tags"
+	    android:layout_centerHorizontal="true"
+	    android:ems="10"
+	    android:hint="Number"
+	    android:inputType="phone" />
+
+	<ImageButton
+	    android:id="@+id/submit_location"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_below="@+id/edit_number"
+	    android:layout_centerHorizontal="true"
+	    android:src="@android:drawable/ic_menu_compass" />
+	
+</RelativeLayout>

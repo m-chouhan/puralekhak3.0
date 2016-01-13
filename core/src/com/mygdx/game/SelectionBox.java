@@ -9,11 +9,13 @@ import com.badlogic.gdx.math.Vector2;
 
 /**
  * Created by maximus_prime on 12/11/15.
+ * Represents a spotted character as a widget
+ * (that's why i embedded a controller inside the model to change its behaviour on selection )
  */
 
 public class SelectionBox extends InputAdapter {
 
-
+    /*All Possible states for a selection box */
     enum States{MOVE,STATIC,SCALE_TOP,SCALE_BOTTOM};
     States currentState = States.STATIC;
 
@@ -22,6 +24,7 @@ public class SelectionBox extends InputAdapter {
     private boolean selected = false;
     private Vector2 InitialPos = new Vector2();
     private Vector2 InitialCenter = new Vector2();
+    private String symbol;
 
     //Todo:initilize sprites
     SelectionBox(float x,float y,float width,float height) {
@@ -117,8 +120,8 @@ public class SelectionBox extends InputAdapter {
 
         return States.MOVE;
     }
-    public Rectangle getRect() {
-        return Rect;
-    }
 
+    public Rectangle getRect() { return Rect; }
+    public void setSymbol(String sym) { symbol = sym; }
+    public String getSymbol() {return symbol; }
 }

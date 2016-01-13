@@ -16,7 +16,7 @@ android {
     }
     defaultConfig {
         applicationId "com.mygdx.game"
-        minSdkVersion 8
+        minSdkVersion 14
         targetSdkVersion 22
     }
 }
@@ -117,4 +117,5 @@ idea {
 }
 dependencies {
     compile project(':opencv-java')
+    compile 'com.android.support:support-v4:22.2.1'
 }

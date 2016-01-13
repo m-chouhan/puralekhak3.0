@@ -57,7 +57,7 @@ public class MainMenuActivity extends Activity implements CvCameraViewListener2 
 
     /*Controller Code */
     public void onButtonClick(View v) {
-        Intent libgdx = new Intent(this,AndroidLauncher.class);
+        Intent libgdx = new Intent(this,ScreenSlidePagerActivity.class);
         startActivity(libgdx);
     }
 

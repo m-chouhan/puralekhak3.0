@@ -20,7 +20,6 @@ public class InputHandler  extends InputAdapter {
     OrthographicCamera camera;
     ArrayList<SelectionBox> BoxList = new ArrayList<SelectionBox>();
     SelectionBox selectedBox = null;
-    private MyImageViewer.CallbackInterface Callback ;
 
     InputHandler(OrthographicCamera cam,ArrayList<SelectionBox> list) {
         camera = cam;
@@ -78,7 +77,4 @@ public class InputHandler  extends InputAdapter {
         return true;
     }
 
-    public void setCallback(MyImageViewer.CallbackInterface callback) {
-        Callback = callback;
-    }
 }
