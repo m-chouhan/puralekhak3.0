@@ -15,7 +15,6 @@ import android.view.ViewGroup.LayoutParams;
 
 /**
  * Generates Fragment View for PagerActivity
- * TODO:Add libgdx fragment
  * */
 
 public class FragmentFactory extends Fragment {
@@ -23,15 +22,15 @@ public class FragmentFactory extends Fragment {
     public static final int WORKER_COUNT = 2;
     private final String TAG = "FragmentFactory";
 
-    private static Fragment libgdxFragment = null;
+    private static LibgdxFragment libgdxFragment = null;
     private static Fragment keyboardFragment = null;
-    // Store instance variables
+    // Store instance variables since multiple fragments are possible
     private int ID;
 
     private static FragmentFactory newInstance(int id) {
         FragmentFactory fragmentFirst = new FragmentFactory();
         Bundle args = new Bundle();
-        args.putInt("someInt", id);
+        args.putInt("ID", id);
         fragmentFirst.setArguments(args);
         return fragmentFirst;
     }
@@ -53,7 +52,7 @@ public class FragmentFactory extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ID = getArguments().getInt("someInt", 1);
+        ID = getArguments().getInt("ID", 1);
     }
 
     // Inflate the view for the fragment based on layout XML
@@ -75,18 +74,14 @@ public class FragmentFactory extends Fragment {
                     keyboardlayout.addView(kv);
                     Log.d(TAG,"Keyboard Inflated");
                     break;
-	        case 0:
-					view = inflater.inflate(R.layout.cv_main, container, false);
-                    view.setTag("1");
-                    CameraBridgeViewBase mOpenCvCameraView = (CameraBridgeViewBase) view.findViewById(R.id.HelloOpenCvView);
-					mOpenCvCameraView.setVisibility(SurfaceView.VISIBLE);
-					mOpenCvCameraView.setCvCameraViewListener((CameraBridgeViewBase.CvCameraViewListener2) getActivity());
-					//mOpenCvCameraView.enableView();
-                    Log.d(TAG,"cv_main Inflated");
-                    break;
         }
-
 		return view;
     }
 
+    public static Fragment getKeyboardFragment() {
+        return keyboardFragment;
+    }
+    public static Fragment getLibgdxFragment() {
+        return libgdxFragment;
+    }
 }

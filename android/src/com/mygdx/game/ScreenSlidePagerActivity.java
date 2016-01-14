@@ -8,6 +8,8 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -25,7 +27,7 @@ import org.opencv.core.Mat;
  */
 
 public class ScreenSlidePagerActivity extends FragmentActivity
-        implements CameraBridgeViewBase.CvCameraViewListener2,AndroidFragmentApplication.Callbacks {
+        implements AndroidFragmentApplication.Callbacks, AdapterView.OnItemClickListener, ViewControllerInterface{
 
     static {
         if (!OpenCVLoader.initDebug()) {
@@ -42,11 +44,13 @@ public class ScreenSlidePagerActivity extends FragmentActivity
     private PagerAdapter mPagerAdapter;
     private CameraBridgeViewBase mOpenCvCameraView;
     private String navigationListElements[] = {
-            "This",
-            "Is",
-            "A",
+            "Start Spotting",
+            "Select Image",
+            "Convert to Text",
+            "Keyboard",
             "Test"
     };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,6 +65,22 @@ public class ScreenSlidePagerActivity extends FragmentActivity
         ListView navigation_list = (ListView) findViewById(R.id.navigation_list);
         navigation_list.setAdapter(new ArrayAdapter<String>
                 (this,R.layout.navigation_list,R.id.text_element,navigationListElements));
+        navigation_list.setOnItemClickListener(this);
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+        switch (position) {
+            case 0: StartSpotting();
+                    break;
+            case 1: StartImageBrowser();
+                    break;
+            case 2: ConvertToText();
+                    break;
+            case 3: ShowKeyboard();
+                    break;
+        }
     }
 
     @Override
@@ -76,18 +96,27 @@ public class ScreenSlidePagerActivity extends FragmentActivity
     }
 
     @Override
-    public void onCameraViewStarted(int width, int height) { }
+    public void exit() { }
 
     @Override
-    public void onCameraViewStopped() { }
+    public void StartImageBrowser() {
 
-    @Override
-    public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
-        return inputFrame.gray();
     }
 
     @Override
-    public void exit() { }
+    public void ConvertToText() {
+
+    }
+
+    @Override
+    public void StartSpotting() {
+
+    }
+
+    @Override
+    public void ShowKeyboard() {
+
+    }
 
     private class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {
 
