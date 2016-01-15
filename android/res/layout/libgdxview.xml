@@ -1,13 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <LinearLayout
+    android:layout_height="match_parent"
+    android:id="@+id/libgdxFrame">
+    <SurfaceView
+        android:id="@+id/surfaceview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/libgdxlayout"
-        android:orientation="horizontal">
-    </LinearLayout>
-</LinearLayout>
+        android:background="#00000000"/>
+    <Button
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:text="U"
+        android:longClickable="true"
+        android:id="@+id/unicodeButton"
+        android:textSize="30sp" />
+</FrameLayout>

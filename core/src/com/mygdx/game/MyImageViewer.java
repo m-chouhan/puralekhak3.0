@@ -49,6 +49,8 @@ import java.util.ArrayList;
     SpriteBatch batch;
 
     private ViewControllerInterface viewControllerInterface;
+    /*Stores the current unicode used for spotting */
+    private TextButton unicodeButton;
 
     public void setViewControllerInterface(ViewControllerInterface callback) {
         viewControllerInterface = callback;
@@ -75,9 +77,9 @@ import java.util.ArrayList;
         myImageSprite = new Sprite(img);
         myImageSprite.setScale(1);
 
-        /*Button Initialization */
-        loadUI();
-
+        /*Buttons Initialization */
+        //loadUI();
+        frontend = new Stage();
         /*Setting up Input Processing */
         InputProcessor = new InputHandler(camera,BoxList);
         InputMultiplexer multiplexer = new InputMultiplexer();
@@ -108,11 +110,19 @@ import java.util.ArrayList;
 
         frontend = new Stage();
         TextButton.TextButtonStyle textBStyle = new TextButton.TextButtonStyle();
-        textBStyle.font = new BitmapFont();;
+        textBStyle.font = new BitmapFont();
         textBStyle.up = textBStyle.down = textBStyle.checked =
                 new TextureRegionDrawable(new TextureRegion(new Texture("uni.png")));
-        TextButton textButton = new TextButton("",textBStyle);
-
+        char uni = '\u0c90';
+        unicodeButton = new TextButton(String.valueOf(uni),textBStyle);
+//        unicodeButton.getLabel().scaleBy(10);
+        unicodeButton.getLabel().setFontScale(3);
+        unicodeButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                viewControllerInterface.ShowKeyboard();
+            }
+        });
         /*Fancy stuff for a button :) *
         textButton.setOrigin(textButton.getWidth()/2,textButton.getHeight()/2);
         textButton.addAction(Actions.rotateBy(180, 0.2f));
@@ -120,11 +130,12 @@ import java.util.ArrayList;
         textButton.scaleBy(40);
         textButton.setPosition(100, Height - 80);*/
 
+        /* Reducing UI elemtents
         ImageButton.ImageButtonStyle imStyle = new ImageButton.ImageButtonStyle();
         imStyle.up = imStyle.down = imStyle.checked =
                 new TextureRegionDrawable(new TextureRegion(new Texture("browser.png")));
         ImageButton imageButton = new ImageButton(imStyle);
-        /*imageButton.setPosition(100, Height - 100);
+        imageButton.setPosition(100, Height - 100);
         imageButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
@@ -135,9 +146,7 @@ import java.util.ArrayList;
         table.setFillParent(true);
         //table.setDebug(true); //shows table elements using lines
         table.left().top();
-        table.add(imageButton).width(100);
-        table.row();
-        table.add(textButton).width(100).height(100);
+        table.add(unicodeButton).width(120).height(120);
         frontend.addActor(table);
     }
 
@@ -154,5 +163,10 @@ import java.util.ArrayList;
     @Override
     public void OpenImage(String imagePath) {
 
+    }
+
+    @Override
+    public void UnicodeSelected(String unicode) {
+        unicodeButton.getLabel().setText(Character.toString((char) (905)));
     }
 }

@@ -21,8 +21,8 @@ public class AndroidLauncher extends AndroidApplication implements ViewControlle
 		setContentView(R.layout.libgdxview);
 		AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
 //		initialize(new MyImageViewer(this), config);
-		LinearLayout gdxlayout = (LinearLayout)findViewById(R.id.libgdxlayout);
-		gdxlayout.addView(initializeForView(new MyImageViewer(this),config));
+//		LinearLayout gdxlayout = (LinearLayout)findViewById(R.id.libgdxlayout);
+//		gdxlayout.addView(initializeForView(new MyImageViewer(this),config));
 	}
 
 	 @Override

@@ -29,6 +29,9 @@ import org.opencv.core.Mat;
 public class ScreenSlidePagerActivity extends FragmentActivity
         implements AndroidFragmentApplication.Callbacks, AdapterView.OnItemClickListener, ViewControllerInterface{
 
+    private final String TAG = "ScreenSliderPagerActivity";
+    private final int IMAGE_FRAGMENT = 0;
+    private final int KEYBOARD_FRAGMENT = 1;
     static {
         if (!OpenCVLoader.initDebug()) {
             // Handle initialization error
@@ -60,7 +63,7 @@ public class ScreenSlidePagerActivity extends FragmentActivity
         mPager = (ViewPager) findViewById(R.id.vpager);
         mPagerAdapter = new ScreenSlidePagerAdapter(getSupportFragmentManager());
         mPager.setAdapter(mPagerAdapter);
-        mPager.setCurrentItem(0);
+        mPager.setCurrentItem(IMAGE_FRAGMENT);
 
         ListView navigation_list = (ListView) findViewById(R.id.navigation_list);
         navigation_list.setAdapter(new ArrayAdapter<String>
@@ -88,10 +91,10 @@ public class ScreenSlidePagerActivity extends FragmentActivity
     	
     	switch( mPager.getCurrentItem()) {
     		
-	    	case 0: super.onBackPressed();
+	    	case IMAGE_FRAGMENT: super.onBackPressed();
                     break;
-	    	case 1:	mPager.setCurrentItem(0);
-	    			break;
+	    	case KEYBOARD_FRAGMENT:	mPager.setCurrentItem(0);
+                    break;
     	}
     }
 
@@ -115,7 +118,18 @@ public class ScreenSlidePagerActivity extends FragmentActivity
 
     @Override
     public void ShowKeyboard() {
-
+        mPager.setCurrentItem(KEYBOARD_FRAGMENT);
+        mPager.invalidate();
+        FragmentFactory.getKeyboardFragment().getView().invalidate();
+        /*
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mPager.setCurrentItem(KEYBOARD_FRAGMENT);
+                mPager.invalidate();
+                FragmentFactory.getKeyboardFragment().getView().invalidate();
+            }
+        });*/
     }
 
     private class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {

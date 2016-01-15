@@ -2,8 +2,11 @@ package com.mygdx.game;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.FrameLayout;
 
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.ApplicationListener;
@@ -17,17 +20,39 @@ import com.badlogic.gdx.backends.android.AndroidFragmentApplication;
  * TODO: which needs be removed ??
  */
 
-public class LibgdxFragment extends AndroidFragmentApplication {
+public class LibgdxFragment extends AndroidFragmentApplication
+        implements View.OnClickListener, View.OnLongClickListener{
 
     ControllerViewInterface cvDelegator;
+    ViewControllerInterface vcDelegator;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        ViewControllerInterface vcDelegator = (ViewControllerInterface) getActivity();
+        vcDelegator = (ViewControllerInterface) getActivity();
         MyImageViewer imageViewer = new MyImageViewer(vcDelegator);
         cvDelegator = imageViewer;
-        return initializeForView(imageViewer);
+        FrameLayout parent = (FrameLayout)inflater.inflate(R.layout.libgdxview,null);
+        parent.addView(initializeForView(imageViewer));
+        Button button = (Button)parent.findViewById(R.id.unicodeButton);
+        button.setOnClickListener(this);
+        button.setOnLongClickListener(this);
+
+        SurfaceView v = (SurfaceView)parent.findViewById(R.id.surfaceview);
+        v.bringToFront();
+        button.bringToFront();
+        return parent;
     }
 
     public ControllerViewInterface getCvDelegator() { return cvDelegator; }
+
+    @Override
+    public void onClick(View v) {
+        vcDelegator.ShowKeyboard();
+    }
+
+    @Override
+    public boolean onLongClick(View v) {
+        vcDelegator.StartSpotting();
+        return true;
+    }
 }

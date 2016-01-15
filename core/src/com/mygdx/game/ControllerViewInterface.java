@@ -6,7 +6,8 @@ package com.mygdx.game;
  */
 public interface ControllerViewInterface {
 
-    public void TextUpdated();
-    public void SpottingUpdated();
-    public void OpenImage(String imagePath);
+    void TextUpdated();
+    void SpottingUpdated();
+    void OpenImage(String imagePath);
+    void UnicodeSelected(String unicode);
 }

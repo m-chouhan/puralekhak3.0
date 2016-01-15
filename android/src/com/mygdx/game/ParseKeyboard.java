@@ -253,7 +253,6 @@ public class ParseKeyboard extends Keyboard{
 			
 	private void InflateKeysTest()
 	{
-		
 		List<Integer> bigger = null;
 		if( vow.size() < dia.size() ) bigger = dia;
 		else bigger = vow;
