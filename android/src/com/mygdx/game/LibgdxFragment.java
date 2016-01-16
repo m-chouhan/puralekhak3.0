@@ -36,7 +36,6 @@ public class LibgdxFragment extends AndroidFragmentApplication
         Button button = (Button)parent.findViewById(R.id.unicodeButton);
         button.setOnClickListener(this);
         button.setOnLongClickListener(this);
-
         SurfaceView v = (SurfaceView)parent.findViewById(R.id.surfaceview);
         v.bringToFront();
         button.bringToFront();

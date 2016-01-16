@@ -7,11 +7,13 @@
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:src="@drawable/badlogic"
-        android:layout_margin="5dp"/>
+        android:layout_margin="5dp"
+        android:id="@+id/icon_element"/>
     <TextView
         android:id="@+id/text_element"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textColor="#ff0A0A0A"
         android:textSize="20sp"
         android:paddingTop="5dp"/>
 </LinearLayout>

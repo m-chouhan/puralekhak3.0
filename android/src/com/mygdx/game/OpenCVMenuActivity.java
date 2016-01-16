@@ -14,9 +14,9 @@ import org.opencv.android.OpenCVLoader;
 import org.opencv.core.Mat;
 
 
-public class MainMenuActivity extends Activity implements CvCameraViewListener2 {
+public class OpenCVMenuActivity extends Activity implements CvCameraViewListener2 {
 
-    private final String TAG = "MenuActivity";
+    private final String TAG = "OpenCVMenuActivity";
     static {
          if (!OpenCVLoader.initDebug()) {
              // Handle initialization error
@@ -57,7 +57,7 @@ public class MainMenuActivity extends Activity implements CvCameraViewListener2 
 
     /*Controller Code */
     public void onButtonClick(View v) {
-        Intent libgdx = new Intent(this,ScreenSlidePagerActivity.class);
+        Intent libgdx = new Intent(this,MainActivity.class);
         startActivity(libgdx);
     }
 

@@ -1,5 +1,6 @@
 package com.mygdx.game;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -10,26 +11,23 @@ import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 
 import com.badlogic.gdx.backends.android.AndroidFragmentApplication;
 
-import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.android.OpenCVLoader;
-import org.opencv.core.Mat;
 
 /**
- * TODO: Should serve as main entry point for our app
  * TODO: rename Activity
- * TODO: add navigation drawer and implement ViewControllerInterface
+ * TODO: implement ViewControllerInterface
  *
  */
 
-public class ScreenSlidePagerActivity extends FragmentActivity
-        implements AndroidFragmentApplication.Callbacks, AdapterView.OnItemClickListener, ViewControllerInterface{
+public class MainActivity extends FragmentActivity
+        implements AndroidFragmentApplication.Callbacks, AdapterView.OnItemClickListener, ViewControllerInterface , FragmentFactory.UpdateViewCallback{
 
-    private final String TAG = "ScreenSliderPagerActivity";
+    private final String TAG = "MainActivity";
     private final int IMAGE_FRAGMENT = 0;
     private final int KEYBOARD_FRAGMENT = 1;
     static {
@@ -42,22 +40,15 @@ public class ScreenSlidePagerActivity extends FragmentActivity
      * The pager widget, which handles animation and allows swiping horizontally to access previous
      * and next fragments.*/
     private ViewPager mPager;
-
+    /*for sending messages to libgdx module */
+    private ControllerViewInterface mCvInterface;
     /**The pager adapter, which provides the pages to the view pager widget.*/
     private PagerAdapter mPagerAdapter;
-    private CameraBridgeViewBase mOpenCvCameraView;
-    private String navigationListElements[] = {
-            "Start Spotting",
-            "Select Image",
-            "Convert to Text",
-            "Keyboard",
-            "Test"
-    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.viewpager);
+        setContentView(R.layout.puralekhak_main);
 
         // Instantiate a ViewPager and a PagerAdapter.
         mPager = (ViewPager) findViewById(R.id.vpager);
@@ -66,8 +57,7 @@ public class ScreenSlidePagerActivity extends FragmentActivity
         mPager.setCurrentItem(IMAGE_FRAGMENT);
 
         ListView navigation_list = (ListView) findViewById(R.id.navigation_list);
-        navigation_list.setAdapter(new ArrayAdapter<String>
-                (this,R.layout.navigation_list,R.id.text_element,navigationListElements));
+        navigation_list.setAdapter(new NavigationListAdapter(this));
         navigation_list.setOnItemClickListener(this);
     }
 
@@ -103,7 +93,7 @@ public class ScreenSlidePagerActivity extends FragmentActivity
 
     @Override
     public void StartImageBrowser() {
-
+        Intent i = new Intent();
     }
 
     @Override
@@ -120,16 +110,14 @@ public class ScreenSlidePagerActivity extends FragmentActivity
     public void ShowKeyboard() {
         mPager.setCurrentItem(KEYBOARD_FRAGMENT);
         mPager.invalidate();
-        FragmentFactory.getKeyboardFragment().getView().invalidate();
-        /*
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                mPager.setCurrentItem(KEYBOARD_FRAGMENT);
-                mPager.invalidate();
-                FragmentFactory.getKeyboardFragment().getView().invalidate();
-            }
-        });*/
+    }
+
+    @Override
+    public void UnicodeSelected(String unicode) {
+        Button button =
+                (Button) FragmentFactory.getLibgdxFragment().getView().findViewById(R.id.unicodeButton);
+        button.setText(unicode);
+        mPager.setCurrentItem(IMAGE_FRAGMENT);
     }
 
     private class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {

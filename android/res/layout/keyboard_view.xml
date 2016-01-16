@@ -7,11 +7,26 @@
     android:clickable="true"
     android:focusable="false"
     android:id="@+id/keyboardLayout">
-    <EditText
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent"
-        android:hint="Type Unicode Here"
-        android:id="@+id/unicodeedit"
-        android:gravity="center_horizontal"
-        android:textSize="40sp" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+        <EditText
+            android:layout_weight="1"
+            android:hint="Type Unicode"
+            android:textSize="40sp"
+            android:gravity="center_horizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/unicodeedit">
+        </EditText>
+        <ImageButton
+            android:background="@drawable/ok_button"
+            android:layout_width="80dip"
+            android:layout_height="80dip"
+            android:id="@+id/ok_button">
+        </ImageButton>
+    </LinearLayout>
+
 </LinearLayout>

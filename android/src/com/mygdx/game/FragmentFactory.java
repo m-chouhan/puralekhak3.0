@@ -2,22 +2,28 @@ package com.mygdx.game;
 
 import org.opencv.android.CameraBridgeViewBase;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.view.SurfaceView;
 import android.inputmethodservice.KeyboardView;
 import android.view.ViewGroup.LayoutParams;
 
+
 /**
  * Generates Fragment View for PagerActivity
+ * supports only keyboard fragment at present
+ * TODO: settings page fragment
  * */
 
-public class FragmentFactory extends Fragment {
+public class FragmentFactory extends Fragment implements View.OnClickListener{
 
     public static final int WORKER_COUNT = 2;
     private final String TAG = "FragmentFactory";
@@ -27,6 +33,10 @@ public class FragmentFactory extends Fragment {
     // Store instance variables since multiple fragments are possible
     private int ID;
 
+    /*for passing messages to main activity */
+    private UpdateViewCallback mCallback;
+    private EditText unicodeTextEditor;
+
     private static FragmentFactory newInstance(int id) {
         FragmentFactory fragmentFirst = new FragmentFactory();
         Bundle args = new Bundle();
@@ -35,7 +45,12 @@ public class FragmentFactory extends Fragment {
         return fragmentFirst;
     }
 
-    public static Fragment getInstance(int position) {
+
+    public interface UpdateViewCallback{
+        void UnicodeSelected(String unicode);
+    };
+
+    static Fragment getInstance(int position) {
 
         switch (position) {
 
@@ -55,6 +70,12 @@ public class FragmentFactory extends Fragment {
         ID = getArguments().getInt("ID", 1);
     }
 
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        mCallback = (UpdateViewCallback) activity;
+    }
+
     // Inflate the view for the fragment based on layout XML
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, 
@@ -72,10 +93,18 @@ public class FragmentFactory extends Fragment {
                     kv.setLayoutParams(parameters);
                     LinearLayout keyboardlayout = (LinearLayout) view.findViewById(R.id.keyboardLayout);
                     keyboardlayout.addView(kv);
+                    ImageButton imageButton = (ImageButton)view.findViewById(R.id.ok_button);
+                    imageButton.setOnClickListener(this);
+                    unicodeTextEditor = (EditText)view.findViewById(R.id.unicodeedit);
                     Log.d(TAG,"Keyboard Inflated");
                     break;
         }
 		return view;
+    }
+
+    @Override
+    public void onClick(View v) {
+        mCallback.UnicodeSelected(unicodeTextEditor.getText().toString());
     }
 
     public static Fragment getKeyboardFragment() {
