@@ -2,6 +2,7 @@ package com.mygdx.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputAdapter;
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
@@ -10,6 +11,8 @@ import java.util.ArrayList;
 
 /**
  * Created by maximus_prime on 12/11/15.
+ * Responsible for handling all raw touch inputs - drag , tap , touch etc and updating the camera
+ * accordingly
  */
 public class InputHandler  extends InputAdapter {
 
@@ -17,11 +20,11 @@ public class InputHandler  extends InputAdapter {
     Vector3 InitialTouchPos = new Vector3();
     Vector3 InitialCameraPos = new Vector3();
 
-    OrthographicCamera camera;
+    Camera camera;
     ArrayList<SelectionBox> BoxList = new ArrayList<SelectionBox>();
     SelectionBox selectedBox = null;
 
-    InputHandler(OrthographicCamera cam,ArrayList<SelectionBox> list) {
+    InputHandler(Camera cam,ArrayList<SelectionBox> list) {
         camera = cam;
         BoxList = list;
     }
@@ -61,10 +64,10 @@ public class InputHandler  extends InputAdapter {
         Vector3 direction = new Vector3(touch3D);
         direction.sub(InitialTouchPos);//direction vector
 
-        direction.scl(-0.5f); //scale direction vector
+        direction.scl(-0.9f); //scale direction vector
         camera.position.set(direction.add(InitialCameraPos));
         camera.update();
-        return super.touchDragged(x, y, pointer);
+        return true;
     }
 
     @Override

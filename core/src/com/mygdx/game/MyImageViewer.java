@@ -15,6 +15,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
@@ -88,11 +89,14 @@ import javax.swing.event.ChangeEvent;
         /*Buttons Initialization */
         //loadUI();
         frontend = new Stage();
+        Image myImage = new Image(img);
+        frontend.addActor(myImage);
+
         /*Setting up Input Processing */
         InputProcessor = new InputHandler(camera,BoxList);
         InputMultiplexer multiplexer = new InputMultiplexer();
         multiplexer.addProcessor(frontend);
-        multiplexer.addProcessor(new GestureDetector(new GestureProcessor(camera, BoxList)));
+        multiplexer.addProcessor(new GestureDetector(new GestureProcessor(frontend.getCamera(), BoxList)));
         multiplexer.addProcessor(InputProcessor);
         Gdx.input.setInputProcessor(multiplexer);
     }
@@ -110,7 +114,7 @@ import javax.swing.event.ChangeEvent;
 		batch.end();
         WidgetRenderer.setColor(Color.YELLOW);
         for(SelectionBox s:BoxList) s.Draw(WidgetRenderer);
-        frontend.draw();
+//        frontend.draw();
 	}
 
     /*Loads frontend UI elements */
