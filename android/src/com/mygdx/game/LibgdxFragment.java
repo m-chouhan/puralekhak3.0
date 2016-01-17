@@ -1,5 +1,6 @@
 package com.mygdx.game;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.SurfaceView;
@@ -23,13 +24,21 @@ import com.badlogic.gdx.backends.android.AndroidFragmentApplication;
 public class LibgdxFragment extends AndroidFragmentApplication
         implements View.OnClickListener, View.OnLongClickListener{
 
-    ControllerViewInterface cvDelegator;
-    ViewControllerInterface vcDelegator;
+    private ControllerViewInterface cvDelegator;
+    private ViewControllerInterface vcDelegator;
+    private MainActivity parentActivity;
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        parentActivity = (MainActivity)activity;
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        vcDelegator = (ViewControllerInterface) getActivity();
-        MyImageViewer imageViewer = new MyImageViewer(vcDelegator);
+        vcDelegator = parentActivity;
+        MyImageViewer imageViewer = new MyImageViewer(vcDelegator,"inscription.jpg");
         cvDelegator = imageViewer;
         FrameLayout parent = (FrameLayout)inflater.inflate(R.layout.libgdxview,null);
         parent.addView(initializeForView(imageViewer));
@@ -39,6 +48,8 @@ public class LibgdxFragment extends AndroidFragmentApplication
         SurfaceView v = (SurfaceView)parent.findViewById(R.id.surfaceview);
         v.bringToFront();
         button.bringToFront();
+
+        parentActivity.ImageviewerReady(cvDelegator);
         return parent;
     }
 

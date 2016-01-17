@@ -34,6 +34,11 @@ public class FragmentFactory extends Fragment implements View.OnClickListener{
     private int ID;
 
     /*for passing messages to main activity */
+    public interface UpdateViewCallback{
+        void UnicodeSelected(String unicode);
+        void ImageviewerReady(ControllerViewInterface cvInterface);
+    };
+
     private UpdateViewCallback mCallback;
     private EditText unicodeTextEditor;
 
@@ -45,20 +50,17 @@ public class FragmentFactory extends Fragment implements View.OnClickListener{
         return fragmentFirst;
     }
 
-
-    public interface UpdateViewCallback{
-        void UnicodeSelected(String unicode);
-    };
-
     static Fragment getInstance(int position) {
 
         switch (position) {
 
             case 0:
-                    if(libgdxFragment == null ) libgdxFragment = new LibgdxFragment();//newInstance(0);
+                    if(libgdxFragment == null )
+                        libgdxFragment = new LibgdxFragment();
                     return libgdxFragment;
             case 1:
-                    if(keyboardFragment == null) keyboardFragment = newInstance(1);
+                    if(keyboardFragment == null)
+                        keyboardFragment = newInstance(1);
                     return keyboardFragment;
         }
         return null;
@@ -110,7 +112,7 @@ public class FragmentFactory extends Fragment implements View.OnClickListener{
     public static Fragment getKeyboardFragment() {
         return keyboardFragment;
     }
-    public static Fragment getLibgdxFragment() {
+    public static LibgdxFragment getLibgdxFragment() {
         return libgdxFragment;
     }
 }

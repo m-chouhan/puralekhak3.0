@@ -22,6 +22,8 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import java.util.ArrayList;
 
+import javax.swing.event.ChangeEvent;
+
 /** TODO:Take image file as in input
  *  Displays image for spotting
  *  Main GUI Renderer
@@ -34,7 +36,7 @@ import java.util.ArrayList;
     private Stage frontend;
     int Width,Height;
 
-    private String imagePath="inscription.jpg";
+    private String imagePath;
     /* represents image from gui's perspective*/
 	Sprite myImageSprite;
     /*For zoomIn,zoomOut and moving image*/
@@ -52,16 +54,20 @@ import java.util.ArrayList;
     /*Stores the current unicode used for spotting */
     private TextButton unicodeButton;
 
-    public void setViewControllerInterface(ViewControllerInterface callback) {
-        viewControllerInterface = callback;
-    }
-
-    public MyImageViewer(ViewControllerInterface callbackInterface) {
+    public MyImageViewer(ViewControllerInterface callbackInterface,String imagePath) {
         viewControllerInterface = callbackInterface;
+        this.imagePath = imagePath;
     }
 
 	@Override
 	public void create () {
+
+        boolean isExtAvailable = Gdx.files.isExternalStorageAvailable();
+        boolean isLocAvailable = Gdx.files.isLocalStorageAvailable();
+
+        String extRoot = Gdx.files.getExternalStoragePath();
+        String locRoot = Gdx.files.getLocalStoragePath();
+        Gdx.app.log(TAG, extRoot);
 
         Width = Gdx.graphics.getWidth(); Height = Gdx.graphics.getHeight();
 
@@ -71,9 +77,11 @@ import java.util.ArrayList;
         camera.zoom -= 0.5;
         camera.rotate(90);
         camera.update();
-        Texture img = new Texture(imagePath);
         batch = new SpriteBatch();
         WidgetRenderer = new ShapeRenderer();
+        /*Opens internal image in assest/ folder as default */
+        //Texture img = new Texture(Gdx.files.absolute("/storage/emulated/0/DCIM/Camera/IMG_20160117_174542891_HDR.jpg"));
+        Texture img = new Texture(imagePath);
         myImageSprite = new Sprite(img);
         myImageSprite.setScale(1);
 
@@ -161,8 +169,17 @@ import java.util.ArrayList;
     }
 
     @Override
-    public void OpenImage(String imagePath) {
-
+    public void OpenImage(final String imagePath) {
+        /*Required since Any graphics operations directly
+        involving OpenGL need to be executed on the rendering thread. */
+        Gdx.app.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                Texture img = new Texture(Gdx.files.absolute(imagePath));
+                myImageSprite = new Sprite(img);
+                myImageSprite.setScale(1);
+            }
+        });
     }
 
     @Override

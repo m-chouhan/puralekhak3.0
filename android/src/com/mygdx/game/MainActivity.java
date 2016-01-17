@@ -1,7 +1,12 @@
 package com.mygdx.game;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -18,15 +23,18 @@ import com.badlogic.gdx.backends.android.AndroidFragmentApplication;
 
 import org.opencv.android.OpenCVLoader;
 
+import java.io.File;
+
 /**
  * TODO: rename Activity
  * TODO: implement ViewControllerInterface
- *
+ * TODO: remove absolute path dependency
  */
 
 public class MainActivity extends FragmentActivity
         implements AndroidFragmentApplication.Callbacks, AdapterView.OnItemClickListener, ViewControllerInterface , FragmentFactory.UpdateViewCallback{
 
+    private static final int IMAGE_BROWSER = 2;
     private final String TAG = "MainActivity";
     private final int IMAGE_FRAGMENT = 0;
     private final int KEYBOARD_FRAGMENT = 1;
@@ -89,11 +97,19 @@ public class MainActivity extends FragmentActivity
     }
 
     @Override
-    public void exit() { }
-
-    @Override
     public void StartImageBrowser() {
         Intent i = new Intent();
+        i.setType("image/*");
+        i.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(i, "Select Inscription"), IMAGE_BROWSER);
+    }
+
+    /*Sends path of the image to be opened to myImageViewr */
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        String Image_path = RealPathUtil.getRealPathFromURI(this,data.getData());
+        Log.d(TAG, Image_path);
+        mCvInterface.OpenImage(Image_path);
     }
 
     @Override
@@ -120,6 +136,11 @@ public class MainActivity extends FragmentActivity
         mPager.setCurrentItem(IMAGE_FRAGMENT);
     }
 
+    @Override
+    public void ImageviewerReady(ControllerViewInterface cvInterface) {
+        mCvInterface = cvInterface;
+    }
+
     private class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {
 
         public ScreenSlidePagerAdapter(FragmentManager fm) {
@@ -134,4 +155,9 @@ public class MainActivity extends FragmentActivity
         @Override
         public int getCount() { return FragmentFactory.WORKER_COUNT;}
     }
+
+    /* Libgdx callback since this activity passes control to libgdx */
+    @Override
+    public void exit() { }
+
 }
