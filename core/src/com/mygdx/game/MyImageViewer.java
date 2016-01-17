@@ -19,13 +19,14 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import java.util.ArrayList;
 
 import javax.swing.event.ChangeEvent;
 
-/** TODO:Take image file as in input
+/** TODO:Port the custom widgets to user Actor class
  *  Displays image for spotting
  *  Main GUI Renderer
  */
@@ -39,7 +40,7 @@ import javax.swing.event.ChangeEvent;
 
     private String imagePath;
     /* represents image from gui's perspective*/
-	Sprite myImageSprite;
+	Image myImage;
     /*For zoomIn,zoomOut and moving image*/
     OrthographicCamera camera;
     /*Handles custom widgets actions like scale,create new , move etc */
@@ -48,8 +49,6 @@ import javax.swing.event.ChangeEvent;
     ArrayList<SelectionBox> BoxList = new ArrayList<SelectionBox>();
     /* Renders all custom widgets*/
     ShapeRenderer WidgetRenderer;
-    /*Renders sprites i.e myimagesprite */
-    SpriteBatch batch;
 
     private ViewControllerInterface viewControllerInterface;
     /*Stores the current unicode used for spotting */
@@ -63,40 +62,26 @@ import javax.swing.event.ChangeEvent;
 	@Override
 	public void create () {
 
-        boolean isExtAvailable = Gdx.files.isExternalStorageAvailable();
-        boolean isLocAvailable = Gdx.files.isLocalStorageAvailable();
-
-        String extRoot = Gdx.files.getExternalStoragePath();
-        String locRoot = Gdx.files.getLocalStoragePath();
-        Gdx.app.log(TAG, extRoot);
-
         Width = Gdx.graphics.getWidth(); Height = Gdx.graphics.getHeight();
 
         /*Initializing View elements */
-        camera  = new OrthographicCamera(Width,Height);
-        camera.position.set(camera.viewportWidth / 2f, camera.viewportHeight / 2f, 0);
-        camera.zoom -= 0.5;
-        camera.rotate(90);
-        camera.update();
-        batch = new SpriteBatch();
+
         WidgetRenderer = new ShapeRenderer();
         /*Opens internal image in assest/ folder as default */
-        //Texture img = new Texture(Gdx.files.absolute("/storage/emulated/0/DCIM/Camera/IMG_20160117_174542891_HDR.jpg"));
         Texture img = new Texture(imagePath);
-        myImageSprite = new Sprite(img);
-        myImageSprite.setScale(1);
 
         /*Buttons Initialization */
         //loadUI();
         frontend = new Stage();
-        Image myImage = new Image(img);
+        myImage = new Image(img);
         frontend.addActor(myImage);
 
         /*Setting up Input Processing */
+        camera = (OrthographicCamera) frontend.getCamera();
         InputProcessor = new InputHandler(camera,BoxList);
         InputMultiplexer multiplexer = new InputMultiplexer();
         multiplexer.addProcessor(frontend);
-        multiplexer.addProcessor(new GestureDetector(new GestureProcessor(frontend.getCamera(), BoxList)));
+        multiplexer.addProcessor(new GestureDetector(new GestureProcessor(camera, BoxList)));
         multiplexer.addProcessor(InputProcessor);
         Gdx.input.setInputProcessor(multiplexer);
     }
@@ -107,14 +92,10 @@ import javax.swing.event.ChangeEvent;
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         Gdx.gl20.glLineWidth(8);
 
-        batch.setProjectionMatrix(camera.combined);
         WidgetRenderer.setProjectionMatrix(camera.combined);
-		batch.begin();
-		    myImageSprite.draw(batch);
-		batch.end();
         WidgetRenderer.setColor(Color.YELLOW);
         for(SelectionBox s:BoxList) s.Draw(WidgetRenderer);
-//        frontend.draw();
+        frontend.draw();
 	}
 
     /*Loads frontend UI elements */
@@ -127,7 +108,6 @@ import javax.swing.event.ChangeEvent;
                 new TextureRegionDrawable(new TextureRegion(new Texture("uni.png")));
         char uni = '\u0c90';
         unicodeButton = new TextButton(String.valueOf(uni),textBStyle);
-//        unicodeButton.getLabel().scaleBy(10);
         unicodeButton.getLabel().setFontScale(3);
         unicodeButton.addListener(new ChangeListener() {
             @Override
@@ -136,6 +116,7 @@ import javax.swing.event.ChangeEvent;
             }
         });
         /*Fancy stuff for a button :) *
+        unicodeButton.getLabel().scaleBy(10);
         textButton.setOrigin(textButton.getWidth()/2,textButton.getHeight()/2);
         textButton.addAction(Actions.rotateBy(180, 0.2f));
         textButton.getLabel().setRotation(90);
@@ -179,9 +160,8 @@ import javax.swing.event.ChangeEvent;
         Gdx.app.postRunnable(new Runnable() {
             @Override
             public void run() {
-                Texture img = new Texture(Gdx.files.absolute(imagePath));
-                myImageSprite = new Sprite(img);
-                myImageSprite.setScale(1);
+                Texture texture = new Texture(Gdx.files.absolute(imagePath));
+                myImage.setDrawable(new SpriteDrawable(new Sprite(texture)));
             }
         });
     }

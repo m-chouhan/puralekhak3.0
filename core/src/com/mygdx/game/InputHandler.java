@@ -20,11 +20,11 @@ public class InputHandler  extends InputAdapter {
     Vector3 InitialTouchPos = new Vector3();
     Vector3 InitialCameraPos = new Vector3();
 
-    Camera camera;
+    OrthographicCamera camera;
     ArrayList<SelectionBox> BoxList = new ArrayList<SelectionBox>();
     SelectionBox selectedBox = null;
 
-    InputHandler(Camera cam,ArrayList<SelectionBox> list) {
+    InputHandler(OrthographicCamera cam,ArrayList<SelectionBox> list) {
         camera = cam;
         BoxList = list;
     }
