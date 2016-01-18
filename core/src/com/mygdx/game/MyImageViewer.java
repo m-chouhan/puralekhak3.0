@@ -82,7 +82,7 @@ import javax.swing.event.ChangeEvent;
         InputProcessor = new InputHandler(camera,BoxList);
         InputMultiplexer multiplexer = new InputMultiplexer();
         multiplexer.addProcessor(frontend);
-        multiplexer.addProcessor(new GestureDetector(new GestureProcessor(camera, BoxList)));
+        multiplexer.addProcessor(new GestureDetector(new GestureProcessor(camera, BoxList,viewControllerInterface)));
         multiplexer.addProcessor(InputProcessor);
         Gdx.input.setInputProcessor(multiplexer);
     }

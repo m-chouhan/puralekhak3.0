@@ -3,7 +3,7 @@ package com.mygdx.game;
 /**
  * Created by maximus_prime on 12/11/15.
  * Handles input for backend UI
- * TODO: Imporve Zoom
+ * TODO: Improve Zoom
  */
 
 import com.badlogic.gdx.Gdx;
@@ -18,17 +18,18 @@ import java.util.ArrayList;
 
 class GestureProcessor implements GestureListener {
 
-    private SpriteBatch batch;
-    private BitmapFont font;
+    private final String TAG = "GestureProcessor";
+    private final ViewControllerInterface vcInterface;
+
     private String message = "No gesture performed yet";
     private int w,h;
-    private String TAG = "GestureProcessor";
     private OrthographicCamera camera;
     private ArrayList<SelectionBox> BoxList;
 
-    GestureProcessor(OrthographicCamera camera,ArrayList<SelectionBox> list) {
+    GestureProcessor(OrthographicCamera camera,ArrayList<SelectionBox> list,ViewControllerInterface vcInterface) {
         this.camera = camera;
         BoxList = list;
+        this.vcInterface = vcInterface;
     }
 
     @Override
@@ -46,7 +47,9 @@ class GestureProcessor implements GestureListener {
             Gdx.app.log(TAG, "tap at " + x + ", " + y + ", count: " + count);
         else
         {
-            BoxList.add(new SelectionBox(touch3D.x-25,touch3D.y-25,50,50));
+            SelectionBox box = new SelectionBox(touch3D.x-25,touch3D.y-25,50,50);
+            BoxList.add(box);
+            vcInterface.TemplateSelected(box);
             Gdx.app.log(TAG, "double tap at " + x + ", " + y + ", count: " + count);
             return true;
         }

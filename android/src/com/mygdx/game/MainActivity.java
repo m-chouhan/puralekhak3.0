@@ -138,7 +138,8 @@ public class MainActivity extends FragmentActivity
     public void TemplateSelected(SelectionBox selectionBox) {
 
         Rectangle rect = selectionBox.getRect();
-        mTempatePreview.setImageBitmap(Bitmap.createBitmap(mCurrentBitmap,rect.x,rect.y,rect.width,rect.height));
+        mTempatePreview.setImageBitmap(
+                Bitmap.createBitmap(mCurrentBitmap, (int) rect.x, (int) rect.y, (int) rect.width, (int)rect.height));
     }
 
     @Override

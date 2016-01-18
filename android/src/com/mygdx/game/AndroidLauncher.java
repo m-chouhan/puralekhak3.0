@@ -9,7 +9,7 @@ import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
 /** Libgdx Code Entry Point
 * */
 
-public class AndroidLauncher extends AndroidApplication implements ViewControllerInterface {
+public class AndroidLauncher extends AndroidApplication {
 
 	static {
 		// If you use opencv 2.4,
@@ -25,22 +25,4 @@ public class AndroidLauncher extends AndroidApplication implements ViewControlle
 //		gdxlayout.addView(initializeForView(new MyImageViewer(this),config));
 	}
 
-	 @Override
-	 public void StartImageBrowser() {
-	 }
-
-    @Override
-    public void ConvertToText() {
-
-    }
-
-    @Override
-    public void StartSpotting() {
-
-    }
-
-    @Override
-    public void ShowKeyboard() {
-
-    }
 }
