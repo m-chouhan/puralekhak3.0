@@ -10,7 +10,7 @@ public interface ViewControllerInterface {
     void StartImageBrowser();
     void ConvertToText();
     void StartSpotting();
-    void TemplateSelected(SelectionBox selectionBox);
+    void TemplateSelected(final int x,final int y,final int width,final int height);
     void ShowKeyboard();
 
 }

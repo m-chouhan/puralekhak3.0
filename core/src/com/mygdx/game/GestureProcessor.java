@@ -19,17 +19,16 @@ import java.util.ArrayList;
 class GestureProcessor implements GestureListener {
 
     private final String TAG = "GestureProcessor";
-    private final ViewControllerInterface vcInterface;
 
     private String message = "No gesture performed yet";
-    private int w,h;
-    private OrthographicCamera camera;
-    private ArrayList<SelectionBox> BoxList;
+    private final MyImageViewer imageViewer;
+    private final OrthographicCamera camera;
+    private final ArrayList<SelectionBox> BoxList;
 
-    GestureProcessor(OrthographicCamera camera,ArrayList<SelectionBox> list,ViewControllerInterface vcInterface) {
-        this.camera = camera;
-        BoxList = list;
-        this.vcInterface = vcInterface;
+    GestureProcessor(MyImageViewer imViewer) {
+        imageViewer = imViewer;
+        camera = imViewer.camera;
+        BoxList = imViewer.BoxList;
     }
 
     @Override
@@ -47,9 +46,7 @@ class GestureProcessor implements GestureListener {
             Gdx.app.log(TAG, "tap at " + x + ", " + y + ", count: " + count);
         else
         {
-            SelectionBox box = new SelectionBox(touch3D.x-25,touch3D.y-25,50,50);
-            BoxList.add(box);
-            vcInterface.TemplateSelected(box);
+            imageViewer.CreateSelectionBoxAt(touch3D.x-100,touch3D.y-100,200,200);
             Gdx.app.log(TAG, "double tap at " + x + ", " + y + ", count: " + count);
             return true;
         }

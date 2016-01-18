@@ -116,12 +116,14 @@ public class MainActivity extends FragmentActivity
     /*Sends path of the image to be opened to myImageViewr */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        String Image_path = RealPathUtil.getRealPathFromURI(this,data.getData());
+        String Image_path = RealPathUtil.getRealPathFromURI(this, data.getData());
         Log.d(TAG, Image_path);
+
         mCurrentBitmap = BitmapFactory.decodeFile(Image_path);
         Bitmap template = Bitmap.createBitmap(mCurrentBitmap,0,0,100,100);
-        mTempatePreview.setImageBitmap(template);
+        mTempatePreview.setImageBitmap(mCurrentBitmap);
         mCvInterface.OpenImage(Image_path);
+        Log.d(TAG,"BitmapSize:"+mCurrentBitmap.getWidth()+","+mCurrentBitmap.getHeight());
     }
 
     @Override
@@ -135,11 +137,18 @@ public class MainActivity extends FragmentActivity
     }
 
     @Override
-    public void TemplateSelected(SelectionBox selectionBox) {
+    public void TemplateSelected(final int x,final int y,final int width,final int height) {
 
-        Rectangle rect = selectionBox.getRect();
-        mTempatePreview.setImageBitmap(
-                Bitmap.createBitmap(mCurrentBitmap, (int) rect.x, (int) rect.y, (int) rect.width, (int)rect.height));
+        Log.d(TAG,"Template Selected "+x+","+y+","+width+","+height);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mTempatePreview.setImageBitmap(
+                        Bitmap.createBitmap(mCurrentBitmap,x,y,width,height));
+//                mTempatePreview.setImageBitmap(
+//                        Bitmap.createBitmap(mCurrentBitmap, 400, 400, 200, 200));
+            }
+        });
     }
 
     @Override

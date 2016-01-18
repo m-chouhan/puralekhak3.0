@@ -41,6 +41,7 @@ import javax.swing.event.ChangeEvent;
     private String imagePath;
     /* represents image from gui's perspective*/
 	Image myImage;
+    Texture myImageTexture;
     /*For zoomIn,zoomOut and moving image*/
     OrthographicCamera camera;
     /*Handles custom widgets actions like scale,create new , move etc */
@@ -68,21 +69,25 @@ import javax.swing.event.ChangeEvent;
 
         WidgetRenderer = new ShapeRenderer();
         /*Opens internal image in assest/ folder as default */
-        Texture img = new Texture(imagePath);
+        myImageTexture = new Texture(imagePath);
 
         /*Buttons Initialization */
         //loadUI();
         frontend = new Stage();
-        myImage = new Image(img);
+        TextureRegion region = new TextureRegion(myImageTexture);
+        region.flip(false,true);
+        myImage = new Image(region);
         frontend.addActor(myImage);
         camera = (OrthographicCamera) frontend.getCamera();
-
+        /*To match the libgdx coordinate system with android coordinate system */
+        camera.setToOrtho(true);
+        //camera.rotate(90);
         /*Setting up Input Processing */
 
         InputProcessor = new InputHandler(camera,BoxList);
         InputMultiplexer multiplexer = new InputMultiplexer();
         multiplexer.addProcessor(frontend);
-        multiplexer.addProcessor(new GestureDetector(new GestureProcessor(camera, BoxList,viewControllerInterface)));
+        multiplexer.addProcessor(new GestureDetector(new GestureProcessor(this)));
         multiplexer.addProcessor(InputProcessor);
         Gdx.input.setInputProcessor(multiplexer);
     }
@@ -144,6 +149,22 @@ import javax.swing.event.ChangeEvent;
         frontend.addActor(table);
     }
 
+    /*Called by input handler on double tap event
+    * x,y,w,h are according to the view
+    * actual pixel value will be different
+    * */
+    public void CreateSelectionBoxAt( float x,float y,float width ,float height ) {
+
+        BoxList.add(new SelectionBox(x,y,width,height));
+        float horizontalRatio = myImageTexture.getWidth()/myImage.getWidth();
+        float verticalRatio = myImageTexture.getHeight()/myImage.getHeight();
+        float rawX = x*horizontalRatio;
+        float rawY = y*verticalRatio;
+        float rawWidth = width*horizontalRatio;
+        float rawHeight = height*verticalRatio;
+        viewControllerInterface.TemplateSelected((int)rawX,(int)rawY,(int)rawWidth,(int)rawHeight);
+
+    }
     @Override
     public void TextUpdated() {
 
@@ -153,16 +174,21 @@ import javax.swing.event.ChangeEvent;
     public void SpottingUpdated() {
 
     }
-
+    /*loads the texture of the image to open and displays it in image widget*/
     @Override
     public void OpenImage(final String imagePath) {
         /*Required since Any graphics operations directly
         involving OpenGL need to be executed on the rendering thread. */
+
         Gdx.app.postRunnable(new Runnable() {
             @Override
             public void run() {
-                Texture texture = new Texture(Gdx.files.absolute(imagePath));
-                myImage.setDrawable(new SpriteDrawable(new Sprite(texture)));
+                myImageTexture = new Texture(Gdx.files.absolute(imagePath));
+                TextureRegion region = new TextureRegion(myImageTexture);
+                region.flip(false,true);
+                myImage.setDrawable(new SpriteDrawable(new Sprite(region)));
+                Gdx.app.log(TAG, "OpenImage:" + myImageTexture.getWidth() + myImageTexture.getHeight() +","+ myImageTexture.getDepth());
+                Gdx.app.log(TAG, "OpenImage (widget):"+myImage.getWidth()+","+myImage.getHeight() );
             }
         });
     }
