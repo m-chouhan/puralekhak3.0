@@ -75,9 +75,10 @@ import javax.swing.event.ChangeEvent;
         frontend = new Stage();
         myImage = new Image(img);
         frontend.addActor(myImage);
+        camera = (OrthographicCamera) frontend.getCamera();
 
         /*Setting up Input Processing */
-        camera = (OrthographicCamera) frontend.getCamera();
+
         InputProcessor = new InputHandler(camera,BoxList);
         InputMultiplexer multiplexer = new InputMultiplexer();
         multiplexer.addProcessor(frontend);
@@ -88,14 +89,14 @@ import javax.swing.event.ChangeEvent;
 
 	@Override
 	public void render () {
+
 		Gdx.gl.glClearColor(0.5f, 0.5f, 0.5f, 0.5f);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         Gdx.gl20.glLineWidth(8);
-
+        frontend.draw();
         WidgetRenderer.setProjectionMatrix(camera.combined);
         WidgetRenderer.setColor(Color.YELLOW);
         for(SelectionBox s:BoxList) s.Draw(WidgetRenderer);
-        frontend.draw();
 	}
 
     /*Loads frontend UI elements */

@@ -3,6 +3,8 @@ package com.mygdx.game;
 import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -17,16 +19,17 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListView;
 
 import com.badlogic.gdx.backends.android.AndroidFragmentApplication;
+import com.badlogic.gdx.math.Rectangle;
 
 import org.opencv.android.OpenCVLoader;
 
 import java.io.File;
 
 /**
- * TODO: rename Activity
  * TODO: implement ViewControllerInterface
  * TODO: remove absolute path dependency
  */
@@ -52,6 +55,10 @@ public class MainActivity extends FragmentActivity
     private ControllerViewInterface mCvInterface;
     /**The pager adapter, which provides the pages to the view pager widget.*/
     private PagerAdapter mPagerAdapter;
+    /*Preview of the template */
+    private ImageView mTempatePreview;
+    /*Actual inscription image as a bitmam for processing */
+    private Bitmap mCurrentBitmap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +74,8 @@ public class MainActivity extends FragmentActivity
         ListView navigation_list = (ListView) findViewById(R.id.navigation_list);
         navigation_list.setAdapter(new NavigationListAdapter(this));
         navigation_list.setOnItemClickListener(this);
+
+        mTempatePreview = (ImageView) findViewById(R.id.template_preview);
     }
 
     @Override
@@ -86,9 +95,9 @@ public class MainActivity extends FragmentActivity
 
     @Override
     public void onBackPressed() {
-    	
+
     	switch( mPager.getCurrentItem()) {
-    		
+
 	    	case IMAGE_FRAGMENT: super.onBackPressed();
                     break;
 	    	case KEYBOARD_FRAGMENT:	mPager.setCurrentItem(0);
@@ -109,6 +118,9 @@ public class MainActivity extends FragmentActivity
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         String Image_path = RealPathUtil.getRealPathFromURI(this,data.getData());
         Log.d(TAG, Image_path);
+        mCurrentBitmap = BitmapFactory.decodeFile(Image_path);
+        Bitmap template = Bitmap.createBitmap(mCurrentBitmap,0,0,100,100);
+        mTempatePreview.setImageBitmap(template);
         mCvInterface.OpenImage(Image_path);
     }
 
@@ -120,6 +132,13 @@ public class MainActivity extends FragmentActivity
     @Override
     public void StartSpotting() {
 
+    }
+
+    @Override
+    public void TemplateSelected(SelectionBox selectionBox) {
+
+        Rectangle rect = selectionBox.getRect();
+        mTempatePreview.setImageBitmap(Bitmap.createBitmap(mCurrentBitmap,rect.x,rect.y,rect.width,rect.height));
     }
 
     @Override

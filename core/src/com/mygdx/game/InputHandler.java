@@ -32,10 +32,9 @@ public class InputHandler  extends InputAdapter {
     @Override
     public boolean touchDown(int x, int y, int pointer, int button) {
 
-        Gdx.app.log(TAG,"touchDown");
         Vector3 touch3D = camera.unproject(new Vector3(x,y,0));
         Vector2 touch2D = new Vector2(touch3D.x,touch3D.y);
-
+        Gdx.app.log(TAG,"touchDown"+touch2D);
         for(SelectionBox s:BoxList) {
             if( s.touchDown(touch2D) ) {
                 selectedBox = s;
