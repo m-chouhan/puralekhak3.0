@@ -4,6 +4,7 @@ package com.mygdx.game;
  * Created by maximus_prime on 12/11/15.
  * Handles input for backend UI
  * TODO: Improve Zoom
+ * TODO: Integrate InputHandler in GestureProcessor
  */
 
 import com.badlogic.gdx.Gdx;
@@ -11,6 +12,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.input.GestureDetector.GestureListener;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 
@@ -53,6 +55,19 @@ class GestureProcessor implements GestureListener {
         return false;
     }
 
+    /* handles pinch and zoom events */
+    @Override
+    public boolean zoom(float initialDistance, float distance) {
+        message = "Zoom performed, initial Distance:" + Float.toString(initialDistance) +
+                " Distance: " + Float.toString(distance);
+        Gdx.app.log(TAG,message);
+        if(initialDistance > (distance+20) ) camera.zoom += 0.01;
+        else if (initialDistance < (distance-20) && camera.zoom > 0.1f ) camera.zoom -=0.01;
+        camera.update();
+        return true;
+    }
+
+    /*These events are not required for now */
     @Override
     public boolean longPress(float x, float y) {
         message = "Long press performed";
@@ -80,17 +95,6 @@ class GestureProcessor implements GestureListener {
     public boolean panStop(float x, float y, int pointer, int button) {
          return false;
      }
-
-    @Override
-    public boolean zoom(float initialDistance, float distance) {
-        message = "Zoom performed, initial Distance:" + Float.toString(initialDistance) +
-                " Distance: " + Float.toString(distance);
-        Gdx.app.log(TAG,message);
-        if(initialDistance > (distance+20) ) camera.zoom += 0.01;
-        else if (initialDistance < (distance-20) ) camera.zoom -=0.01;
-        camera.update();
-        return true;
-    }
 
     @Override
     public boolean pinch(Vector2 initialPointer1, Vector2 initialPointer2,

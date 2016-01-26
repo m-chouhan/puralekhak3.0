@@ -12,11 +12,13 @@ import java.util.ArrayList;
 /**
  * Created by maximus_prime on 12/11/15.
  * Responsible for handling all raw touch inputs - drag , tap , touch etc and updating the camera
- * accordingly
+ * accordingly.
+ * TODO: Integrate with GestureProcessor
  */
 public class InputHandler  extends InputAdapter {
 
     private final String TAG = "InputHandler";
+    private final MyImageViewer myImageViewer;
     Vector3 InitialTouchPos = new Vector3();
     Vector3 InitialCameraPos = new Vector3();
 
@@ -24,9 +26,10 @@ public class InputHandler  extends InputAdapter {
     ArrayList<SelectionBox> BoxList = new ArrayList<SelectionBox>();
     SelectionBox selectedBox = null;
 
-    InputHandler(OrthographicCamera cam,ArrayList<SelectionBox> list) {
-        camera = cam;
-        BoxList = list;
+    InputHandler(MyImageViewer imViewer) {
+        myImageViewer = imViewer;
+        camera = imViewer.camera;
+        BoxList = imViewer.BoxList;
     }
 
     @Override
@@ -73,6 +76,16 @@ public class InputHandler  extends InputAdapter {
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
 
         if(selectedBox != null) {
+            switch (selectedBox.currentState)
+            {
+                case MOVE:  myImageViewer.SelectionBoxMoved(selectedBox);
+                            break;
+                case SCALE_BOTTOM:
+                case SCALE_TOP:
+                            myImageViewer.SelectionBoxScaled(selectedBox);
+                        break;
+            }
+
             selectedBox.touchUp();
             selectedBox = null;
         }

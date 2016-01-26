@@ -13,6 +13,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.input.GestureDetector;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -72,8 +73,9 @@ import javax.swing.event.ChangeEvent;
         myImageTexture = new Texture(imagePath);
 
         /*Buttons Initialization */
-        //loadUI();
+        //loadUI(); not required since already implemented in android
         frontend = new Stage();
+        /*required for correct rendering in android coordinate system */
         TextureRegion region = new TextureRegion(myImageTexture);
         region.flip(false,true);
         myImage = new Image(region);
@@ -81,10 +83,9 @@ import javax.swing.event.ChangeEvent;
         camera = (OrthographicCamera) frontend.getCamera();
         /*To match the libgdx coordinate system with android coordinate system */
         camera.setToOrtho(true);
-        //camera.rotate(90);
-        /*Setting up Input Processing */
 
-        InputProcessor = new InputHandler(camera,BoxList);
+        /*Setting up Input Processing */
+        InputProcessor = new InputHandler(this);
         InputMultiplexer multiplexer = new InputMultiplexer();
         multiplexer.addProcessor(frontend);
         multiplexer.addProcessor(new GestureDetector(new GestureProcessor(this)));
@@ -149,22 +150,40 @@ import javax.swing.event.ChangeEvent;
         frontend.addActor(table);
     }
 
-    /*Called by input handler on double tap event
+    /*
     * x,y,w,h are according to the view
-    * actual pixel value will be different
+    * actual pixel values for template selection will be different hence need to be calculated
     * */
-    public void CreateSelectionBoxAt( float x,float y,float width ,float height ) {
-
-        BoxList.add(new SelectionBox(x,y,width,height));
+    private Rectangle TransformToPixelCoordinates(SelectionBox box) {
+        Rectangle rect = new Rectangle();
         float horizontalRatio = myImageTexture.getWidth()/myImage.getWidth();
         float verticalRatio = myImageTexture.getHeight()/myImage.getHeight();
-        float rawX = x*horizontalRatio;
-        float rawY = y*verticalRatio;
-        float rawWidth = width*horizontalRatio;
-        float rawHeight = height*verticalRatio;
-        viewControllerInterface.TemplateSelected((int)rawX,(int)rawY,(int)rawWidth,(int)rawHeight);
-
+        /*calculating actual pixel coordinates */
+        rect.x = box.getX()*horizontalRatio;
+        rect.y = box.getY()*verticalRatio;
+        rect.width = box.getWidth()*horizontalRatio;
+        rect.height = box.getHeight()*verticalRatio;
+        return rect;
     }
+
+    /*Sends message to the controller to update template and adds a new selection box*/
+    void CreateSelectionBoxAt( float x,float y,float width ,float height ) {
+        SelectionBox box = new SelectionBox(x, y, width, height);
+        BoxList.add(box);
+        Rectangle rect = TransformToPixelCoordinates(box);
+        viewControllerInterface.TemplateSelected((int) rect.x, (int) rect.y, (int) rect.width, (int) rect.height);
+    }
+    /*for updating template */
+    void SelectionBoxMoved( SelectionBox box) {
+        Rectangle rect = TransformToPixelCoordinates(box);
+        viewControllerInterface.TemplateMoved((int) rect.x, (int) rect.y, (int) rect.width, (int) rect.height);
+    }
+
+    void SelectionBoxScaled(SelectionBox box) {
+        Rectangle rect = TransformToPixelCoordinates(box);
+        viewControllerInterface.TemplateResized((int) rect.x, (int) rect.y, (int) rect.width, (int) rect.height);
+    }
+
     @Override
     public void TextUpdated() {
 

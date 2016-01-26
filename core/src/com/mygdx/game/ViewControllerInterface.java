@@ -11,6 +11,8 @@ public interface ViewControllerInterface {
     void ConvertToText();
     void StartSpotting();
     void TemplateSelected(final int x,final int y,final int width,final int height);
+    void TemplateMoved(final int x,final int y,final int width,final int height);
+    void TemplateResized(final int x,final int y,final int width,final int height);
     void ShowKeyboard();
 
 }

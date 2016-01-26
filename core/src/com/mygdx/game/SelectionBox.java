@@ -43,14 +43,14 @@ public class SelectionBox extends InputAdapter {
         shapeRenderer.end();
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         shapeRenderer.rect(Top_Right.x, Top_Right.y, Top_Right.width, Top_Right.height);
-        shapeRenderer.rect(Bottom_Left.x,Bottom_Left.y,Bottom_Left.width,Bottom_Left.height);
+        shapeRenderer.rect(Bottom_Left.x, Bottom_Left.y, Bottom_Left.width, Bottom_Left.height);
         shapeRenderer.end();
 
     }
 
     void Move(Vector2 position) {
         Rect.setCenter(position);
-        Top_Right.setCenter(Rect.x + Rect.width , Rect.y + Rect.height);
+        Top_Right.setCenter(Rect.x + Rect.width, Rect.y + Rect.height);
         Bottom_Left.setCenter(Rect.x, Rect.y);
     }
 
@@ -82,7 +82,7 @@ public class SelectionBox extends InputAdapter {
     }
 
     public boolean touchUp() {
-
+        //reset to initial condition
         InitialPos.set(0,0);
         currentState = States.STATIC;
         return true;
@@ -121,7 +121,11 @@ public class SelectionBox extends InputAdapter {
         return States.MOVE;
     }
 
-    public Rectangle getRect() { return Rect; }
+    public float getX() { return Rect.getX(); }
+    public float getY() { return Rect.getY(); }
+    public float getWidth() { return Rect.getWidth(); }
+    public float getHeight() { return Rect.getHeight(); }
+
     public void setSymbol(String sym) { symbol = sym; }
     public String getSymbol() {return symbol; }
 }
