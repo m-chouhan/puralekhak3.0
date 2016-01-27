@@ -37,6 +37,11 @@ public class InputHandler  extends InputAdapter {
         Vector3 touch3D = camera.unproject(new Vector3(x,y,0));
         Vector2 touch2D = new Vector2(touch3D.x,touch3D.y);
         Gdx.app.log(TAG,"touchDown"+touch2D);
+
+        if(selectedBox != null) {
+            selectedBox.touchUp();
+            selectedBox = null;
+        }
         for(SelectionBox s:BoxList) {
             if( s.touchDown(touch2D) ) {
                 selectedBox = s;
@@ -85,8 +90,6 @@ public class InputHandler  extends InputAdapter {
                         break;
             }
 
-            selectedBox.touchUp();
-            selectedBox = null;
         }
         return true;
     }

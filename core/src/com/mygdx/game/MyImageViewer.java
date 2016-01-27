@@ -9,7 +9,6 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.input.GestureDetector;
@@ -26,8 +25,6 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import java.util.ArrayList;
 
-import javax.swing.event.ChangeEvent;
-
 /** TODO:Port the custom widgets to user Actor class
  *  Displays image for spotting
  *  Main GUI Renderer
@@ -37,7 +34,8 @@ import javax.swing.event.ChangeEvent;
     private final String TAG = "MyImageViewer";
 
     /*responsible for buttons */
-    private Stage frontend;
+    private Stage mButtonStage;
+    private Stage mCustomWidgetStage;
     int Width,Height;
 
     private String imagePath;
@@ -68,27 +66,26 @@ import javax.swing.event.ChangeEvent;
         Width = Gdx.graphics.getWidth(); Height = Gdx.graphics.getHeight();
 
         /*Initializing View elements */
-
         WidgetRenderer = new ShapeRenderer();
         /*Opens internal image in assest/ folder as default */
         myImageTexture = new Texture(imagePath);
 
         /*Buttons Initialization */
-        //loadUI(); not required since already implemented in android
-        frontend = new Stage();
+        loadUI();
+        mCustomWidgetStage = new Stage();
         /*required for correct rendering in android coordinate system */
         TextureRegion region = new TextureRegion(myImageTexture);
         region.flip(false,true);
         myImage = new Image(region);
-        frontend.addActor(myImage);
-        camera = (OrthographicCamera) frontend.getCamera();
+        mCustomWidgetStage.addActor(myImage);
+        camera = (OrthographicCamera) mCustomWidgetStage.getCamera();
         /*To match the libgdx coordinate system with android coordinate system */
         camera.setToOrtho(true);
 
         /*Setting up Input Processing */
         InputProcessor = new InputHandler(this);
         InputMultiplexer multiplexer = new InputMultiplexer();
-        multiplexer.addProcessor(frontend);
+        multiplexer.addProcessor(mCustomWidgetStage);
         multiplexer.addProcessor(new GestureDetector(new GestureProcessor(this)));
         multiplexer.addProcessor(InputProcessor);
         Gdx.input.setInputProcessor(multiplexer);
@@ -100,16 +97,43 @@ import javax.swing.event.ChangeEvent;
 		Gdx.gl.glClearColor(0.5f, 0.5f, 0.5f, 0.5f);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         Gdx.gl20.glLineWidth(8);
-        frontend.draw();
+        mCustomWidgetStage.draw();
         WidgetRenderer.setProjectionMatrix(camera.combined);
         WidgetRenderer.setColor(Color.YELLOW);
         for(SelectionBox s:BoxList) s.Draw(WidgetRenderer);
+        mButtonStage.draw();
 	}
 
-    /*Loads frontend UI elements */
+    /*Loads UI elements */
     public void loadUI() {
 
-        frontend = new Stage();
+        mButtonStage = new Stage();
+        ImageButton.ImageButtonStyle imStyle = new ImageButton.ImageButtonStyle();
+        imStyle.up = imStyle.down = imStyle.checked =
+                new TextureRegionDrawable(new TextureRegion(new Texture("plus.png")));
+        ImageButton plusButton = new ImageButton(imStyle);
+//        plusButton.setPosition(100, Height - 100);
+        plusButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+
+            }
+        });
+
+        ImageButton.ImageButtonStyle minusStyle = new ImageButton.ImageButtonStyle();
+        minusStyle.up = minusStyle.down = minusStyle.checked =
+                new TextureRegionDrawable(new TextureRegion(new Texture("minus.png")));
+        ImageButton minusButton = new ImageButton(minusStyle);
+        Table table = new Table();
+        table.setFillParent(true);
+        //table.setDebug(true); //shows table elements using lines
+        table.left().top().padLeft(50).padTop(150);
+        table.add(plusButton).width(80).height(80);
+        table.row();
+        table.add(minusButton).width(80).height(80);
+        mButtonStage.addActor(table);
+
+        /*
         TextButton.TextButtonStyle textBStyle = new TextButton.TextButtonStyle();
         textBStyle.font = new BitmapFont();
         textBStyle.up = textBStyle.down = textBStyle.checked =
@@ -122,7 +146,7 @@ import javax.swing.event.ChangeEvent;
             public void changed(ChangeEvent event, Actor actor) {
                 viewControllerInterface.ShowKeyboard();
             }
-        });
+        });*/
         /*Fancy stuff for a button :) *
         unicodeButton.getLabel().scaleBy(10);
         textButton.setOrigin(textButton.getWidth()/2,textButton.getHeight()/2);
@@ -130,25 +154,6 @@ import javax.swing.event.ChangeEvent;
         textButton.getLabel().setRotation(90);
         textButton.scaleBy(40);
         textButton.setPosition(100, Height - 80);*/
-
-        /* Reducing UI elemtents
-        ImageButton.ImageButtonStyle imStyle = new ImageButton.ImageButtonStyle();
-        imStyle.up = imStyle.down = imStyle.checked =
-                new TextureRegionDrawable(new TextureRegion(new Texture("browser.png")));
-        ImageButton imageButton = new ImageButton(imStyle);
-        imageButton.setPosition(100, Height - 100);
-        imageButton.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                StartActivityCallback.StartImageBrowser();
-            }
-        });*/
-        Table table = new Table();
-        table.setFillParent(true);
-        //table.setDebug(true); //shows table elements using lines
-        table.left().top();
-        table.add(unicodeButton).width(120).height(120);
-        frontend.addActor(table);
     }
 
     /*
