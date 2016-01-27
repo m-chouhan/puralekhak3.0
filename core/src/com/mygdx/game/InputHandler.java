@@ -19,12 +19,11 @@ public class InputHandler  extends InputAdapter {
 
     private final String TAG = "InputHandler";
     private final MyImageViewer myImageViewer;
-    Vector3 InitialTouchPos = new Vector3();
-    Vector3 InitialCameraPos = new Vector3();
-
-    OrthographicCamera camera;
-    ArrayList<SelectionBox> BoxList = new ArrayList<SelectionBox>();
-    SelectionBox selectedBox = null;
+    private final OrthographicCamera camera;
+    private final ArrayList<SelectionBox> BoxList;
+    private Vector3 InitialTouchPos = new Vector3();
+    private Vector3 InitialCameraPos = new Vector3();
+    private SelectionBox selectedBox = null; /*only one box can be selected at a time */
 
     InputHandler(MyImageViewer imViewer) {
         myImageViewer = imViewer;

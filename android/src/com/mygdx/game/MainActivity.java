@@ -1,14 +1,9 @@
 package com.mygdx.game;
 
-import android.app.Activity;
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -24,13 +19,10 @@ import android.widget.ImageView;
 import android.widget.ListView;
 
 import com.badlogic.gdx.backends.android.AndroidFragmentApplication;
-import com.badlogic.gdx.math.Rectangle;
 
 import org.opencv.android.OpenCVLoader;
 import org.opencv.android.Utils;
 import org.opencv.core.Mat;
-
-import java.io.File;
 
 /**
  * TODO: implement ViewControllerInterface
@@ -132,7 +124,7 @@ public class MainActivity extends FragmentActivity
     /*Sends path of the image to be opened to myImageViewr */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        String Image_path = RealPathUtil.getRealPathFromURI(this, data.getData());
+        String Image_path = Utility.getRealPathFromURI(this, data.getData());
         Log.d(TAG, Image_path);
 
         mCurrentBitmap = BitmapFactory.decodeFile(Image_path);
@@ -155,7 +147,7 @@ public class MainActivity extends FragmentActivity
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
-                BackgroundProcess.helloworld(original,template);
+                BackgroundProcess.helloworld(original,template,mCvInterface);
             }
         });
         t.start();

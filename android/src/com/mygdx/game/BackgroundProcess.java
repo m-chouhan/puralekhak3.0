@@ -29,8 +29,9 @@ import org.opencv.objdetect.HOGDescriptor;
 
 import android.graphics.Bitmap;
 import android.os.Environment;
-/*Crappy code for image Processing
-* TODO: Improve / Clean / */
+/*Crappy code for image Processing >:|
+                don't touch ---- Handle With Care
+* TODO: Improve / Clean / Replace */
 public class BackgroundProcess {
 	
 	static private boolean firstSpotting = true, undoToDefault=false, preUndo=false;
@@ -41,7 +42,7 @@ public class BackgroundProcess {
 	static ArrayList<Point> locsPre = new ArrayList<Point>();
 	static ArrayList<Point> locsCurrent = new ArrayList<Point>();
 	static private long fileSize = 0;
-	static public long helloworld(Mat OMat,Mat TMat) {
+	static public long helloworld(Mat OMat,Mat TMat,ControllerViewInterface cvInterface) {
 		
 		if(firstSpotting){
 			//Do nothing
@@ -486,7 +487,7 @@ public class BackgroundProcess {
               for( int n = 0; n < det_imwt.cols(); n++ )
               {
             	  double[] data = det_imwt.get(m, n);
-            	  if ( ( locs.get(i).x==m )&&( locs.get(i).y==n )&& (data[0]>=0.80))
+            	  if ( ( locs.get(i).x==m )&&( locs.get(i).y==n )&& (data[0]>=0.70))
             	  {
             		  
             		  item it1 = new item();
@@ -503,7 +504,6 @@ public class BackgroundProcess {
             }
         }
         System.out.println(stuctpoints.size());
-        
 
         // now starting to write to file
         String gettexts = "\u0905";
@@ -535,9 +535,8 @@ public class BackgroundProcess {
 		// now starting to write to file ends
 		
 		long lEndTime = new Date().getTime();
-//    	difference = Math.round((lEndTime - lStartTime)/1000);
-//    	System.out.println("Elapsed milliseconds: " + difference);
-    	
+
+        cvInterface.SpottingUpdated(Utility.convertToVector(locs));
     	// find the imageview and draw it!
         System.out.println("He He");
         fileSize = 1000000;

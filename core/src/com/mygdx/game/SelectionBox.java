@@ -2,6 +2,7 @@ package com.mygdx.game;
 
 
 import com.badlogic.gdx.InputAdapter;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
@@ -10,23 +11,28 @@ import com.badlogic.gdx.math.Vector2;
 /**
  * Created by maximus_prime on 12/11/15.
  * Represents a spotted character as a widget
+ * TODO:Separate model data from view by using spotArea class
  * (that's why i embedded a controller inside the model to change its behaviour on selection )
  */
 
 public class SelectionBox extends InputAdapter {
 
+    /*actual spotting area */
+    private Rectangle Rect;
+    private String symbol;
+
+    /*GUI/Widget code follows -->*/
+    private final Color default_col = Color.RED,selection_col = Color.SCARLET;
     /*All Possible states for a selection box */
     enum States{MOVE,STATIC,SCALE_TOP,SCALE_BOTTOM};
     States currentState = States.STATIC;
-
-    Rectangle Rect,Top_Right,Bottom_Left;
-    Sprite boxLeft,boxRight;
+    Color mColor = default_col;
+    Rectangle Top_Right,Bottom_Left;
+    /*true if this instance is handling the input events*/
     private boolean selected = false;
     private Vector2 InitialPos = new Vector2();
     private Vector2 InitialCenter = new Vector2();
-    private String symbol;
 
-    //Todo:initilize sprites
     SelectionBox(float x,float y,float width,float height) {
 
         Rect = new Rectangle(x,y,width,height);
@@ -38,14 +44,18 @@ public class SelectionBox extends InputAdapter {
 
     void Draw(ShapeRenderer shapeRenderer) {
 
+        Color prevColor = shapeRenderer.getColor();
+        shapeRenderer.setColor(mColor);
+
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
-        shapeRenderer.rect(Rect.x,Rect.y,Rect.width,Rect.height);
+        shapeRenderer.rect(Rect.x, Rect.y, Rect.width, Rect.height);
         shapeRenderer.end();
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         shapeRenderer.rect(Top_Right.x, Top_Right.y, Top_Right.width, Top_Right.height);
         shapeRenderer.rect(Bottom_Left.x, Bottom_Left.y, Bottom_Left.width, Bottom_Left.height);
         shapeRenderer.end();
 
+        shapeRenderer.setColor(prevColor);
     }
 
     void Move(Vector2 position) {
@@ -85,6 +95,7 @@ public class SelectionBox extends InputAdapter {
         //reset to initial condition
         InitialPos.set(0,0);
         currentState = States.STATIC;
+        mColor = default_col;
         return true;
     }
 
@@ -104,9 +115,10 @@ public class SelectionBox extends InputAdapter {
         }
         else {
             currentState = States.STATIC;
+            mColor = default_col;
             return false;
         }
-
+        mColor = selection_col;
         InitialPos.set(point);
         return true;
     }
@@ -114,7 +126,6 @@ public class SelectionBox extends InputAdapter {
 
     States contains(Vector2 point) {
         if( !Rect.contains(point)) return States.STATIC;
-
         if(Top_Right.contains(point)) return States.SCALE_TOP;
         if(Bottom_Left.contains(point)) return States.SCALE_BOTTOM;
 

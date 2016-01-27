@@ -14,6 +14,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -154,10 +155,12 @@ import javax.swing.event.ChangeEvent;
     * x,y,w,h are according to the view
     * actual pixel values for template selection will be different hence need to be calculated
     * */
+    float horizontalRatio;
+    float verticalRatio;
     private Rectangle TransformToPixelCoordinates(SelectionBox box) {
         Rectangle rect = new Rectangle();
-        float horizontalRatio = myImageTexture.getWidth()/myImage.getWidth();
-        float verticalRatio = myImageTexture.getHeight()/myImage.getHeight();
+        horizontalRatio = myImageTexture.getWidth()/myImage.getWidth();
+        verticalRatio = myImageTexture.getHeight()/myImage.getHeight();
         /*calculating actual pixel coordinates */
         rect.x = box.getX()*horizontalRatio;
         rect.y = box.getY()*verticalRatio;
@@ -165,7 +168,15 @@ import javax.swing.event.ChangeEvent;
         rect.height = box.getHeight()*verticalRatio;
         return rect;
     }
+    private Vector2 TransformToCameraCoordinates(Vector2 point) {
 
+//        float horizontalRatio = myImageTexture.getWidth()/myImage.getWidth();
+//        float verticalRatio = myImageTexture.getHeight()/myImage.getHeight();
+        /*calculating actual pixel coordinates */
+        point.x = point.x/horizontalRatio;
+        point.y = point.y/verticalRatio;
+        return point;
+    }
     /*Sends message to the controller to update template and adds a new selection box*/
     void CreateSelectionBoxAt( float x,float y,float width ,float height ) {
         SelectionBox box = new SelectionBox(x, y, width, height);
@@ -190,9 +201,16 @@ import javax.swing.event.ChangeEvent;
     }
 
     @Override
-    public void SpottingUpdated() {
+    public void SpottingUpdated(ArrayList<Vector2> points) {
 
+        for( Vector2 point:points) {
+            Gdx.app.log(TAG,"before:"+point);
+            TransformToCameraCoordinates(point);
+            Gdx.app.log(TAG,"after:"+point);
+            CreateSelectionBoxAt(point.x,point.y,50,50);
+        }
     }
+
     /*loads the texture of the image to open and displays it in image widget*/
     @Override
     public void OpenImage(final String imagePath) {
