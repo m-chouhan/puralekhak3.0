@@ -22,7 +22,7 @@ public class SelectionBox extends InputAdapter {
     private String symbol;
 
     /*GUI/Widget code follows -->*/
-    private final Color default_col = Color.RED,selection_col = Color.SCARLET;
+    private final Color default_col = Color.RED,selection_col = Color.GOLD;
     /*All Possible states for a selection box */
     enum States{MOVE,STATIC,SCALE_TOP,SCALE_BOTTOM};
     States currentState = States.STATIC;
@@ -41,6 +41,7 @@ public class SelectionBox extends InputAdapter {
         Top_Right.setCenter(Rect.x + Rect.width , Rect.y + Rect.height);
         Bottom_Left.setCenter(Rect.x, Rect.y);
     }
+
 
     void Draw(ShapeRenderer shapeRenderer) {
 
