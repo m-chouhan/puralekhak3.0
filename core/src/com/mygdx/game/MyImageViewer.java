@@ -52,8 +52,6 @@ import java.util.ArrayList;
     ShapeRenderer WidgetRenderer;
 
     private ViewControllerInterface viewControllerInterface;
-    /*Stores the current unicode used for spotting */
-    private TextButton unicodeButton;
 
     public MyImageViewer(ViewControllerInterface callbackInterface,String imagePath) {
         viewControllerInterface = callbackInterface;
@@ -85,6 +83,7 @@ import java.util.ArrayList;
         /*Setting up Input Processing */
         InputProcessor = new InputHandler(this);
         InputMultiplexer multiplexer = new InputMultiplexer();
+        multiplexer.addProcessor(mButtonStage);
         multiplexer.addProcessor(mCustomWidgetStage);
         multiplexer.addProcessor(new GestureDetector(new GestureProcessor(this)));
         multiplexer.addProcessor(InputProcessor);
@@ -116,7 +115,7 @@ import java.util.ArrayList;
         plusButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-
+                CreateSelectionBoxAt(camera.position.x-50,camera.position.y-50,100,100);
             }
         });
 
@@ -124,6 +123,12 @@ import java.util.ArrayList;
         minusStyle.up = minusStyle.down = minusStyle.checked =
                 new TextureRegionDrawable(new TextureRegion(new Texture("minus.png")));
         ImageButton minusButton = new ImageButton(minusStyle);
+        minusButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                RemoveCurrentSelection();
+            }
+        });
         Table table = new Table();
         table.setFillParent(true);
         //table.setDebug(true); //shows table elements using lines
@@ -189,6 +194,13 @@ import java.util.ArrayList;
         Rectangle rect = TransformToPixelCoordinates(box);
         viewControllerInterface.TemplateSelected((int) rect.x, (int) rect.y, (int) rect.width, (int) rect.height);
     }
+
+    void RemoveCurrentSelection() {
+        SelectionBox s = InputProcessor.getSelectedBox();
+        BoxList.remove(s);
+        InputProcessor.setSelectedBox(null);
+    }
+
     /*for updating template */
     void SelectionBoxMoved( SelectionBox box) {
         Rectangle rect = TransformToPixelCoordinates(box);
@@ -235,8 +247,9 @@ import java.util.ArrayList;
         });
     }
 
+    /*Already implemented in android
+     *TODO: this event need not be handled here */
     @Override
     public void UnicodeSelected(String unicode) {
-        unicodeButton.getLabel().setText(Character.toString((char) (905)));
     }
 }

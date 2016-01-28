@@ -93,5 +93,6 @@ public class InputHandler  extends InputAdapter {
         }
         return true;
     }
-
+    public void setSelectedBox(SelectionBox s) { selectedBox = s; }
+    public SelectionBox getSelectedBox() { return selectedBox;}
 }

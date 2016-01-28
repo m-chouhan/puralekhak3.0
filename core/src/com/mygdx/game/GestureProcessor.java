@@ -35,7 +35,7 @@ class GestureProcessor implements GestureListener {
 
     @Override
     public boolean touchDown(float x, float y, int pointer, int button) {
-        // TODO Auto-generated method stub
+        Gdx.app.log(TAG, "touchdown at " + x + ", " + y );
         return false;
     }
 

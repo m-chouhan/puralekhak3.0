@@ -36,8 +36,8 @@ public class SelectionBox extends InputAdapter {
     SelectionBox(float x,float y,float width,float height) {
 
         Rect = new Rectangle(x,y,width,height);
-        Top_Right = new Rectangle(0,0,20,20);
-        Bottom_Left = new Rectangle(0,0,20,20);
+        Top_Right = new Rectangle(0,0,40,40);
+        Bottom_Left = new Rectangle(0,0,40,40);
         Top_Right.setCenter(Rect.x + Rect.width , Rect.y + Rect.height);
         Bottom_Left.setCenter(Rect.x, Rect.y);
     }
