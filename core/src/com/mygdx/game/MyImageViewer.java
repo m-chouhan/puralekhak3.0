@@ -45,7 +45,7 @@ import java.util.ArrayList;
     /*For zoomIn,zoomOut and moving image*/
     OrthographicCamera camera;
     /*Handles custom widgets actions like scale,create new , move etc */
-    InputHandler InputProcessor;
+    GestureProcessor InputProcessor;
     /* Stores all custom widgets i.e spotted characters */
     ArrayList<SelectionBox> BoxList = new ArrayList<SelectionBox>();
     /* Renders all custom widgets*/
@@ -81,12 +81,10 @@ import java.util.ArrayList;
         camera.setToOrtho(true);
 
         /*Setting up Input Processing */
-        InputProcessor = new InputHandler(this);
+        InputProcessor = new GestureProcessor(this);
         InputMultiplexer multiplexer = new InputMultiplexer();
         multiplexer.addProcessor(mButtonStage);
-        multiplexer.addProcessor(mCustomWidgetStage);
-        multiplexer.addProcessor(new GestureDetector(new GestureProcessor(this)));
-        multiplexer.addProcessor(InputProcessor);
+        multiplexer.addProcessor(new GestureDetector(InputProcessor));
         Gdx.input.setInputProcessor(multiplexer);
     }
 
@@ -98,7 +96,6 @@ import java.util.ArrayList;
         Gdx.gl20.glLineWidth(8);
         mCustomWidgetStage.draw();
         WidgetRenderer.setProjectionMatrix(camera.combined);
-        WidgetRenderer.setColor(Color.YELLOW);
         for(SelectionBox s:BoxList) s.Draw(WidgetRenderer);
         mButtonStage.draw();
 	}

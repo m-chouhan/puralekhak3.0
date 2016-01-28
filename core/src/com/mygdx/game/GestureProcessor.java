@@ -21,11 +21,14 @@ import java.util.ArrayList;
 class GestureProcessor implements GestureListener {
 
     private final String TAG = "GestureProcessor";
-
     private String message = "No gesture performed yet";
     private final MyImageViewer imageViewer;
     private final OrthographicCamera camera;
     private final ArrayList<SelectionBox> BoxList;
+
+    private Vector3 InitialTouchPos = new Vector3();
+    private Vector3 InitialCameraPos = new Vector3();
+    private SelectionBox selectedBox = null; /*only one box can be selected at a time */
 
     GestureProcessor(MyImageViewer imViewer) {
         imageViewer = imViewer;
@@ -35,8 +38,25 @@ class GestureProcessor implements GestureListener {
 
     @Override
     public boolean touchDown(float x, float y, int pointer, int button) {
-        Gdx.app.log(TAG, "touchdown at " + x + ", " + y );
-        return false;
+
+        Vector3 touch3D = camera.unproject(new Vector3(x,y,0));
+        Vector2 touch2D = new Vector2(touch3D.x,touch3D.y);
+        Gdx.app.log(TAG,"touchDown"+touch2D);
+
+        if(selectedBox != null) {
+            selectedBox.touchUp();
+            selectedBox = null;
+        }
+        for(SelectionBox s:BoxList) {
+            if( s.touchDown(touch2D) ) {
+                selectedBox = s;
+                return true;
+            }
+        }
+        InitialTouchPos.set(touch3D);
+        InitialCameraPos.set(camera.position);
+
+        return true;
     }
 
     @Override
@@ -88,12 +108,39 @@ class GestureProcessor implements GestureListener {
         message = "Pan performed, delta:" + Float.toString(deltaX) +
                 "," + Float.toString(deltaY);
         Gdx.app.log(TAG,message);
-        return false;
+
+        Vector3 touch3D = camera.unproject(new Vector3(x,y,0));
+        Vector2 touch2D = new Vector2(touch3D.x,touch3D.y);
+
+        if( selectedBox != null ) {
+            selectedBox.touchDragged(touch2D);
+            return true;
+        }
+
+        Vector3 direction = new Vector3(touch3D);
+        direction.sub(InitialTouchPos);//direction vector
+
+        direction.scl(-0.9f); //scale direction vector
+        camera.position.set(direction.add(InitialCameraPos));
+        camera.update();
+        return true;
     }
 
     @Override
     public boolean panStop(float x, float y, int pointer, int button) {
-         return false;
+
+        if(selectedBox != null) {
+            switch (selectedBox.currentState)
+            {
+                case MOVE:  imageViewer.SelectionBoxMoved(selectedBox);
+                    break;
+                case SCALE_BOTTOM:
+                case SCALE_TOP:
+                    imageViewer.SelectionBoxScaled(selectedBox);
+                    break;
+            }
+        }
+        return true;
      }
 
     @Override
@@ -104,4 +151,6 @@ class GestureProcessor implements GestureListener {
         return false;
     }
 
+    public void setSelectedBox(SelectionBox s) { selectedBox = s; }
+    public SelectionBox getSelectedBox() { return selectedBox;}
 }
