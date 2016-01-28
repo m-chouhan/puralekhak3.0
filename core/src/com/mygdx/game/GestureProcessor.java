@@ -4,7 +4,6 @@ package com.mygdx.game;
  * Created by maximus_prime on 12/11/15.
  * Handles input for backend UI
  * TODO: Improve Zoom
- * TODO: Integrate InputHandler in GestureProcessor
  */
 
 import com.badlogic.gdx.Gdx;
@@ -43,16 +42,13 @@ class GestureProcessor implements GestureListener {
         Vector2 touch2D = new Vector2(touch3D.x,touch3D.y);
         Gdx.app.log(TAG,"touchDown"+touch2D);
 
-        if(selectedBox != null) {
-            selectedBox.touchUp();
-            selectedBox = null;
-        }
         for(SelectionBox s:BoxList) {
             if( s.touchDown(touch2D) ) {
-                selectedBox = s;
+                setSelectedBox(s);
                 return true;
             }
         }
+        setSelectedBox(null);
         InitialTouchPos.set(touch3D);
         InitialCameraPos.set(camera.position);
 
@@ -119,7 +115,6 @@ class GestureProcessor implements GestureListener {
 
         Vector3 direction = new Vector3(touch3D);
         direction.sub(InitialTouchPos);//direction vector
-
         direction.scl(-0.9f); //scale direction vector
         camera.position.set(direction.add(InitialCameraPos));
         camera.update();
@@ -151,6 +146,10 @@ class GestureProcessor implements GestureListener {
         return false;
     }
 
-    public void setSelectedBox(SelectionBox s) { selectedBox = s; }
+    public void setSelectedBox(SelectionBox s) {
+        if(selectedBox != null ) selectedBox.touchUp();
+        selectedBox = s;
+        if(selectedBox != null) imageViewer.SelectBoxAt(selectedBox);
+    }
     public SelectionBox getSelectedBox() { return selectedBox;}
 }

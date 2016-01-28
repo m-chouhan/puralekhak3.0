@@ -67,7 +67,6 @@ import java.util.ArrayList;
         WidgetRenderer = new ShapeRenderer();
         /*Opens internal image in assest/ folder as default */
         myImageTexture = new Texture(imagePath);
-
         /*Buttons Initialization */
         loadUI();
         mCustomWidgetStage = new Stage();
@@ -76,6 +75,7 @@ import java.util.ArrayList;
         region.flip(false,true);
         myImage = new Image(region);
         mCustomWidgetStage.addActor(myImage);
+        myImage.setDrawable(new SpriteDrawable(new Sprite(region)));
         camera = (OrthographicCamera) mCustomWidgetStage.getCamera();
         /*To match the libgdx coordinate system with android coordinate system */
         camera.setToOrtho(true);
@@ -192,6 +192,10 @@ import java.util.ArrayList;
         viewControllerInterface.TemplateSelected((int) rect.x, (int) rect.y, (int) rect.width, (int) rect.height);
     }
 
+    void SelectBoxAt(SelectionBox box) {
+        Rectangle rect = TransformToPixelCoordinates(box);
+        viewControllerInterface.TemplateSelected((int) rect.x, (int) rect.y, (int) rect.width, (int) rect.height);
+    }
     void RemoveCurrentSelection() {
         SelectionBox s = InputProcessor.getSelectedBox();
         BoxList.remove(s);
