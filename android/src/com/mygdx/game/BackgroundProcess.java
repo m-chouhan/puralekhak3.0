@@ -136,7 +136,8 @@ public class BackgroundProcess {
         Mat cor1 = new Mat(cor1_rows,cor1_cols , CvType.CV_32FC1 );
         Imgproc.matchTemplate(image_mag1, roi1, cor1, Imgproc.TM_CCOEFF_NORMED);
         
-        cor1.copyTo(cf1.submat(TMatg.rows()/2, TMatg.rows()/2+cor1.rows()-1, TMatg.cols()/2, cor1.cols()+TMatg.cols()/2-1));
+        cor1.copyTo(cf1.submat(TMatg.rows()/2, TMatg.rows()/2+cor1.rows()-1,
+                TMatg.cols()/2, cor1.cols()+TMatg.cols()/2-1));
         
         Mat dilatekernel = Imgproc.getStructuringElement(Imgproc.MORPH_CROSS, new Size(2 * maxdilate + 1, 2 * maxdilate + 1), new Point(maxdilate, maxdilate));
         Imgproc.dilate(cf1, cf1, dilatekernel, new Point(-1,-1), 5);
