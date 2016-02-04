@@ -42,6 +42,8 @@ class GestureProcessor implements GestureListener {
         Vector2 touch2D = new Vector2(touch3D.x,touch3D.y);
         Gdx.app.log(TAG,"touchDown"+touch2D);
 
+        if( selectedBox != null && selectedBox.touchDown(touch2D) ) return true;
+
         for(SelectionBox s:BoxList) {
             if( s.touchDown(touch2D) ) {
                 setSelectedBox(s);
@@ -87,7 +89,7 @@ class GestureProcessor implements GestureListener {
     @Override
     public boolean longPress(float x, float y) {
         message = "Long press performed";
-        Gdx.app.log(TAG,message);
+        //Gdx.app.log(TAG,message);
         return false;
     }
 
@@ -95,7 +97,7 @@ class GestureProcessor implements GestureListener {
     public boolean fling(float velocityX, float velocityY, int button) {
         message = "Fling performed, velocity:" + Float.toString(velocityX) +
                 "," + Float.toString(velocityY);
-        Gdx.app.log(TAG,message);
+        //Gdx.app.log(TAG,message);
         return false;
     }
 
@@ -142,7 +144,7 @@ class GestureProcessor implements GestureListener {
     public boolean pinch(Vector2 initialPointer1, Vector2 initialPointer2,
                          Vector2 pointer1, Vector2 pointer2) {
         message = "Pinch performed";
-        Gdx.app.log(TAG,message);
+        //Gdx.app.log(TAG,message);
         return false;
     }
 
