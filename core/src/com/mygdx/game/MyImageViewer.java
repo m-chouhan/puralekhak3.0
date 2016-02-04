@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import javax.swing.event.ChangeEvent;
 
 /** TODO:Port the custom widgets to user Actor class
+ * TODO: default image not mapping properly to image display
  *  Displays image for spotting
  *  Main GUI Renderer
  */
@@ -78,7 +79,7 @@ import javax.swing.event.ChangeEvent;
         frontend = new Stage();
         /*required for correct rendering in android coordinate system */
         TextureRegion region = new TextureRegion(myImageTexture);
-        region.flip(false,true);
+        //region.flip(false,true);
         myImage = new Image(region);
         frontend.addActor(myImage);
         camera = (OrthographicCamera) frontend.getCamera();

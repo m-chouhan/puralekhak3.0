@@ -29,9 +29,11 @@ import org.opencv.objdetect.HOGDescriptor;
 
 import android.graphics.Bitmap;
 import android.os.Environment;
-/*Crappy code for image Processing >:|
+/*code for image Processing >:|
                 don't touch ---- Handle With Care
+
 * TODO: Improve / Clean / Replace */
+
 public class BackgroundProcess {
 	
 	static private boolean firstSpotting = true, undoToDefault=false, preUndo=false;
@@ -42,6 +44,15 @@ public class BackgroundProcess {
 	static ArrayList<Point> locsPre = new ArrayList<Point>();
 	static ArrayList<Point> locsCurrent = new ArrayList<Point>();
 	static private long fileSize = 0;
+
+    /*
+        @template: template to be used for spotting
+        @original: original image where characters need to be spotted
+    * */
+    static public void SpotChars(Mat template,Mat original) {
+
+    }
+
 	static public long helloworld(Mat OMat,Mat TMat,ControllerViewInterface cvInterface) {
 		
 		if(firstSpotting){
