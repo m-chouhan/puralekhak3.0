@@ -29,9 +29,10 @@ import org.opencv.objdetect.HOGDescriptor;
 
 import android.graphics.Bitmap;
 import android.os.Environment;
-/*code for image Processing >:|
-                don't touch ---- Handle With Care
 
+/*Entry point for image processing code >:|
+* this will run on a separate thread
+                don't touch ---- Handle With Care
 * TODO: Improve / Clean / Replace */
 
 public class BackgroundProcess {
@@ -45,15 +46,40 @@ public class BackgroundProcess {
 	static ArrayList<Point> locsCurrent = new ArrayList<Point>();
 	static private long fileSize = 0;
 
-    /*
-        @template: template to be used for spotting
-        @original: original image where characters need to be spotted
+    /**
+        @param template: template to be used for spotting
+        @param original: original image where characters need to be spotted
+    */
+    static public void SpotCharacters(Mat template,Mat original) {
+
+    }
+    /*Converts the symbols into textfile */
+    static public void ConvertToText() {
+
+    }
+    /**
+    * updates the spotted characters for gui and further processing
+    * call this from spotcharacters method to reflect/update the new spottings
     * */
-    static public void SpotChars(Mat template,Mat original) {
+    static private void updateSpottedCharacters( ArrayList<Point> points) {
+
+    }
+    /**
+        Call this method to update progressbar
+        @param progress : 0< < 100
+    */
+    static private void updateProgressBar(long progress) {
 
     }
 
-	static public long helloworld(Mat OMat,Mat TMat,ControllerViewInterface cvInterface) {
+    /** Old code starts here
+     *
+     * @param OMat
+     * @param TMat
+     * @param cvInterface
+     * @return
+     */
+    static public long helloworld(Mat OMat,Mat TMat,ControllerViewInterface cvInterface) {
 		
 		if(firstSpotting){
 			//Do nothing
@@ -568,10 +594,6 @@ public class BackgroundProcess {
         return fileSize;
     }
 	
-	static private void updateProgressBar(long l) {
-		// TODO Auto-generated method stub
-		
-	}
 	static Mat partialhogmatch4frags(Mat im1,Mat im2){
 		
 		  System.out.println("Hog begin");
