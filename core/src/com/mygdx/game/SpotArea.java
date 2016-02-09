@@ -13,10 +13,11 @@ public class SpotArea {
     int width;
     int height;
     String unicode;
-    public SpotArea(int xx,int yy,int widthh,int heightt) {
+    public SpotArea(int xx,int yy,int widthh,int heightt,String uni) {
         x = xx;
         y = yy;
         width = widthh;
         height = heightt;
+        unicode = uni;
     }
 }

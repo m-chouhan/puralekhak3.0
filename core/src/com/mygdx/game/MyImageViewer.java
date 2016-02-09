@@ -167,8 +167,8 @@ import java.util.ArrayList;
     float verticalRatio;
     private Rectangle TransformToPixelCoordinates(SelectionBox box) {
         Rectangle rect = new Rectangle();
-        horizontalRatio = myImageTexture.getWidth()/myImage.getWidth();
-        verticalRatio = myImageTexture.getHeight()/myImage.getHeight();
+        float horizontalRatio = myImageTexture.getWidth()/myImage.getWidth();
+        float verticalRatio = myImageTexture.getHeight()/myImage.getHeight();
         /*calculating actual pixel coordinates */
         rect.x = box.getX()*horizontalRatio;
         rect.y = box.getY()*verticalRatio;
@@ -178,8 +178,8 @@ import java.util.ArrayList;
     }
     private Vector2 TransformToCameraCoordinates(Vector2 point) {
 
-//        float horizontalRatio = myImageTexture.getWidth()/myImage.getWidth();
-//        float verticalRatio = myImageTexture.getHeight()/myImage.getHeight();
+        float horizontalRatio = myImageTexture.getWidth()/myImage.getWidth();
+        float verticalRatio = myImageTexture.getHeight()/myImage.getHeight();
         /*calculating actual pixel coordinates */
         point.x = point.x/horizontalRatio;
         point.y = point.y/verticalRatio;

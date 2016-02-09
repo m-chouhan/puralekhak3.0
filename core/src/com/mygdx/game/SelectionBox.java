@@ -21,11 +21,13 @@ public class SelectionBox extends InputAdapter {
     private Rectangle Rect;
     private String symbol;
 
+    private final SpottingViewAdapter Adapter;
     /*GUI/Widget code follows -->*/
     private final Color default_col = Color.RED,selection_col = Color.GOLD;
     /*All Possible states for a selection box */
     enum States{MOVE,STATIC,SCALE_TOP,SCALE_BOTTOM};
-    States currentState = States.STATIC;
+    private States currentState = States.STATIC;
+
     Color mColor = default_col;
     Rectangle Top_Right,Bottom_Left;
     /*true if this instance is handling the input events*/
@@ -33,12 +35,13 @@ public class SelectionBox extends InputAdapter {
     private Vector2 InitialPos = new Vector2();
     private Vector2 InitialCenter = new Vector2();
 
-    SelectionBox(float x,float y,float width,float height) {
+    SelectionBox(SpottingViewAdapter adapter,SpotArea area) {
 
-        Rect = new Rectangle(x,y,width,height);
+        Adapter = adapter;
+        Rect = new Rectangle(area.x,area.y,area.width,area.height);
         Top_Right = new Rectangle(0,0,40,40);
         Bottom_Left = new Rectangle(0,0,40,40);
-        Top_Right.setCenter(Rect.x + Rect.width , Rect.y + Rect.height);
+        Top_Right.setCenter(Rect.x + Rect.width, Rect.y + Rect.height);
         Bottom_Left.setCenter(Rect.x, Rect.y);
     }
 
@@ -94,8 +97,8 @@ public class SelectionBox extends InputAdapter {
 
     public boolean touchUp() {
         //reset to initial condition
-        InitialPos.set(0,0);
-        currentState = States.STATIC;
+        InitialPos.set(0, 0);
+        switchState(States.STATIC);
         mColor = default_col;
         return true;
     }
@@ -103,34 +106,27 @@ public class SelectionBox extends InputAdapter {
     public boolean touchDown(Vector2 point) {
 
         if(Top_Right.contains(point)) {
-            currentState = States.SCALE_TOP;
+            switchState(States.SCALE_TOP);
             Top_Right.getCenter(InitialCenter);
         }
         else if(Bottom_Left.contains(point)) {
-            currentState = States.SCALE_BOTTOM;
+            switchState(States.SCALE_BOTTOM);
             Bottom_Left.getCenter(InitialCenter);
         }
         else if( Rect.contains(point)) {
-            currentState = States.MOVE;
+            switchState(States.MOVE);
             Rect.getCenter(InitialCenter);
         }
         else {
-            currentState = States.STATIC;
+            switchState(States.STATIC);
             mColor = default_col;
             return false;
         }
+
+        Adapter.ItemSelected(this);
         mColor = selection_col;
         InitialPos.set(point);
         return true;
-    }
-
-
-    States contains(Vector2 point) {
-        if( !Rect.contains(point)) return States.STATIC;
-        if(Top_Right.contains(point)) return States.SCALE_TOP;
-        if(Bottom_Left.contains(point)) return States.SCALE_BOTTOM;
-
-        return States.MOVE;
     }
 
     public float getX() { return Rect.getX(); }
@@ -138,6 +134,23 @@ public class SelectionBox extends InputAdapter {
     public float getWidth() { return Rect.getWidth(); }
     public float getHeight() { return Rect.getHeight(); }
 
+    /** changes state of the selection box and takes action accordingly
+     *  for optimization, event will be thrown when a state completes, not when it starts
+     * @param state new state of the selection box
+     */
+    public void switchState(States state) {
+        States prevstate = currentState;
+        currentState = state;
+        switch (prevstate) {
+            case SCALE_TOP:
+            case SCALE_BOTTOM:
+                Adapter.Scaled(this);
+                break;
+            case MOVE:
+                Adapter.Moved(this);
+        }
+    }
+    public States getCurrentState() {return currentState; }
     public void setSymbol(String sym) { symbol = sym; }
     public String getSymbol() {return symbol; }
 }
