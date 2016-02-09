@@ -26,6 +26,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import java.util.ArrayList;
 
 /** TODO:Port the custom widgets to user Actor class
+ * TODO: default image not mapping properly to image display
  *  Displays image for spotting
  *  Main GUI Renderer
  */
@@ -72,7 +73,7 @@ import java.util.ArrayList;
         mCustomWidgetStage = new Stage();
         /*required for correct rendering in android coordinate system */
         TextureRegion region = new TextureRegion(myImageTexture);
-        region.flip(false,true);
+        //region.flip(false,true);
         myImage = new Image(region);
         mCustomWidgetStage.addActor(myImage);
         myImage.setDrawable(new SpriteDrawable(new Sprite(region)));
