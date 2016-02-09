@@ -22,7 +22,6 @@ import java.util.ArrayList;
  * required to send real path to libgdx fragment
  */
 
-
 public class Utility {
 
     public static String getRealPathFromURI(Context context, Uri uri) {
