@@ -9,8 +9,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
 
-import com.badlogic.gdx.Application;
-import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.backends.android.AndroidFragmentApplication;
 
 /**
@@ -56,9 +54,7 @@ public class LibgdxFragment extends AndroidFragmentApplication
     public ControllerViewInterface getCvDelegator() { return cvDelegator; }
 
     @Override
-    public void onClick(View v) {
-        vcDelegator.ShowKeyboard();
-    }
+    public void onClick(View v) { vcDelegator.ShowKeyboard(((Button) v).getText()); }
 
     @Override
     public boolean onLongClick(View v) {

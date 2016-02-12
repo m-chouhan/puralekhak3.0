@@ -12,5 +12,5 @@ public interface ViewControllerInterface {
     void TemplateSelected(final int x, final int y, final int width, final int height, String unicode);
     void TemplateMoved(final int x, final int y, final int width, final int height, String unicode);
     void TemplateResized(final int x, final int y, final int width, final int height, String unicode);
-    void ShowKeyboard();
+    void ShowKeyboard(CharSequence previewText);
 }

@@ -42,15 +42,18 @@ class GestureProcessor implements GestureListener {
         Vector2 touch2D = new Vector2(touch3D.x,touch3D.y);
         Gdx.app.log(TAG,"touchDown"+touch2D);
 
-        if( selectedBox != null && selectedBox.touchDown(touch2D) ) return true;
-
+        if( selectedBox != null && selectedBox.contains(touch2D) ) {
+            selectedBox.touchDown(touch2D);
+            return true;
+        }
         for(SelectionBox s:BoxList) {
-            if( s.touchDown(touch2D) ) {
+            if( s.contains(touch2D) ) {
+                s.touchDown(touch2D);
                 setSelectedBox(s);
                 return true;
             }
         }
-        setSelectedBox(null);
+//        setSelectedBox(null);
         InitialTouchPos.set(touch3D);
         InitialCameraPos.set(camera.position);
 
@@ -110,7 +113,7 @@ class GestureProcessor implements GestureListener {
         Vector3 touch3D = camera.unproject(new Vector3(x,y,0));
         Vector2 touch2D = new Vector2(touch3D.x,touch3D.y);
 
-        if( selectedBox != null ) {
+        if( selectedBox != null && selectedBox.contains(touch2D) ) {
             selectedBox.touchDragged(touch2D);
             return true;
         }

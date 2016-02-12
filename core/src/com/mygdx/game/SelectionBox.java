@@ -33,8 +33,9 @@ public class SelectionBox extends InputAdapter {
     private Vector2 InitialPos = new Vector2();
     private Vector2 InitialCenter = new Vector2();
 
-    SelectionBox(float x,float y,float width,float height) {
+    SelectionBox(float x,float y,float width,float height,String sym) {
 
+        symbol = sym;
         Rect = new Rectangle(x,y,width,height);
         Top_Right = new Rectangle(0,0,40,40);
         Bottom_Left = new Rectangle(0,0,40,40);
@@ -124,13 +125,12 @@ public class SelectionBox extends InputAdapter {
         return true;
     }
 
+    boolean contains(Vector2 point) {
+        if(Top_Right.contains(point)) return true;
+        else if(Bottom_Left.contains(point)) return true;
+        else if(Rect.contains(point)) return true;
 
-    States contains(Vector2 point) {
-        if( !Rect.contains(point)) return States.STATIC;
-        if(Top_Right.contains(point)) return States.SCALE_TOP;
-        if(Bottom_Left.contains(point)) return States.SCALE_BOTTOM;
-
-        return States.MOVE;
+        return false;
     }
 
     public float getX() { return Rect.getX(); }

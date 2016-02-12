@@ -184,7 +184,7 @@ import java.util.ArrayList;
     }
     /*Sends message to the controller to update template and adds a new selection box*/
     void CreateSelectionBoxAt( float x,float y,float width ,float height,String unicode ) {
-        SelectionBox box = new SelectionBox(x, y, width, height);
+        SelectionBox box = new SelectionBox(x, y, width, height,unicode);
         BoxList.add(box);
         Rectangle rect = TransformToPixelCoordinates(box);
         viewControllerInterface.TemplateSelected((int) rect.x, (int) rect.y, (int) rect.width, (int) rect.height,unicode );
@@ -245,5 +245,7 @@ import java.util.ArrayList;
     * */
     @Override
     public void UnicodeSelected(String unicode) {
+        SelectionBox box = InputProcessor.getSelectedBox();
+        if(box != null) box.setSymbol(unicode);
     }
 }

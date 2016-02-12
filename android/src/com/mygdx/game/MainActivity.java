@@ -25,7 +25,6 @@ import org.opencv.android.Utils;
 import org.opencv.core.Mat;
 
 /**
- * TODO: implement ViewControllerInterface
  * TODO: remove absolute path dependency
  */
 
@@ -81,7 +80,7 @@ public class MainActivity extends FragmentActivity
 
         mCurrentBitmap = BitmapFactory.decodeResource(getResources(),
                 R.drawable.inscription);
-        mCurrentTemplate = new SelectionBox(0,0,mCurrentBitmap.getWidth(),mCurrentBitmap.getHeight());
+        mCurrentTemplate = new SelectionBox(0,0,mCurrentBitmap.getWidth(),mCurrentBitmap.getHeight(),"");
         mTempatePreview = (ImageView) findViewById(R.id.template_preview);
         mTempatePreview.setImageBitmap(mCurrentBitmap);
     }
@@ -96,7 +95,7 @@ public class MainActivity extends FragmentActivity
                     break;
             case 2: ConvertToText();
                     break;
-            case 3: ShowKeyboard();
+            case 3: ShowKeyboard("");
                     break;
         }
     }
@@ -154,10 +153,18 @@ public class MainActivity extends FragmentActivity
     }
 
     @Override
-    public void TemplateSelected(final int x, final int y, final int width, final int height, String unicode) {
+    public void TemplateSelected(final int x, final int y, final int width, final int height, final String unicode) {
 
         Log.d(TAG,"Template Selected "+x+","+y+","+width+","+height);
-        mCurrentTemplate = new SelectionBox(x,y,width,height);
+        mCurrentTemplate = new SelectionBox(x,y,width,height,unicode);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Button button =
+                        (Button) FragmentFactory.getLibgdxFragment().getView().findViewById(R.id.unicodeButton);
+                button.setText(unicode);
+            }
+        });
     }
 
     @Override
@@ -171,9 +178,9 @@ public class MainActivity extends FragmentActivity
     }
 
     @Override
-    public void ShowKeyboard() {
+    public void ShowKeyboard(CharSequence previewText) {
+        FragmentFactory.getKeyboardFragment().setText(previewText);
         mPager.setCurrentItem(KEYBOARD_FRAGMENT);
-        mPager.invalidate();
     }
 
     @Override
@@ -182,6 +189,7 @@ public class MainActivity extends FragmentActivity
                 (Button) FragmentFactory.getLibgdxFragment().getView().findViewById(R.id.unicodeButton);
         button.setText(unicode);
         mPager.setCurrentItem(IMAGE_FRAGMENT);
+        mCvInterface.UnicodeSelected(unicode);
     }
 
     @Override
