@@ -154,20 +154,20 @@ public class MainActivity extends FragmentActivity
     }
 
     @Override
-    public void TemplateSelected(final int x,final int y,final int width,final int height) {
+    public void TemplateSelected(final int x, final int y, final int width, final int height, String unicode) {
 
         Log.d(TAG,"Template Selected "+x+","+y+","+width+","+height);
         mCurrentTemplate = new SelectionBox(x,y,width,height);
     }
 
     @Override
-    public void TemplateMoved(int x, int y, int width, int height) {
-        TemplateSelected(x,y,width,height);
+    public void TemplateMoved(int x, int y, int width, int height, String unicode) {
+        TemplateSelected(x,y,width,height,unicode);
     }
 
     @Override
-    public void TemplateResized(int x, int y, int width, int height) {
-        TemplateSelected(x,y,width,height);
+    public void TemplateResized(int x, int y, int width, int height, String unicode) {
+        TemplateSelected(x,y,width,height,unicode);
     }
 
     @Override

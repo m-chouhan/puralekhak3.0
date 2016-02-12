@@ -11,8 +11,7 @@ import java.util.ArrayList;
  */
 public interface ControllerViewInterface {
 
-    void TextUpdated();
-    void SpottingUpdated(ArrayList<Vector2> points);
+    void SpottingUpdated(ArrayList<Vector2> points, String unicode);
     void OpenImage(String imagePath);
     void UnicodeSelected(String unicode);
 }

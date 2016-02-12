@@ -3,11 +3,9 @@ package com.mygdx.game;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -19,7 +17,6 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
@@ -113,7 +110,7 @@ import java.util.ArrayList;
         plusButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                CreateSelectionBoxAt(camera.position.x-50,camera.position.y-50,100,100);
+                CreateSelectionBoxAt(camera.position.x-50,camera.position.y-50,100,100,"");
             }
         });
 
@@ -186,16 +183,16 @@ import java.util.ArrayList;
         return point;
     }
     /*Sends message to the controller to update template and adds a new selection box*/
-    void CreateSelectionBoxAt( float x,float y,float width ,float height ) {
+    void CreateSelectionBoxAt( float x,float y,float width ,float height,String unicode ) {
         SelectionBox box = new SelectionBox(x, y, width, height);
         BoxList.add(box);
         Rectangle rect = TransformToPixelCoordinates(box);
-        viewControllerInterface.TemplateSelected((int) rect.x, (int) rect.y, (int) rect.width, (int) rect.height);
+        viewControllerInterface.TemplateSelected((int) rect.x, (int) rect.y, (int) rect.width, (int) rect.height,unicode );
     }
 
     void SelectBoxAt(SelectionBox box) {
         Rectangle rect = TransformToPixelCoordinates(box);
-        viewControllerInterface.TemplateSelected((int) rect.x, (int) rect.y, (int) rect.width, (int) rect.height);
+        viewControllerInterface.TemplateSelected((int) rect.x, (int) rect.y, (int) rect.width, (int) rect.height,box.getSymbol() );
     }
     void RemoveCurrentSelection() {
         SelectionBox s = InputProcessor.getSelectedBox();
@@ -206,27 +203,22 @@ import java.util.ArrayList;
     /*for updating template */
     void SelectionBoxMoved( SelectionBox box) {
         Rectangle rect = TransformToPixelCoordinates(box);
-        viewControllerInterface.TemplateMoved((int) rect.x, (int) rect.y, (int) rect.width, (int) rect.height);
+        viewControllerInterface.TemplateMoved((int) rect.x, (int) rect.y, (int) rect.width, (int) rect.height, box.getSymbol() );
     }
 
     void SelectionBoxScaled(SelectionBox box) {
         Rectangle rect = TransformToPixelCoordinates(box);
-        viewControllerInterface.TemplateResized((int) rect.x, (int) rect.y, (int) rect.width, (int) rect.height);
+        viewControllerInterface.TemplateResized((int) rect.x, (int) rect.y, (int) rect.width, (int) rect.height,box.getSymbol());
     }
 
     @Override
-    public void TextUpdated() {
-
-    }
-
-    @Override
-    public void SpottingUpdated(ArrayList<Vector2> points) {
+    public void SpottingUpdated(ArrayList<Vector2> points, String unicode) {
 
         for( Vector2 point:points) {
             Gdx.app.log(TAG,"before:"+point);
             TransformToCameraCoordinates(point);
             Gdx.app.log(TAG,"after:"+point);
-            CreateSelectionBoxAt(point.x,point.y,50,50);
+            CreateSelectionBoxAt(point.x,point.y,50,50,unicode);
         }
     }
 
@@ -249,8 +241,8 @@ import java.util.ArrayList;
         });
     }
 
-    /*Already implemented in android
-     *TODO: this event need not be handled here */
+    /* update current selected template's unicode
+    * */
     @Override
     public void UnicodeSelected(String unicode) {
     }

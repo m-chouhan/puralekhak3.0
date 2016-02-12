@@ -66,7 +66,7 @@ class GestureProcessor implements GestureListener {
             Gdx.app.log(TAG, "tap at " + x + ", " + y + ", count: " + count);
         else
         {
-            imageViewer.CreateSelectionBoxAt(touch3D.x-100,touch3D.y-100,200,200);
+            imageViewer.CreateSelectionBoxAt(touch3D.x-100,touch3D.y-100,200,200,"");
             Gdx.app.log(TAG, "double tap at " + x + ", " + y + ", count: " + count);
             return true;
         }

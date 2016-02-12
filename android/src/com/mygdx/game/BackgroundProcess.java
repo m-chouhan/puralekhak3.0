@@ -573,8 +573,8 @@ public class BackgroundProcess {
 		// now starting to write to file ends
 		
 		long lEndTime = new Date().getTime();
-
-        cvInterface.SpottingUpdated(Utility.convertToVector(locs));
+        //second parameter is unicode
+        cvInterface.SpottingUpdated(Utility.convertToVector(locs),"u");
     	// find the imageview and draw it!
         System.out.println("He He");
         fileSize = 1000000;
