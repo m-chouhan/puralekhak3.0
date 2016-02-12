@@ -3,6 +3,7 @@ package com.mygdx.game;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -39,6 +40,7 @@ import java.util.ArrayList;
     private String imagePath;
     /* represents image from gui's perspective*/
 	Image myImage;
+    Image myTemplatePreview;
     Texture myImageTexture;
     /*For zoomIn,zoomOut and moving image*/
     OrthographicCamera camera;
@@ -70,8 +72,9 @@ import java.util.ArrayList;
         mCustomWidgetStage = new Stage();
         /*required for correct rendering in android coordinate system */
         TextureRegion region = new TextureRegion(myImageTexture);
-        //region.flip(false,true);
+        region.flip(false,true);
         myImage = new Image(region);
+
         mCustomWidgetStage.addActor(myImage);
         myImage.setDrawable(new SpriteDrawable(new Sprite(region)));
         camera = (OrthographicCamera) mCustomWidgetStage.getCamera();
@@ -110,7 +113,7 @@ import java.util.ArrayList;
         plusButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                CreateSelectionBoxAt(camera.position.x-50,camera.position.y-50,100,100,"");
+                CreateSelectionBoxAt(camera.position.x - 50, camera.position.y - 50, 100, 100, "");
             }
         });
 
@@ -124,6 +127,8 @@ import java.util.ArrayList;
                 RemoveCurrentSelection();
             }
         });
+        myTemplatePreview = new Image(new TextureRegion(myImageTexture,0,0,100,100));
+
         Table table = new Table();
         table.setFillParent(true);
         //table.setDebug(true); //shows table elements using lines
@@ -131,8 +136,14 @@ import java.util.ArrayList;
         table.add(plusButton).width(80).height(80);
         table.row();
         table.add(minusButton).width(80).height(80);
-        mButtonStage.addActor(table);
 
+        Table templatepreviewTable = new Table();
+        templatepreviewTable.setFillParent(true);
+        templatepreviewTable.setDebug(true);
+        templatepreviewTable.right().padRight(25).top().padTop(25).add(myTemplatePreview);
+
+        mButtonStage.addActor(table);
+        mButtonStage.addActor(templatepreviewTable);
         /*
         TextButton.TextButtonStyle textBStyle = new TextButton.TextButtonStyle();
         textBStyle.font = new BitmapFont();
@@ -187,11 +198,13 @@ import java.util.ArrayList;
         SelectionBox box = new SelectionBox(x, y, width, height,unicode);
         BoxList.add(box);
         Rectangle rect = TransformToPixelCoordinates(box);
+        UpdateTemplatePreview(box);
         viewControllerInterface.TemplateSelected((int) rect.x, (int) rect.y, (int) rect.width, (int) rect.height,unicode );
     }
 
     void SelectBoxAt(SelectionBox box) {
         Rectangle rect = TransformToPixelCoordinates(box);
+        UpdateTemplatePreview(box);
         viewControllerInterface.TemplateSelected((int) rect.x, (int) rect.y, (int) rect.width, (int) rect.height,box.getSymbol() );
     }
     void RemoveCurrentSelection() {
@@ -203,12 +216,29 @@ import java.util.ArrayList;
     /*for updating template */
     void SelectionBoxMoved( SelectionBox box) {
         Rectangle rect = TransformToPixelCoordinates(box);
-        viewControllerInterface.TemplateMoved((int) rect.x, (int) rect.y, (int) rect.width, (int) rect.height, box.getSymbol() );
+        UpdateTemplatePreview(box);
+        viewControllerInterface.TemplateMoved((int) rect.x, (int) rect.y, (int) rect.width, (int) rect.height, box.getSymbol());
     }
 
     void SelectionBoxScaled(SelectionBox box) {
         Rectangle rect = TransformToPixelCoordinates(box);
-        viewControllerInterface.TemplateResized((int) rect.x, (int) rect.y, (int) rect.width, (int) rect.height,box.getSymbol());
+        UpdateTemplatePreview(box);
+        viewControllerInterface.TemplateResized((int) rect.x, (int) rect.y, (int) rect.width, (int) rect.height, box.getSymbol());
+    }
+
+    /**Quick preview of template
+     * Updates the local copy of template (since dynamically creating bitmap in android might be heavy)
+     * @param box : new coordinates of template
+    * */
+    private void UpdateTemplatePreview(final SelectionBox box) {
+        Gdx.app.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                TextureRegion region =
+                        new TextureRegion(myImageTexture,(int)box.getX(),(int)box.getY(),(int)box.getWidth(),(int)box.getHeight());
+                myTemplatePreview.setDrawable(new SpriteDrawable(new Sprite(region)));
+            }
+        });
     }
 
     @Override
