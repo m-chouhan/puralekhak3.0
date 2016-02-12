@@ -140,7 +140,7 @@ import java.util.ArrayList;
         Table templatepreviewTable = new Table();
         templatepreviewTable.setFillParent(true);
         templatepreviewTable.setDebug(true);
-        templatepreviewTable.right().padRight(25).top().padTop(25).add(myTemplatePreview);
+        templatepreviewTable.right().padRight(35).top().padTop(35).add(myTemplatePreview);
 
         mButtonStage.addActor(table);
         mButtonStage.addActor(templatepreviewTable);
@@ -198,13 +198,13 @@ import java.util.ArrayList;
         SelectionBox box = new SelectionBox(x, y, width, height,unicode);
         BoxList.add(box);
         Rectangle rect = TransformToPixelCoordinates(box);
-        UpdateTemplatePreview(box);
+        UpdateTemplatePreview(rect);
         viewControllerInterface.TemplateSelected((int) rect.x, (int) rect.y, (int) rect.width, (int) rect.height,unicode );
     }
 
     void SelectBoxAt(SelectionBox box) {
         Rectangle rect = TransformToPixelCoordinates(box);
-        UpdateTemplatePreview(box);
+        UpdateTemplatePreview(rect);
         viewControllerInterface.TemplateSelected((int) rect.x, (int) rect.y, (int) rect.width, (int) rect.height,box.getSymbol() );
     }
     void RemoveCurrentSelection() {
@@ -216,26 +216,26 @@ import java.util.ArrayList;
     /*for updating template */
     void SelectionBoxMoved( SelectionBox box) {
         Rectangle rect = TransformToPixelCoordinates(box);
-        UpdateTemplatePreview(box);
+        UpdateTemplatePreview(rect);
         viewControllerInterface.TemplateMoved((int) rect.x, (int) rect.y, (int) rect.width, (int) rect.height, box.getSymbol());
     }
 
     void SelectionBoxScaled(SelectionBox box) {
         Rectangle rect = TransformToPixelCoordinates(box);
-        UpdateTemplatePreview(box);
+        UpdateTemplatePreview(rect);
         viewControllerInterface.TemplateResized((int) rect.x, (int) rect.y, (int) rect.width, (int) rect.height, box.getSymbol());
     }
 
     /**Quick preview of template
      * Updates the local copy of template (since dynamically creating bitmap in android might be heavy)
-     * @param box : new coordinates of template
+     * @param rect : new coordinates of template
     * */
-    private void UpdateTemplatePreview(final SelectionBox box) {
+    private void UpdateTemplatePreview(final Rectangle rect) {
         Gdx.app.postRunnable(new Runnable() {
             @Override
             public void run() {
                 TextureRegion region =
-                        new TextureRegion(myImageTexture,(int)box.getX(),(int)box.getY(),(int)box.getWidth(),(int)box.getHeight());
+                        new TextureRegion(myImageTexture,(int)rect.getX(),(int)rect.getY(),(int)rect.getWidth(),(int)rect.getHeight());
                 myTemplatePreview.setDrawable(new SpriteDrawable(new Sprite(region)));
             }
         });
