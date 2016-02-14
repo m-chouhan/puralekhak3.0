@@ -3,6 +3,7 @@ package com.mygdx.game;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -19,6 +20,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 
 import com.badlogic.gdx.backends.android.AndroidFragmentApplication;
+import com.badlogic.gdx.math.Rectangle;
 
 import org.opencv.android.OpenCVLoader;
 import org.opencv.android.Utils;
@@ -55,7 +57,7 @@ public class MainActivity extends FragmentActivity
     private ImageView mTempatePreview;
     /*Stores Coordinates of current template to be used for creating a new bitmap
     (its a heavy operation so do it only when its necessary)*/
-    private SelectionBox mCurrentTemplate;
+    private Rectangle mCurrentTemplate;
     /* Actual template to be updated only before viewing or processing*/
     private Bitmap mCurrentBitmapTemplate;
     /*Actual inscription image as a bitmap for processing */
@@ -80,7 +82,7 @@ public class MainActivity extends FragmentActivity
 
         mCurrentBitmap = BitmapFactory.decodeResource(getResources(),
                 R.drawable.inscription);
-        mCurrentTemplate = new SelectionBox(0,0,mCurrentBitmap.getWidth(),mCurrentBitmap.getHeight(),"");
+        mCurrentTemplate = new Rectangle(0,0,mCurrentBitmap.getWidth(),mCurrentBitmap.getHeight());
         mTempatePreview = (ImageView) findViewById(R.id.template_preview);
         mTempatePreview.setImageBitmap(mCurrentBitmap);
     }
@@ -156,7 +158,7 @@ public class MainActivity extends FragmentActivity
     public void TemplateSelected(final int x, final int y, final int width, final int height, final String unicode) {
 
         Log.d(TAG,"Template Selected "+x+","+y+","+width+","+height);
-        mCurrentTemplate = new SelectionBox(x,y,width,height,unicode);
+        mCurrentTemplate = new Rectangle(x,y,width,height);
         runOnUiThread(new Runnable() {
             @Override
             public void run() {

@@ -22,7 +22,7 @@ public class SelectionBox extends InputAdapter {
     private String symbol;
 
     /*GUI/Widget code follows -->*/
-    private final Color default_col = Color.RED,selection_col = Color.GOLD;
+    private Color default_col = Color.RED,selection_col = Color.GOLD;
     /*All Possible states for a selection box */
     enum States{MOVE,STATIC,SCALE_TOP,SCALE_BOTTOM};
     States currentState = States.STATIC;
@@ -35,7 +35,7 @@ public class SelectionBox extends InputAdapter {
 
     SelectionBox(float x,float y,float width,float height,String sym) {
 
-        symbol = sym;
+        setSymbol(sym);
         Rect = new Rectangle(x,y,width,height);
         Top_Right = new Rectangle(0,0,40,40);
         Bottom_Left = new Rectangle(0,0,40,40);
@@ -138,6 +138,10 @@ public class SelectionBox extends InputAdapter {
     public float getWidth() { return Rect.getWidth(); }
     public float getHeight() { return Rect.getHeight(); }
 
-    public void setSymbol(String sym) { symbol = sym; }
+    public void setSymbol(String sym) {
+        symbol = sym;
+        //default_col = Util.Rainbow(Util.UnicodetoLong(symbol));
+        default_col = Util.ColorFromList(Util.UnicodetoLong(symbol));
+    }
     public String getSymbol() {return symbol; }
 }
