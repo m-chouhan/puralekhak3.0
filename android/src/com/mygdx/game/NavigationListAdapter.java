@@ -13,7 +13,6 @@ import android.widget.TextView;
 /**
  * Created by monty on 1/16/2016.
  * Static Adapter for navigation list elements
- * TODO: Add spotting template preview to navigation list
  */
 public class NavigationListAdapter extends ArrayAdapter<String> {
 
@@ -22,10 +21,12 @@ public class NavigationListAdapter extends ArrayAdapter<String> {
         "Start Spotting",
         "Select Image",
         "Convert to Text",
+        "Settings"
     };
     private static Integer [] imageId = {
         R.drawable.process,
         R.drawable.browser,
+        R.drawable.process,
         R.drawable.process
     };
     public NavigationListAdapter(FragmentActivity activity) {
@@ -44,7 +45,6 @@ public class NavigationListAdapter extends ArrayAdapter<String> {
         txtTitle.setText(items[position]);
         imageView.setImageResource(imageId[position]);
         return rowView;
-
     };
 
 }

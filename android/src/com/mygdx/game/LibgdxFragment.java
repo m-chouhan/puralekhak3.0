@@ -1,6 +1,7 @@
 package com.mygdx.game;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.SurfaceView;
@@ -25,11 +26,17 @@ public class LibgdxFragment extends AndroidFragmentApplication
     private ControllerViewInterface cvDelegator;
     private ViewControllerInterface vcDelegator;
     private MainActivity parentActivity;
-
+    private ProgressDialog progressBar;
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         parentActivity = (MainActivity)activity;
+        progressBar = new ProgressDialog(getContext());
+        progressBar.setCancelable(false);
+        progressBar.setMessage("Processing ...");
+        progressBar.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        progressBar.setProgress(0);
+        progressBar.setMax(100);
     }
 
     @Override
@@ -60,5 +67,38 @@ public class LibgdxFragment extends AndroidFragmentApplication
     public boolean onLongClick(View v) {
         vcDelegator.StartSpotting();
         return true;
+    }
+
+    /**
+     * Progress bar to display spotting progress
+     */
+    public void ShowProgressBar() {
+
+        progressBar.show();
+        /*
+        new Thread(new Runnable() {
+            public void run() {
+                int counter = 0;
+                while (counter < 100 ) {
+                    try {
+                        Thread.sleep(50);
+                        counter++;
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    UpdateProgressBar(counter);
+                }
+                progressBar.dismiss();
+            }
+        }).start();
+        */
+    }
+    public void UpdateProgressBar(final int progress) {
+        postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                progressBar.setProgress(progress);
+            }
+        });
     }
 }

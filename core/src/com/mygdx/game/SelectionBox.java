@@ -3,7 +3,6 @@ package com.mygdx.game;
 
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
@@ -22,7 +21,7 @@ public class SelectionBox extends InputAdapter {
     private String symbol;
 
     /*GUI/Widget code follows -->*/
-    private Color default_col = Color.RED,selection_col = Color.GOLD;
+    private Color default_col = Color.RED,selection_col = Color.WHITE;
     /*All Possible states for a selection box */
     enum States{MOVE,STATIC,SCALE_TOP,SCALE_BOTTOM};
     States currentState = States.STATIC;
@@ -140,8 +139,8 @@ public class SelectionBox extends InputAdapter {
 
     public void setSymbol(String sym) {
         symbol = sym;
-        //default_col = Util.Rainbow(Util.UnicodetoLong(symbol));
-        default_col = Util.ColorFromList(Util.UnicodetoLong(symbol));
+        //default_col = Util.Rainbow(Util.UnicodetoInteger(symbol));
+        default_col = Util.ColorFromList(Util.UnicodetoInteger(symbol));
     }
     public String getSymbol() {return symbol; }
 }

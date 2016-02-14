@@ -68,8 +68,8 @@ public class BackgroundProcess {
         Call this method to update progressbar
         @param progress : 0< < 100
     */
-    static private void updateProgressBar(long progress) {
-
+    static private void updateProgressBar(int progress) {
+        FragmentFactory.getLibgdxFragment().UpdateProgressBar(progress);
     }
 
     /** Old code starts here
@@ -181,7 +181,7 @@ public class BackgroundProcess {
         //cor1 ends
         
         fileSize = 100000;
-        updateProgressBar(fileSize/10000);
+        updateProgressBar((int)fileSize/10000);
         
         //cor2 begins
         Mat cf2 = new Mat(OMat.rows(),OMat.cols(),CvType.CV_32FC1);
@@ -204,7 +204,7 @@ public class BackgroundProcess {
         //cor2 ends
         
         fileSize = 200000;
-        updateProgressBar(fileSize/10000);
+        updateProgressBar((int)fileSize/10000);
 
       //cor3 begins
         Mat cf3 = new Mat(OMat.rows(),OMat.cols(),CvType.CV_32FC1);
@@ -227,7 +227,7 @@ public class BackgroundProcess {
         //cor3 ends
         
         fileSize = 300000;
-        updateProgressBar(fileSize/10000);
+        updateProgressBar((int)fileSize/10000);
 
         //cor4 begins
         Mat cf4 = new Mat(OMat.rows(),OMat.cols(),CvType.CV_32FC1);
@@ -247,7 +247,7 @@ public class BackgroundProcess {
         //cor4 ends
         
         fileSize = 400000;
-        updateProgressBar(fileSize/10000);
+        updateProgressBar((int)fileSize/10000);
 
         //cor5 begins
         Mat cf5 = new Mat(OMat.rows(),OMat.cols(),CvType.CV_32FC1);
@@ -270,7 +270,7 @@ public class BackgroundProcess {
         //cor5 ends
         
         fileSize = 500000;
-        updateProgressBar(fileSize/10000);
+        updateProgressBar((int)fileSize/10000);
 
         //cor6 begins
         Mat cf6 = new Mat(OMat.rows(),OMat.cols(),CvType.CV_32FC1);
@@ -293,7 +293,7 @@ public class BackgroundProcess {
         //cor6 ends
         
         fileSize = 600000;
-        updateProgressBar(fileSize/10000);
+        updateProgressBar((int)fileSize/10000);
 
         //cor7 begins
         Mat cf7 = new Mat(OMat.rows(),OMat.cols(),CvType.CV_32FC1);
@@ -316,7 +316,7 @@ public class BackgroundProcess {
         //cor7 ends
         
         fileSize = 700000;
-        updateProgressBar(fileSize/10000);
+        updateProgressBar((int)fileSize/10000);
 
         //cor8 begins
         Mat cf8 = new Mat(OMat.rows(),OMat.cols(),CvType.CV_32FC1);
@@ -339,7 +339,7 @@ public class BackgroundProcess {
         //cor8 ends
         
         fileSize = 800000;
-        updateProgressBar(fileSize/10000);
+        updateProgressBar((int)fileSize/10000);
 
         Mat cf = new Mat( OMat.rows(), OMat.cols(), CvType.CV_32FC1);
         Core.add(cf1, cf2, cf);

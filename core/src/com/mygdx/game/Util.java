@@ -45,7 +45,7 @@ public final class Util {
      */
     public static Color Rainbow(double value)
     {
-        double div = (Math.abs(value % 1) * 6);
+        double div = (Math.abs(value % 62)/62 * 6);
         int ascending = (int) ((div % 1) * 255);
         int descending = 255 - ascending;
 
@@ -71,7 +71,7 @@ public final class Util {
      * @param unicode 0-4 chars
      * @return long value
      */
-    public static int UnicodetoLong(String unicode) {
+    public static int UnicodetoInteger(String unicode) {
         if( unicode.length() < 1) return 0;
         byte array[] = unicode.getBytes();
         ByteBuffer buffer = ByteBuffer.wrap(array);

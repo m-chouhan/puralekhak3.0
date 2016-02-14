@@ -33,11 +33,12 @@ import org.opencv.core.Mat;
 public class MainActivity extends FragmentActivity
         implements AndroidFragmentApplication.Callbacks, AdapterView.OnItemClickListener,
         ViewControllerInterface , FragmentFactory.UpdateViewCallback,DrawerLayout.DrawerListener{
-
+    /** to identify onactivityresult */
     private static final int IMAGE_BROWSER = 2;
     private final String TAG = "MainActivity";
-    private final int IMAGE_FRAGMENT = 0;
-    private final int KEYBOARD_FRAGMENT = 1;
+    /**Ids of different fragments */
+    private static final int IMAGE_FRAGMENT = 1;
+    private static final int KEYBOARD_FRAGMENT = 2;
 
     static {
         if (!OpenCVLoader.initDebug()) {
@@ -97,7 +98,7 @@ public class MainActivity extends FragmentActivity
                     break;
             case 2: ConvertToText();
                     break;
-            case 3: ShowKeyboard("");
+            case 3: mPager.setCurrentItem(0);
                     break;
         }
     }
@@ -109,7 +110,7 @@ public class MainActivity extends FragmentActivity
 
 	    	case IMAGE_FRAGMENT: super.onBackPressed();
                     break;
-	    	case KEYBOARD_FRAGMENT:	mPager.setCurrentItem(0);
+	    	case KEYBOARD_FRAGMENT:	mPager.setCurrentItem(IMAGE_FRAGMENT);
                     break;
     	}
     }
@@ -152,6 +153,7 @@ public class MainActivity extends FragmentActivity
             }
         });
         t.start();
+        FragmentFactory.getLibgdxFragment().ShowProgressBar();
     }
 
     @Override

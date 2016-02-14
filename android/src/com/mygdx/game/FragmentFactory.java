@@ -23,14 +23,14 @@ import android.view.ViewGroup.LayoutParams;
  * TODO: settings page fragment
  * */
 
-public class FragmentFactory {
+public final class FragmentFactory {
 
-    public static final int WORKER_COUNT = 2;
-    private final String TAG = "FragmentFactory";
+    public static final int WORKER_COUNT = 3;
+    private static final String TAG = "FragmentFactory";
 
     private static LibgdxFragment libgdxFragment = null;
     private static KeyboardFragment keyboardFragment = null;
-
+    private static SettingsFragment settingsFragment = null;
     /*for passing messages to main activity */
     public interface UpdateViewCallback{
         void UnicodeSelected(String unicode);
@@ -41,14 +41,18 @@ public class FragmentFactory {
 
         switch (position) {
 
-            case 0:
+            case 1:
                     if(libgdxFragment == null )
                         libgdxFragment = new LibgdxFragment();
                     return libgdxFragment;
-            case 1:
+            case 2:
                     if(keyboardFragment == null)
                         keyboardFragment = new KeyboardFragment();
                     return keyboardFragment;
+            case 0:
+                    if(settingsFragment == null)
+                        settingsFragment = new SettingsFragment();
+                    return settingsFragment;
         }
         return null;
     }
