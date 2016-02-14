@@ -21,6 +21,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.utils.Scaling;
+
 import java.util.ArrayList;
 
 /** TODO:Port the custom widgets to user Actor class
@@ -140,8 +142,8 @@ import java.util.ArrayList;
         Table templatepreviewTable = new Table();
         templatepreviewTable.setFillParent(true);
         templatepreviewTable.setDebug(true);
-        templatepreviewTable.right().padRight(35).top().padTop(35).add(myTemplatePreview);
-
+        templatepreviewTable.right().padRight(35).top().padTop(35).add(myTemplatePreview).center().colspan(2);
+        myTemplatePreview.setScaling(Scaling.fit);
         mButtonStage.addActor(table);
         mButtonStage.addActor(templatepreviewTable);
         /*
