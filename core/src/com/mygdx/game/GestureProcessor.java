@@ -28,7 +28,6 @@ class GestureProcessor implements GestureListener {
     private Vector3 InitialTouchPos = new Vector3();
     private Vector3 InitialCameraPos = new Vector3();
     private SelectionBox selectedBox = null; /*only one box can be selected at a time */
-    private boolean delegateInput = false; /*true implies that input event must be delegated to selection boxe widget*/
 
     GestureProcessor(MyImageViewer imViewer) {
         imageViewer = imViewer;
@@ -43,15 +42,18 @@ class GestureProcessor implements GestureListener {
         Vector2 touch2D = new Vector2(touch3D.x,touch3D.y);
         Gdx.app.log(TAG,"touchDown"+touch2D);
 
+        if( selectedBox != null && selectedBox.contains(touch2D) ) {
+            selectedBox.touchDown(touch2D);
+            return true;
+        }
         for(SelectionBox s:BoxList) {
             if( s.contains(touch2D) ) {
-                setSelectedBox(s);
                 s.touchDown(touch2D);
+                setSelectedBox(s);
                 return true;
             }
         }
-
-        delegateInput = false;
+//        setSelectedBox(null);
         InitialTouchPos.set(touch3D);
         InitialCameraPos.set(camera.position);
 
@@ -88,7 +90,11 @@ class GestureProcessor implements GestureListener {
 
     /*These events are not required for now */
     @Override
-    public boolean longPress(float x, float y) { return false;  }
+    public boolean longPress(float x, float y) {
+        message = "Long press performed";
+        //Gdx.app.log(TAG,message);
+        return false;
+    }
 
     @Override
     public boolean fling(float velocityX, float velocityY, int button) {
@@ -107,7 +113,7 @@ class GestureProcessor implements GestureListener {
         Vector3 touch3D = camera.unproject(new Vector3(x,y,0));
         Vector2 touch2D = new Vector2(touch3D.x,touch3D.y);
 
-        if( delegateInput ) {
+        if( selectedBox != null && selectedBox.contains(touch2D) ) {
             selectedBox.touchDragged(touch2D);
             return true;
         }
@@ -123,7 +129,6 @@ class GestureProcessor implements GestureListener {
     @Override
     public boolean panStop(float x, float y, int pointer, int button) {
 
-        delegateInput = false;
         if(selectedBox != null) {
             switch (selectedBox.currentState)
             {
@@ -149,10 +154,7 @@ class GestureProcessor implements GestureListener {
     public void setSelectedBox(SelectionBox s) {
         if(selectedBox != null ) selectedBox.touchUp();
         selectedBox = s;
-        if(selectedBox != null) {
-            imageViewer.SelectBoxAt(selectedBox);
-            delegateInput = true;//pass upcoming events to this box
-        }
+        if(selectedBox != null) imageViewer.SelectBoxAt(selectedBox);
     }
     public SelectionBox getSelectedBox() { return selectedBox;}
 }

@@ -1,7 +1,6 @@
 package com.mygdx.game;
 
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -23,7 +22,7 @@ public class SelectionBox extends InputAdapter {
     private String symbol;
 
     /*GUI/Widget code follows -->*/
-    private Color default_col = Color.RED,selection_col = Color.GOLD;
+    private final Color default_col = Color.RED,selection_col = Color.GOLD;
     /*All Possible states for a selection box */
     enum States{MOVE,STATIC,SCALE_TOP,SCALE_BOTTOM};
     States currentState = States.STATIC;
@@ -36,7 +35,7 @@ public class SelectionBox extends InputAdapter {
 
     SelectionBox(float x,float y,float width,float height,String sym) {
 
-        setSymbol(sym);
+        symbol = sym;
         Rect = new Rectangle(x,y,width,height);
         Top_Right = new Rectangle(0,0,40,40);
         Bottom_Left = new Rectangle(0,0,40,40);
@@ -53,14 +52,12 @@ public class SelectionBox extends InputAdapter {
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
         shapeRenderer.rect(Rect.x, Rect.y, Rect.width, Rect.height);
         shapeRenderer.end();
-        Gdx.gl20.glLineWidth(14);
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         shapeRenderer.rect(Top_Right.x, Top_Right.y, Top_Right.width, Top_Right.height);
         shapeRenderer.rect(Bottom_Left.x, Bottom_Left.y, Bottom_Left.width, Bottom_Left.height);
         shapeRenderer.end();
 
         shapeRenderer.setColor(prevColor);
-        Gdx.gl20.glLineWidth(8);
     }
 
     void Move(Vector2 position) {
@@ -83,18 +80,14 @@ public class SelectionBox extends InputAdapter {
                     Move(delta.add(InitialCenter));
                     break;
             case SCALE_TOP:
-                delta.add(InitialCenter);
-                Rect.set(Rect.x, Rect.y, delta.x - Rect.x, delta.y - Rect.y);
-                Top_Right.setSize(Rect.getWidth()/ 2, Rect.getHeight()/2);
-                Top_Right.setCenter(delta);
-                Bottom_Left.setSize(Top_Right.getWidth(),Top_Right.getHeight());
-                break;
+                    Top_Right.setCenter(delta.add(InitialCenter));
+                    Rect.set(Rect.x,Rect.y,delta.x-Rect.x,delta.y-Rect.y);
+                    break;
             case SCALE_BOTTOM:
-                    delta.add(InitialCenter);
+                    Bottom_Left.setCenter(delta.add(InitialCenter));
                     Rect.set(delta.x, delta.y,
-                            Rect.width + Rect.x - delta.x, Rect.height + Rect.y - delta.y);
-                    Bottom_Left.setSize(Rect.getWidth()/2,Rect.getHeight()/2);
-                    Bottom_Left.setCenter(delta);
+                            Rect.width+Rect.x-delta.x,Rect.height+Rect.y-delta.y);
+                    //Rect.setX(delta.x);Rect.setY(delta.y);
                 break;
         }
         return true;
@@ -145,9 +138,6 @@ public class SelectionBox extends InputAdapter {
     public float getWidth() { return Rect.getWidth(); }
     public float getHeight() { return Rect.getHeight(); }
 
-    public void setSymbol(String sym) {
-        symbol = sym;
-        default_col = Utility.Rainbow(Utility.UnicodetoLong(symbol));
-    }
+    public void setSymbol(String sym) { symbol = sym; }
     public String getSymbol() {return symbol; }
 }
