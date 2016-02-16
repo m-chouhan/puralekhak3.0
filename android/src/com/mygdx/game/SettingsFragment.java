@@ -54,7 +54,7 @@ public class SettingsFragment extends Fragment implements AdapterView.OnItemClic
                 new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, msupportedLanguages); //selected item will look like a spinner set from XML
         spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(spinnerArrayAdapter);
-        spinner.setOnItemClickListener(this);
+//        spinner.setOnItemClickListener(this);
         return view;
     }
 

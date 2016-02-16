@@ -63,6 +63,7 @@ public class MainActivity extends FragmentActivity
     private Bitmap mCurrentBitmapTemplate;
     /*Actual inscription image as a bitmap for processing */
     private Bitmap mCurrentBitmap;
+    private DrawerLayout mNavigation_drawer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,8 +76,8 @@ public class MainActivity extends FragmentActivity
         mPager.setAdapter(mPagerAdapter);
         mPager.setCurrentItem(IMAGE_FRAGMENT);
 
-        DrawerLayout navigation_drawer = (DrawerLayout)findViewById(R.id.navigation_drawer);
-        navigation_drawer.setDrawerListener(this);
+        mNavigation_drawer = (DrawerLayout)findViewById(R.id.navigation_drawer);
+        mNavigation_drawer.setDrawerListener(this);
         ListView navigation_list = (ListView) findViewById(R.id.navigation_list);
         navigation_list.setAdapter(new NavigationListAdapter(this));
         navigation_list.setOnItemClickListener(this);
@@ -101,6 +102,7 @@ public class MainActivity extends FragmentActivity
             case 3: mPager.setCurrentItem(0);
                     break;
         }
+//        mNavigation_drawer.closeDrawer(view);
     }
 
     @Override
@@ -110,7 +112,7 @@ public class MainActivity extends FragmentActivity
 
 	    	case IMAGE_FRAGMENT: super.onBackPressed();
                     break;
-	    	case KEYBOARD_FRAGMENT:	mPager.setCurrentItem(IMAGE_FRAGMENT);
+	    	default:	mPager.setCurrentItem(IMAGE_FRAGMENT);
                     break;
     	}
     }
