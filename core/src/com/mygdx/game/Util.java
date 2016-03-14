@@ -72,14 +72,10 @@ public final class Util {
      * @return long value
      */
     public static int UnicodetoInteger(String unicode) {
-        return 0;
-//
-//        if( unicode.length() < 1) return 0;
-//        byte array[] = unicode.getBytes();
-//        ByteBuffer buffer = ByteBuffer.wrap(array);
-//        Math.abs(buffer.getShort());
-//        int value = unicode.hashCode();
-//        Gdx.app.log(TAG,""+value);
-//        return value;
+
+        if( unicode.length() < 1) return 0;
+        int value = unicode.hashCode();
+        Gdx.app.log(TAG,""+value);
+        return value;
     }
 }

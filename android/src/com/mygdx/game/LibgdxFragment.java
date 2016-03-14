@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 
 import com.badlogic.gdx.backends.android.AndroidFragmentApplication;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 
 /**
  * Created by monty on 1/13/2016.
@@ -27,6 +28,7 @@ public class LibgdxFragment extends AndroidFragmentApplication
     private ViewControllerInterface vcDelegator;
     private MainActivity parentActivity;
     private ProgressDialog progressBar;
+    private Button unicodeButton;
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -47,12 +49,12 @@ public class LibgdxFragment extends AndroidFragmentApplication
         cvDelegator = imageViewer;
         FrameLayout parent = (FrameLayout)inflater.inflate(R.layout.libgdxview,null);
         parent.addView(initializeForView(imageViewer));
-        Button button = (Button)parent.findViewById(R.id.unicodeButton);
-        button.setOnClickListener(this);
-        button.setOnLongClickListener(this);
+        unicodeButton = (Button)parent.findViewById(R.id.unicodeButton);
+        unicodeButton.setOnClickListener(this);
+        unicodeButton.setOnLongClickListener(this);
         SurfaceView v = (SurfaceView)parent.findViewById(R.id.surfaceview);
         v.bringToFront();
-        button.bringToFront();
+        unicodeButton.bringToFront();
 
         parentActivity.ImageviewerReady(cvDelegator);
         return parent;
@@ -73,26 +75,9 @@ public class LibgdxFragment extends AndroidFragmentApplication
      * Progress bar to display spotting progress
      */
     public void ShowProgressBar() {
-
         progressBar.show();
-        /*
-        new Thread(new Runnable() {
-            public void run() {
-                int counter = 0;
-                while (counter < 100 ) {
-                    try {
-                        Thread.sleep(50);
-                        counter++;
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    UpdateProgressBar(counter);
-                }
-                progressBar.dismiss();
-            }
-        }).start();
-        */
     }
+
     public void UpdateProgressBar(final int progress) {
         if (progress >= 100 ) progressBar.dismiss();
         postRunnable(new Runnable() {
@@ -101,5 +86,13 @@ public class LibgdxFragment extends AndroidFragmentApplication
                 progressBar.setProgress(progress);
             }
         });
+    }
+
+    public String getUnicodeText() {
+        return unicodeButton.getText().toString();
+    }
+    public void setUnicodeText(String text) {
+        unicodeButton.setText(text);
+        cvDelegator.UnicodeSelected(text);
     }
 }

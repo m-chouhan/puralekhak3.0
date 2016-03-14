@@ -77,10 +77,11 @@ public class BackgroundProcess {
      *
      * @param OMat
      * @param TMat
+     * @param unicode
      * @param cvInterface
      * @return
      */
-    static public long helloworld(Mat OMat,Mat TMat,ControllerViewInterface cvInterface) {
+    static public long helloworld(Mat OMat,Mat TMat,String unicode, ControllerViewInterface cvInterface) {
 		
 		if(firstSpotting){
 			//Do nothing
@@ -579,7 +580,7 @@ public class BackgroundProcess {
         System.out.println("structPoint Size:" + stuctpoints.size() + "\tOMat Size :"+OMatg.size().toString()
                 +"\tdet_imwt size "+ det_imwt.size().toString());
         //second parameter is unicode
-        cvInterface.SpottingUpdated(Utility.convertToVector(stuctpoints,result.width(),result.height()),"u");
+        cvInterface.SpottingUpdated(Utility.convertToVector(stuctpoints,result.width(),result.height()),unicode);
     	// find the imageview and draw it!
         System.out.println("He He");
         fileSize = 1000000;
