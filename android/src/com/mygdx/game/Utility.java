@@ -1,6 +1,7 @@
 package com.mygdx.game;
 
 import android.annotation.SuppressLint;
+import android.content.ClipData;
 import android.content.Context;
 import android.content.CursorLoader;
 import android.database.Cursor;
@@ -9,9 +10,11 @@ import android.os.Build;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import org.opencv.core.Point;
+import org.opencv.core.Rect;
 
 import java.util.ArrayList;
 
@@ -93,9 +96,15 @@ public class Utility {
         return cursor.getString(column_index);
     }
 
-    public static ArrayList<Vector2> convertToVector(ArrayList<Point> points) {
-        ArrayList<Vector2> list = new ArrayList<Vector2>();
-        for(Point p : points) list.add(new Vector2((float)p.x,(float)p.y));
+    public static ArrayList<Rectangle> convertToVector(ArrayList<item> points,float imWidth,float imHeight) {
+
+        ArrayList<Rectangle> list = new ArrayList<Rectangle>();
+        for(item p : points) {
+            Rectangle rect = new Rectangle((float) p.gety(), (float) p.getx(),
+                    (float) p.getposy(), (float) p.getposx());
+            //rect.setPosition(rect.getX()-rect.getWidth()/2,rect.getY()-rect.getHeight()-2);
+            list.add(rect);
+        }
         return list;
     }
 }

@@ -28,7 +28,7 @@ public class SelectionBox extends InputAdapter {
     Color mColor = default_col;
     Rectangle Top_Right,Bottom_Left;
     /*true if this instance is handling the input events*/
-    private boolean selected = false;
+    private boolean disabled = false;
     private Vector2 InitialPos = new Vector2();
     private Vector2 InitialCenter = new Vector2();
 
@@ -102,6 +102,8 @@ public class SelectionBox extends InputAdapter {
 
     public boolean touchDown(Vector2 point) {
 
+        if( disabled ) return false;
+
         if(Top_Right.contains(point)) {
             currentState = States.SCALE_TOP;
             Top_Right.getCenter(InitialCenter);
@@ -125,6 +127,9 @@ public class SelectionBox extends InputAdapter {
     }
 
     boolean contains(Vector2 point) {
+
+        if( disabled ) return false;
+
         if(Top_Right.contains(point)) return true;
         else if(Bottom_Left.contains(point)) return true;
         else if(Rect.contains(point)) return true;
@@ -136,7 +141,8 @@ public class SelectionBox extends InputAdapter {
     public float getY() { return Rect.getY(); }
     public float getWidth() { return Rect.getWidth(); }
     public float getHeight() { return Rect.getHeight(); }
-
+    public void enable() { disabled = false;}
+    public void disable(){ disabled = true;}
     public void setSymbol(String sym) {
         symbol = sym;
         //default_col = Util.Rainbow(Util.UnicodetoInteger(symbol));

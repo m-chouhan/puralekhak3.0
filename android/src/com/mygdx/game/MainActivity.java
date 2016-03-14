@@ -145,6 +145,8 @@ public class MainActivity extends FragmentActivity
 
     @Override
     public void StartSpotting() {
+        Log.d(TAG,mCurrentTemplate.toString());
+        Log.d(TAG,"Bitmap Size: "+mCurrentBitmap.getWidth()+","+mCurrentBitmap.getHeight());
         final Mat original = new Mat(),template = new Mat();
         Utils.bitmapToMat(mCurrentBitmap,original);
         Utils.bitmapToMat(mCurrentBitmapTemplate, template);

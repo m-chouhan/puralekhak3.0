@@ -38,7 +38,7 @@ import java.util.ArrayList;
     int Width,Height;
 
     private String imagePath;
-    /* represents image from gui's perspective*/
+    /** represents image from gui's perspective*/
 	Image myImage;
     Image myTemplatePreview;
     Texture myImageTexture;
@@ -242,13 +242,13 @@ import java.util.ArrayList;
     }
 
     @Override
-    public void SpottingUpdated(ArrayList<Vector2> points, String unicode) {
+    public void SpottingUpdated(ArrayList<Rectangle> spots_list, String unicode) {
 
-        for( Vector2 point:points) {
-            Gdx.app.log(TAG,"before:"+point);
-            TransformToCameraCoordinates(point);
-            Gdx.app.log(TAG,"after:"+point);
-            CreateSelectionBoxAt(point.x,point.y,50,50,unicode);
+//        Gdx.app.log(TAG,"myImage:"+myImage.getImageWidth()+","+myImage.getImageHeight()
+//                +",\t"+myImage.getWidth()+","+myImage.getHeight());
+//        Gdx.app.log(TAG,"texture:"+myImageTexture.getWidth()+","+myImageTexture.getHeight());
+        for( Rectangle rect:spots_list) {
+            CreateSelectionBoxAt(rect.x,rect.y,rect.getWidth(),rect.getHeight(),unicode);
         }
     }
 

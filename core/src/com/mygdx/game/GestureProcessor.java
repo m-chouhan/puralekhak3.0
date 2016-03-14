@@ -65,9 +65,9 @@ class GestureProcessor implements GestureListener {
         message = "Tap performed, finger" + Integer.toString(button);
         Vector3 touch3D = camera.unproject(new Vector3(x,y,0));
 
-        if(count == 1)
-            Gdx.app.log(TAG, "tap at " + x + ", " + y + ", count: " + count);
-        else
+//        if(count == 1)
+//            Gdx.app.log(TAG, "tap at " + x + ", " + y + ", count: " + count);
+        if(count > 1)
         {
             imageViewer.CreateSelectionBoxAt(touch3D.x-100,touch3D.y-100,200,200,"");
             Gdx.app.log(TAG, "double tap at " + x + ", " + y + ", count: " + count);
@@ -81,7 +81,7 @@ class GestureProcessor implements GestureListener {
     public boolean zoom(float initialDistance, float distance) {
         message = "Zoom performed, initial Distance:" + Float.toString(initialDistance) +
                 " Distance: " + Float.toString(distance);
-        Gdx.app.log(TAG,message);
+        //Gdx.app.log(TAG,message);
         if(initialDistance > (distance+20) ) camera.zoom += 0.01;
         else if (initialDistance < (distance-20) && camera.zoom > 0.1f ) camera.zoom -=0.01;
         camera.update();
@@ -108,7 +108,7 @@ class GestureProcessor implements GestureListener {
     public boolean pan(float x, float y, float deltaX, float deltaY) {
         message = "Pan performed, delta:" + Float.toString(deltaX) +
                 "," + Float.toString(deltaY);
-        Gdx.app.log(TAG,message);
+        //Gdx.app.log(TAG,message);
 
         Vector3 touch3D = camera.unproject(new Vector3(x,y,0));
         Vector2 touch2D = new Vector2(touch3D.x,touch3D.y);

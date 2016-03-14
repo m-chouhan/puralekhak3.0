@@ -29,6 +29,7 @@ import org.opencv.objdetect.HOGDescriptor;
 
 import android.graphics.Bitmap;
 import android.os.Environment;
+import android.util.Log;
 
 /*Entry point for image processing code >:|
 * this will run on a separate thread
@@ -386,10 +387,10 @@ public class BackgroundProcess {
         
         for(int i=0; i<mc.size(); i++){
 
-       	if( ((mc.get(i).x)>0) && ((mc.get(i).y)>0))
-       	{
-       		bw1.put((int)mc.get(i).y,(int)mc.get(i).x,255);
-       		}
+            if( ((mc.get(i).x)>0) && ((mc.get(i).y)>0))
+            {
+                bw1.put((int)mc.get(i).y,(int)mc.get(i).x,255);
+            }
         }
 
         int nz;
@@ -418,7 +419,7 @@ public class BackgroundProcess {
         	System.out.println(idx.get(i).x+","+idx.get(i).y);
         }
         
-        // Parts based HOG feature matching starts
+        //Parts based HOG feature matching starts
         Mat score = new Mat(TMatg.rows(), TMatg.cols(), CvType.CV_32FC1);
         //Mat det_imwt = new Mat.zeros(OMatg.rows(),OMatg.cols(),CvType.CV_32FC3);
         Mat det_imwt = Mat.zeros(OMatg.rows(),OMatg.cols(),CvType.CV_32FC3);
@@ -471,14 +472,16 @@ public class BackgroundProcess {
         	  double[] data = det_imwt.get(m, n);
         	  double[] odata = OMatg.get(m,n);
         	  if(data[0] > 0.80)
-        	  {   
-        		  tmp.put(m, n, data[0]*55) ;
+        	  {
+                  //Log.d("Background",""+m+","+n);
+        		  tmp.put(m, n, data[0] * 55) ;
         		  im_select.put(m, n, odata[0]*55);
         	  }
           }
         }
-        
+        Log.d("Background","Imselect "+im_select.width()+","+im_select.height());
         im_select.convertTo(im_select, CvType.CV_8U);
+        Log.d("Background", "Imselect " + im_select.width() + "," + im_select.height());
         String filename = "im_select.jpg";
         File file2 = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM), filename);
         filename = file2.toString();
@@ -535,13 +538,13 @@ public class BackgroundProcess {
             		  it1.setposx(TMatg.rows());
             		  it1.setposy(TMatg.cols());
             		  
-            		  it1.setScore(data[0]);
-            		  stuctpoints.add(it1);     				  	
+                      it1.setScore(data[0]);
+            		  stuctpoints.add(it1);
+                      System.out.println("Item Added:"+it1.getx()+","+it1.gety());
             	  }
               }
             }
         }
-        System.out.println(stuctpoints.size());
 
         // now starting to write to file
         String gettexts = "\u0905";
@@ -550,7 +553,7 @@ public class BackgroundProcess {
         File f = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM),"inscription.txt");
         FileWriter fw;
 		try {
-                fw = new FileWriter(f,true);
+             fw = new FileWriter(f,true);
 			 BufferedWriter bufwr = new BufferedWriter(fw);
 			 bufwr.write("$New$");bufwr.write("\n");
 			 bufwr.write(Double.toString(TMatg.rows()));bufwr.write(" ");bufwr.write(Double.toString(TMatg.cols()));bufwr.write(" ");
@@ -573,11 +576,14 @@ public class BackgroundProcess {
 		// now starting to write to file ends
 		
 		long lEndTime = new Date().getTime();
+        System.out.println("structPoint Size:" + stuctpoints.size() + "\tOMat Size :"+OMatg.size().toString()
+                +"\tdet_imwt size "+ det_imwt.size().toString());
         //second parameter is unicode
-        cvInterface.SpottingUpdated(Utility.convertToVector(locs),"u");
+        cvInterface.SpottingUpdated(Utility.convertToVector(stuctpoints,result.width(),result.height()),"u");
     	// find the imageview and draw it!
         System.out.println("He He");
         fileSize = 1000000;
+        updateProgressBar((int)fileSize/10000);
         undoToDefault=false;
         if(firstSpotting){
         	firstSpotting = false;

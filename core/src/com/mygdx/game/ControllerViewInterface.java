@@ -1,5 +1,6 @@
 package com.mygdx.game;
 
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import java.awt.Point;
@@ -11,7 +12,7 @@ import java.util.ArrayList;
  */
 public interface ControllerViewInterface {
 
-    void SpottingUpdated(ArrayList<Vector2> points, String unicode);
+    void SpottingUpdated(ArrayList<Rectangle> points, String unicode);
     void OpenImage(String imagePath);
     void UnicodeSelected(String unicode);
 }
