@@ -100,7 +100,7 @@ public class Utility {
 
         ArrayList<Rectangle> list = new ArrayList<Rectangle>();
         for(item p : points) {
-            Rectangle rect = new Rectangle((float) p.gety(), (float) p.getx(),
+            Rectangle rect = new Rectangle((float) (p.gety()-p.getposy()/2), (float) (p.getx()-p.getposx()/2),
                     (float) p.getposy(), (float) p.getposx());
             //rect.setPosition(rect.getX()-rect.getWidth()/2,rect.getY()-rect.getHeight()-2);
             list.add(rect);

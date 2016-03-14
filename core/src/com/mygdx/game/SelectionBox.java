@@ -36,8 +36,8 @@ public class SelectionBox extends InputAdapter {
 
         setSymbol(sym);
         Rect = new Rectangle(x,y,width,height);
-        Top_Right = new Rectangle(0,0,40,40);
-        Bottom_Left = new Rectangle(0,0,40,40);
+        Top_Right = new Rectangle(0,0,width/3,height/3);
+        Bottom_Left = new Rectangle(0,0,width/3,height/3);
         Top_Right.setCenter(Rect.x + Rect.width , Rect.y + Rect.height);
         Bottom_Left.setCenter(Rect.x, Rect.y);
     }
@@ -50,8 +50,8 @@ public class SelectionBox extends InputAdapter {
 
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
         shapeRenderer.rect(Rect.x, Rect.y, Rect.width, Rect.height);
-        shapeRenderer.end();
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+//        shapeRenderer.end();
+//        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         shapeRenderer.rect(Top_Right.x, Top_Right.y, Top_Right.width, Top_Right.height);
         shapeRenderer.rect(Bottom_Left.x, Bottom_Left.y, Bottom_Left.width, Bottom_Left.height);
         shapeRenderer.end();
@@ -79,16 +79,20 @@ public class SelectionBox extends InputAdapter {
                     Move(delta.add(InitialCenter));
                     break;
             case SCALE_TOP:
-                    Top_Right.setCenter(delta.add(InitialCenter));
-                    Rect.set(Rect.x,Rect.y,delta.x-Rect.x,delta.y-Rect.y);
-                    break;
+                    delta.add(InitialCenter);
+                    Rect.set(Rect.x, Rect.y, delta.x - Rect.x, delta.y - Rect.y);
+                break;
             case SCALE_BOTTOM:
-                    Bottom_Left.setCenter(delta.add(InitialCenter));
+                    delta.add(InitialCenter);
                     Rect.set(delta.x, delta.y,
-                            Rect.width+Rect.x-delta.x,Rect.height+Rect.y-delta.y);
-                    //Rect.setX(delta.x);Rect.setY(delta.y);
+                            Rect.width + Rect.x - delta.x, Rect.height + Rect.y - delta.y);
                 break;
         }
+
+        Top_Right.setSize(Rect.width/3, Rect.height/3);
+        Bottom_Left.setSize(Rect.width/3,Rect.height/3);
+        Top_Right.setCenter(Rect.x + Rect.width, Rect.y + Rect.height);
+        Bottom_Left.setCenter(Rect.x, Rect.y);
         return true;
     }
 
