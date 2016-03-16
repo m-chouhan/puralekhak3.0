@@ -19,13 +19,16 @@ public class KeyboardFragment extends Fragment implements View.OnClickListener{
 
     private final String TAG = "KeyboardFragment";
 
+    private View mFragmentView = null;
+    private KeyboardView mKeyboardView = null;
     private FragmentFactory.UpdateViewCallback mCallback;
     private EditText unicodeTextEditor;
-
+    private Activity parentActivity;
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         mCallback = (FragmentFactory.UpdateViewCallback) activity;
+        parentActivity = activity;
     }
 
     // Inflate the view for the fragment based on layout XML
@@ -33,18 +36,18 @@ public class KeyboardFragment extends Fragment implements View.OnClickListener{
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.keyboard_view, container, false);
-        LinearLayout.LayoutParams parameters =
-                new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-        KeyboardView kv = new MyKeyboard(getActivity(),R.xml.keyboard_hindi);
-        kv.setLayoutParams(parameters);
-        LinearLayout keyboardlayout = (LinearLayout) view.findViewById(R.id.keyboardLayout);
-        keyboardlayout.addView(kv);
-        ImageButton imageButton = (ImageButton)view.findViewById(R.id.ok_button);
+        mFragmentView = inflater.inflate(R.layout.keyboard_view, container, false);
+//        LinearLayout.LayoutParams parameters =
+//                new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        mKeyboardView = new MyKeyboard(getActivity(),R.xml.keyboard_hindi);
+        //kv.setLayoutParams(parameters);
+        LinearLayout keyboardlayout = (LinearLayout) mFragmentView.findViewById(R.id.keyboardLayout);
+        keyboardlayout.addView(mKeyboardView);
+        ImageButton imageButton = (ImageButton) mFragmentView.findViewById(R.id.ok_button);
         imageButton.setOnClickListener(this);
-        unicodeTextEditor = (EditText)view.findViewById(R.id.unicodeedit);
+        unicodeTextEditor = (EditText) mFragmentView.findViewById(R.id.unicodeedit);
         Log.d(TAG, "Keyboard Inflated");
-        return view;
+        return mFragmentView;
     }
 
     @Override
@@ -54,5 +57,14 @@ public class KeyboardFragment extends Fragment implements View.OnClickListener{
 
     public void setText(CharSequence charSequence) {
         unicodeTextEditor.setText(charSequence);
+    }
+
+    public void setKeyboard(int keyboard_id) {
+
+        KeyboardView kv = new MyKeyboard(parentActivity,keyboard_id);
+        LinearLayout keyboardlayout = (LinearLayout) mFragmentView.findViewById(R.id.keyboardLayout);
+        keyboardlayout.removeView(mKeyboardView);
+        keyboardlayout.addView(kv);
+        mKeyboardView = kv;
     }
 }

@@ -97,10 +97,8 @@ class GestureProcessor implements GestureListener {
         //Gdx.app.log(TAG,message);
         for(SelectionBox s:BoxList) {
             if( s.getRect().contains(touch2D) ) {
-                s.enable();
+                s.SwitchState();
                 Gdx.input.vibrate(200);
-                s.touchDown(touch2D);
-                setSelectedBox(s);
                 return true;
             }
         }

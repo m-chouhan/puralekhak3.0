@@ -18,15 +18,17 @@ import java.util.ArrayList;
 /**
  * Created by monty on 2/14/2016.
  */
-public class SettingsFragment extends Fragment implements AdapterView.OnItemClickListener {
+public class SettingsFragment extends Fragment implements AdapterView.OnItemSelectedListener{
 
     private final String TAG = "Settings Fragment";
     private ArrayList<String> msupportedLanguages = new ArrayList<String>();
     private ArrayList<Integer> ResourceIds = new ArrayList<Integer>();
+    private FragmentFactory.UpdateViewCallback mUVCallback;
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
+        mUVCallback = (FragmentFactory.UpdateViewCallback) activity;
         for( Field f: R.xml.class.getDeclaredFields() ) {
             f.setAccessible(true);
             try {
@@ -54,13 +56,19 @@ public class SettingsFragment extends Fragment implements AdapterView.OnItemClic
                 new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, msupportedLanguages); //selected item will look like a spinner set from XML
         spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(spinnerArrayAdapter);
-//        spinner.setOnItemClickListener(this);
+        spinner.setOnItemSelectedListener(this);
         return view;
     }
 
     @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         final String item = (String) parent.getItemAtPosition(position);
         Log.d(TAG,item);
+        mUVCallback.KeyboardSelected(ResourceIds.get(position));
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
     }
 }

@@ -35,6 +35,8 @@ public final class FragmentFactory {
     public interface UpdateViewCallback{
         void UnicodeSelected(String unicode);
         void ImageviewerReady(ControllerViewInterface cvInterface);
+        void KeyboardSelected(int keyboard_id);
+        void FragmentSizeChanged(int newFragmentSize);
     };
 
     static Fragment getInstance(int position) {

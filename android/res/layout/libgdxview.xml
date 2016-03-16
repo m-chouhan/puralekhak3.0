@@ -26,12 +26,14 @@
             android:textSize="30sp" />
         <ToggleButton
             android:id="@+id/freez_toggle"
+            android:textOff=""
+            android:textOn=""
             android:layout_marginLeft="5dp"
             android:layout_width="45dp"
             android:layout_height="45dp"
             android:background="@drawable/check"
             android:focusable="false"
             android:focusableInTouchMode="false"
-            android:layout_centerVertical="true"/>
+            android:layout_gravity="center_vertical"/>
     </LinearLayout>
 </FrameLayout>

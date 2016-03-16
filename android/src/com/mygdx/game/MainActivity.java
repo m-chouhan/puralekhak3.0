@@ -165,6 +165,8 @@ public class MainActivity extends FragmentActivity
 
         Log.d(TAG,"Template Selected "+x+","+y+","+width+","+height);
         mCurrentTemplate = new Rectangle(x,y,width,height);
+        mCurrentBitmapTemplate = Bitmap.createBitmap(mCurrentBitmap,
+                (int)mCurrentTemplate.getX(),(int)mCurrentTemplate.getY(),(int)mCurrentTemplate.getWidth(),(int)mCurrentTemplate.getHeight());
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -200,6 +202,16 @@ public class MainActivity extends FragmentActivity
     @Override
     public void ImageviewerReady(ControllerViewInterface cvInterface) {
         mCvInterface = cvInterface;
+    }
+
+    @Override
+    public void KeyboardSelected(int keyboard_id) {
+        FragmentFactory.getKeyboardFragment().setKeyboard(keyboard_id);
+    }
+
+    @Override
+    public void FragmentSizeChanged(int newFragmentSize) {
+
     }
 
     @Override
