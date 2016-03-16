@@ -42,13 +42,13 @@ import java.util.ArrayList;
 	Image myImage;
     Image myTemplatePreview;
     Texture myImageTexture;
-    /*For zoomIn,zoomOut and moving image*/
+    /**For zoomIn,zoomOut and moving image*/
     OrthographicCamera camera;
-    /*Handles custom widgets actions like scale,create new , move etc */
+    /**Handles custom widgets actions like scale,create new , move etc */
     GestureProcessor InputProcessor;
-    /* Stores all custom widgets i.e spotted characters */
+    /** Stores all custom widgets i.e spotted characters */
     ArrayList<SelectionBox> BoxList = new ArrayList<SelectionBox>();
-    /* Renders all custom widgets*/
+    /** Renders all custom widgets*/
     ShapeRenderer WidgetRenderer;
 
     private ViewControllerInterface viewControllerInterface;
@@ -184,15 +184,16 @@ import java.util.ArrayList;
         rect.height = box.getHeight()*verticalRatio;
         return rect;
     }
-    private Vector2 TransformToCameraCoordinates(Vector2 point) {
 
+//    private Vector2 TransformToCameraCoordinates(Vector2 point) {
+//
 //        float horizontalRatio = myImageTexture.getWidth()/myImage.getWidth();
 //        float verticalRatio = myImageTexture.getHeight()/myImage.getHeight();
-        /*calculating actual pixel coordinates */
-        point.x = point.x/horizontalRatio;
-        point.y = point.y/verticalRatio;
-        return point;
-    }
+//        /*calculating actual pixel coordinates */
+//        point.x = point.x/horizontalRatio;
+//        point.y = point.y/verticalRatio;
+//        return point;
+//    }
     /*Sends message to the controller to update template and adds a new selection box*/
     void CreateSelectionBoxAt( float x,float y,float width ,float height,String unicode ) {
         SelectionBox box = new SelectionBox(x, y, width, height,unicode);
@@ -235,7 +236,7 @@ import java.util.ArrayList;
             @Override
             public void run() {
                 TextureRegion region =
-                        new TextureRegion(myImageTexture,(int)rect.getX(),(int)rect.getY(),(int)rect.getWidth(),(int)rect.getHeight());
+                        new TextureRegion(myImageTexture, (int) rect.getX(), (int) rect.getY(), (int) rect.getWidth(), (int) rect.getHeight());
                 myTemplatePreview.setDrawable(new SpriteDrawable(new Sprite(region)));
             }
         });
@@ -277,5 +278,15 @@ import java.util.ArrayList;
     public void UnicodeSelected(String unicode) {
         SelectionBox box = InputProcessor.getSelectedBox();
         if(box != null) box.setSymbol(unicode);
+    }
+
+    @Override
+    public void FreezTemplates() {
+        for(SelectionBox box:BoxList ) box.disable();
+    }
+
+    @Override
+    public void UnFreezTemplates() {
+        for(SelectionBox box:BoxList) box.enable();
     }
 }

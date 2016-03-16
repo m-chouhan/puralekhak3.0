@@ -22,6 +22,8 @@ public class SelectionBox extends InputAdapter {
 
     /*GUI/Widget code follows -->*/
     private Color default_col = Color.RED,selection_col = Color.WHITE;
+
+
     /*All Possible states for a selection box */
     enum States{MOVE,STATIC,SCALE_TOP,SCALE_BOTTOM};
     States currentState = States.STATIC;
@@ -90,7 +92,7 @@ public class SelectionBox extends InputAdapter {
         }
 
         Top_Right.setSize(Rect.width/3, Rect.height/3);
-        Bottom_Left.setSize(Rect.width/3,Rect.height/3);
+        Bottom_Left.setSize(Rect.width / 3, Rect.height / 3);
         Top_Right.setCenter(Rect.x + Rect.width, Rect.y + Rect.height);
         Bottom_Left.setCenter(Rect.x, Rect.y);
         return true;
@@ -98,7 +100,7 @@ public class SelectionBox extends InputAdapter {
 
     public boolean touchUp() {
         //reset to initial condition
-        InitialPos.set(0,0);
+        InitialPos.set(0, 0);
         currentState = States.STATIC;
         mColor = default_col;
         return true;
@@ -141,12 +143,17 @@ public class SelectionBox extends InputAdapter {
         return false;
     }
 
+    public Rectangle getRect() { return Rect; }
     public float getX() { return Rect.getX(); }
     public float getY() { return Rect.getY(); }
     public float getWidth() { return Rect.getWidth(); }
     public float getHeight() { return Rect.getHeight(); }
     public void enable() { disabled = false;}
     public void disable(){ disabled = true;}
+    public void SwitchState() {
+        disabled = !disabled;
+    }
+
     public void setSymbol(String sym) {
         symbol = sym;
         //default_col = Util.Rainbow(Util.UnicodetoInteger(symbol));

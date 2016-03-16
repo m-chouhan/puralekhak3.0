@@ -92,7 +92,18 @@ class GestureProcessor implements GestureListener {
     @Override
     public boolean longPress(float x, float y) {
         message = "Long press performed";
+        Vector3 touch3D = camera.unproject(new Vector3(x,y,0));
+        Vector2 touch2D = new Vector2(touch3D.x,touch3D.y);
         //Gdx.app.log(TAG,message);
+        for(SelectionBox s:BoxList) {
+            if( s.getRect().contains(touch2D) ) {
+                s.enable();
+                Gdx.input.vibrate(200);
+                s.touchDown(touch2D);
+                setSelectedBox(s);
+                return true;
+            }
+        }
         return false;
     }
 

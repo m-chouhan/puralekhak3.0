@@ -15,4 +15,6 @@ public interface ControllerViewInterface {
     void SpottingUpdated(ArrayList<Rectangle> points, String unicode);
     void OpenImage(String imagePath);
     void UnicodeSelected(String unicode);
+    void FreezTemplates();
+    void UnFreezTemplates();
 }

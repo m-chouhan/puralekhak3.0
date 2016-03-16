@@ -3,12 +3,16 @@ package com.mygdx.game;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
+import android.widget.ToggleButton;
 
 import com.badlogic.gdx.backends.android.AndroidFragmentApplication;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
@@ -22,13 +26,16 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
  */
 
 public class LibgdxFragment extends AndroidFragmentApplication
-        implements View.OnClickListener, View.OnLongClickListener{
+        implements View.OnClickListener, View.OnLongClickListener,CompoundButton.OnCheckedChangeListener{
+
+    private final String TAG = "LibgdxFragment";
 
     private ControllerViewInterface cvDelegator;
     private ViewControllerInterface vcDelegator;
     private MainActivity parentActivity;
     private ProgressDialog progressBar;
     private Button unicodeButton;
+    private ToggleButton toggleButton;
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -52,9 +59,13 @@ public class LibgdxFragment extends AndroidFragmentApplication
         unicodeButton = (Button)parent.findViewById(R.id.unicodeButton);
         unicodeButton.setOnClickListener(this);
         unicodeButton.setOnLongClickListener(this);
+        toggleButton = (ToggleButton)parent.findViewById(R.id.freez_toggle);
+        toggleButton.setOnCheckedChangeListener(this);
         SurfaceView v = (SurfaceView)parent.findViewById(R.id.surfaceview);
+        LinearLayout linearLayout = (LinearLayout)parent.findViewById(R.id.linearlayout);
         v.bringToFront();
-        unicodeButton.bringToFront();
+        linearLayout.bringToFront();
+        //unicodeButton.bringToFront();
 
         parentActivity.ImageviewerReady(cvDelegator);
         return parent;
@@ -94,5 +105,17 @@ public class LibgdxFragment extends AndroidFragmentApplication
     public void setUnicodeText(String text) {
         unicodeButton.setText(text);
         cvDelegator.UnicodeSelected(text);
+    }
+
+    @Override
+    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        if( isChecked ) {
+            cvDelegator.FreezTemplates();
+            Log.d(TAG,"freez templates");
+        }
+        else {
+            cvDelegator.UnFreezTemplates();
+            Log.d(TAG,"unfreez templates");
+        }
     }
 }

@@ -9,14 +9,29 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="#00000000"/>
-    <Button
+    <LinearLayout
+        android:id="@+id/linearlayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_margin="20dp"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:text="U"
-        android:layout_gravity="top"
-        android:background="@drawable/uni_background"
-        android:longClickable="true"
-        android:id="@+id/unicodeButton"
-        android:textSize="30sp" />
+        android:orientation="horizontal">
+        <Button
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:text="U"
+            android:layout_gravity="top"
+            android:background="@drawable/uni_background"
+            android:longClickable="true"
+            android:id="@+id/unicodeButton"
+            android:textSize="30sp" />
+        <ToggleButton
+            android:id="@+id/freez_toggle"
+            android:layout_marginLeft="5dp"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:background="@drawable/check"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:layout_centerVertical="true"/>
+    </LinearLayout>
 </FrameLayout>
