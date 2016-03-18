@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -57,6 +58,8 @@ public class MainActivity extends FragmentActivity
     private PagerAdapter mPagerAdapter;
     /**Imageview showing Preview of the template (update when drawer is opened*/
     private ImageView mTempatePreview;
+    /**Default image to be displayed when no template is present*/
+    private Drawable mDefaultPreview;
     /**Stores Coordinates of current template to be used for creating a new bitmap
     (its a heavy operation so do it only when its necessary)*/
     private Rectangle mCurrentTemplateRect;
@@ -84,10 +87,12 @@ public class MainActivity extends FragmentActivity
         navigation_list.setOnItemClickListener(this);
 
         mCurrentBitmap = BitmapFactory.decodeResource(getResources(),
-                R.drawable.titleimg);
+                R.drawable.inscription);
         //mCurrentTemplateRect = new Rectangle(0,0,mCurrentBitmap.getWidth(),mCurrentBitmap.getHeight());
         mTempatePreview = (ImageView) findViewById(R.id.template_preview);
-        mTempatePreview.setImageBitmap(mCurrentBitmap);
+        mDefaultPreview = getResources().getDrawable(R.drawable.titleimg);
+        mTempatePreview.setImageDrawable(mDefaultPreview);
+
     }
 
     @Override
@@ -133,7 +138,7 @@ public class MainActivity extends FragmentActivity
         Log.d(TAG, Image_path);
 
         mCurrentBitmap = BitmapFactory.decodeFile(Image_path);
-        mTempatePreview.setBackgroundResource(R.drawable.titleimg);
+        mTempatePreview.setImageDrawable(mDefaultPreview);
         mCvInterface.OpenImage(Image_path);
         Log.d(TAG, "BitmapSize:" + mCurrentBitmap.getWidth() + "," + mCurrentBitmap.getHeight());
     }
@@ -146,10 +151,12 @@ public class MainActivity extends FragmentActivity
     @Override
     public void StartSpotting() {
 
-        if(mCurrentTemplateRect == null ) {
+        Rectangle r = new Rectangle(0,0,mCurrentBitmap.getWidth(),mCurrentBitmap.getHeight());
+        if(mCurrentTemplateRect == null || !r.contains(mCurrentTemplateRect) ) {
             Toast.makeText(this,"Please select a valid template first !!",Toast.LENGTH_SHORT).show();
             return;
         }
+
         Log.d(TAG, mCurrentTemplateRect.toString());
         Log.d(TAG,"Bitmap Size: "+mCurrentBitmap.getWidth()+","+mCurrentBitmap.getHeight());
         final Mat original = new Mat(),template = new Mat();
