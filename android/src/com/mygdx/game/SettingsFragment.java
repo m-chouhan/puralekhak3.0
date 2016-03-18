@@ -25,6 +25,8 @@ public class SettingsFragment extends Fragment implements AdapterView.OnItemSele
     private ArrayList<Integer> ResourceIds;
     private FragmentFactory.UpdateViewCallback mUVCallback;
 
+    private boolean inhibit_spinner = true;//to stop first automatic call to spinner on initialization
+
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -62,8 +64,13 @@ public class SettingsFragment extends Fragment implements AdapterView.OnItemSele
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+        if(inhibit_spinner) {
+            inhibit_spinner = false;
+            return;
+        }
         final String item = (String) parent.getItemAtPosition(position);
-        Log.d(TAG,item);
+        Log.d(TAG,item+" selected");
         mUVCallback.KeyboardSelected(ResourceIds.get(position));
     }
 

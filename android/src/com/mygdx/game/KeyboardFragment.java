@@ -24,6 +24,7 @@ public class KeyboardFragment extends Fragment implements View.OnClickListener{
     private FragmentFactory.UpdateViewCallback mCallback;
     private EditText unicodeTextEditor;
     private Activity parentActivity;
+    private int mKeyboard_id = R.xml.hindi;
 
     @Override
     public void onAttach(Activity activity) {
@@ -38,7 +39,7 @@ public class KeyboardFragment extends Fragment implements View.OnClickListener{
                              Bundle savedInstanceState) {
 
         mFragmentView = inflater.inflate(R.layout.keyboard_view, container, false);
-        mKeyboardView = new MyKeyboard(getActivity(),R.xml.keyboard_hindi);
+        mKeyboardView = new MyKeyboard(getActivity(),mKeyboard_id);
         //kv.setLayoutParams(parameters);
         LinearLayout keyboardlayout = (LinearLayout) mFragmentView.findViewById(R.id.keyboardLayout);
         keyboardlayout.addView(mKeyboardView);
@@ -60,11 +61,13 @@ public class KeyboardFragment extends Fragment implements View.OnClickListener{
 
     public void setKeyboard(int keyboard_id) {
 
-        KeyboardView kv = new MyKeyboard(parentActivity,keyboard_id);
+        mKeyboard_id = keyboard_id;
+        KeyboardView kv = new MyKeyboard(parentActivity,mKeyboard_id);
         LinearLayout keyboardlayout = (LinearLayout) mFragmentView.findViewById(R.id.keyboardLayout);
         keyboardlayout.removeView(mKeyboardView);
         keyboardlayout.addView(kv);
         keyboardlayout.invalidate();
+        mFragmentView.invalidate();
         mKeyboardView = kv;
     }
 }

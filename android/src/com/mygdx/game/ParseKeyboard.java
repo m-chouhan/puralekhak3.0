@@ -58,12 +58,14 @@ public class ParseKeyboard extends Keyboard{
 		mykeyparser = context.getResources().getXml(dataId);	
 
 		try {
+
 			loadKeyboardfromXML(context,mykeyparser);
 		} 	catch (Exception e) {
 			e.printStackTrace();
 		}
 		
-		Log.d(TAG,"display width"+mDisplayWidth+"display Height"+mDisplayHeight);		
+		Log.d(TAG,"display width"+mDisplayWidth+"display Height"+mDisplayHeight);
+        Log.d(TAG,"Parsing Finished");
 	}
 	
 	@Override
@@ -192,17 +194,17 @@ public class ParseKeyboard extends Keyboard{
 	        	switch(eventType)
 	        	{
 		        	case XmlPullParser.START_DOCUMENT:
-		                	Log.d(TAG,"Start document");
+		                	//Log.d(TAG,"Start document");
 		        			break;
 		        	case XmlPullParser.START_TAG:
-	                		Log.d(TAG,"Start Tag:" + parser.getName());
+	                		//Log.d(TAG,"Start Tag:" + parser.getName());
 	                		currentTag = parser.getName();
 		        			break;
 		        	case XmlPullParser.END_TAG:
-		        			Log.d(TAG,"End tag :" + parser.getName());
+		        			//Log.d(TAG,"End tag :" + parser.getName());
 		        			break;
 		        	case XmlPullParser.TEXT:
-		                	Log.d(TAG,"Original Text :" + parser.getText());
+		                	//Log.d(TAG,"Original Text :" + parser.getText());
 		                	String currentString = parser.getText().replaceAll("\\s+", "");
 	                		List<String> tokens = Arrays.asList(currentString.split(","));
 	                		ListIterator<String> it = tokens.listIterator();
@@ -214,7 +216,7 @@ public class ParseKeyboard extends Keyboard{
 	                				int start = Integer.parseInt(tuple[0],16),
 	                						end = Integer.parseInt(tuple[1],16);
 	                		
-	                				Log.d(TAG,"["+start+"--"+end+"]");
+	                				//Log.d(TAG,"["+start+"--"+end+"]");
 	                				while(start <= end)
 	                				{
 	                					if(currentTag.equals("vowels"))
@@ -241,7 +243,7 @@ public class ParseKeyboard extends Keyboard{
                 				}
 
 	                		}
-		                	
+
 		                	break;
 	        	
 	        	}
