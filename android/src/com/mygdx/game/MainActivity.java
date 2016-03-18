@@ -18,6 +18,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.badlogic.gdx.backends.android.AndroidFragmentApplication;
 import com.badlogic.gdx.math.Rectangle;
@@ -50,18 +51,18 @@ public class MainActivity extends FragmentActivity
      * The pager widget, which handles animation and allows swiping horizontally to access previous
      * and next fragments.*/
     private ViewPager mPager;
-    /*for sending messages to libgdx module */
+    /**for sending messages to libgdx module */
     private ControllerViewInterface mCvInterface;
     /**The pager adapter, which provides the pages to the view pager widget.*/
     private PagerAdapter mPagerAdapter;
-    /*Preview of the template */
+    /**Imageview showing Preview of the template (update when drawer is opened*/
     private ImageView mTempatePreview;
-    /*Stores Coordinates of current template to be used for creating a new bitmap
+    /**Stores Coordinates of current template to be used for creating a new bitmap
     (its a heavy operation so do it only when its necessary)*/
-    private Rectangle mCurrentTemplate;
-    /* Actual template to be updated only before viewing or processing*/
+    private Rectangle mCurrentTemplateRect;
+    /** Actual template to be updated only before viewing or processing*/
     private Bitmap mCurrentBitmapTemplate;
-    /*Actual inscription image as a bitmap for processing */
+    /**Actual inscription image as a bitmap for processing */
     private Bitmap mCurrentBitmap;
     private DrawerLayout mNavigation_drawer;
 
@@ -83,8 +84,8 @@ public class MainActivity extends FragmentActivity
         navigation_list.setOnItemClickListener(this);
 
         mCurrentBitmap = BitmapFactory.decodeResource(getResources(),
-                R.drawable.inscription);
-        mCurrentTemplate = new Rectangle(0,0,mCurrentBitmap.getWidth(),mCurrentBitmap.getHeight());
+                R.drawable.titleimg);
+        //mCurrentTemplateRect = new Rectangle(0,0,mCurrentBitmap.getWidth(),mCurrentBitmap.getHeight());
         mTempatePreview = (ImageView) findViewById(R.id.template_preview);
         mTempatePreview.setImageBitmap(mCurrentBitmap);
     }
@@ -102,7 +103,7 @@ public class MainActivity extends FragmentActivity
             case 3: mPager.setCurrentItem(0);
                     break;
         }
-//        mNavigation_drawer.closeDrawer(view);
+        mNavigation_drawer.closeDrawers();
     }
 
     @Override
@@ -125,15 +126,14 @@ public class MainActivity extends FragmentActivity
         startActivityForResult(Intent.createChooser(i, "Select Inscription"), IMAGE_BROWSER);
     }
 
-    /*Sends path of the image to be opened to myImageViewr */
+    /**Sends path of the image to be opened to myImageViewr */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         String Image_path = Utility.getRealPathFromURI(this, data.getData());
         Log.d(TAG, Image_path);
 
         mCurrentBitmap = BitmapFactory.decodeFile(Image_path);
-        Bitmap template = Bitmap.createBitmap(mCurrentBitmap,0,0,100,100);
-        mTempatePreview.setImageBitmap(template);
+        mTempatePreview.setBackgroundResource(R.drawable.titleimg);
         mCvInterface.OpenImage(Image_path);
         Log.d(TAG, "BitmapSize:" + mCurrentBitmap.getWidth() + "," + mCurrentBitmap.getHeight());
     }
@@ -145,7 +145,12 @@ public class MainActivity extends FragmentActivity
 
     @Override
     public void StartSpotting() {
-        Log.d(TAG,mCurrentTemplate.toString());
+
+        if(mCurrentTemplateRect == null ) {
+            Toast.makeText(this,"Please select a valid template first !!",Toast.LENGTH_SHORT).show();
+            return;
+        }
+        Log.d(TAG, mCurrentTemplateRect.toString());
         Log.d(TAG,"Bitmap Size: "+mCurrentBitmap.getWidth()+","+mCurrentBitmap.getHeight());
         final Mat original = new Mat(),template = new Mat();
         Utils.bitmapToMat(mCurrentBitmap,original);
@@ -164,9 +169,9 @@ public class MainActivity extends FragmentActivity
     public void TemplateSelected(final int x, final int y, final int width, final int height, final String unicode) {
 
         Log.d(TAG,"Template Selected "+x+","+y+","+width+","+height);
-        mCurrentTemplate = new Rectangle(x,y,width,height);
+        mCurrentTemplateRect = new Rectangle(x,y,width,height);
         mCurrentBitmapTemplate = Bitmap.createBitmap(mCurrentBitmap,
-                (int)mCurrentTemplate.getX(),(int)mCurrentTemplate.getY(),(int)mCurrentTemplate.getWidth(),(int)mCurrentTemplate.getHeight());
+                (int) mCurrentTemplateRect.getX(),(int) mCurrentTemplateRect.getY(),(int) mCurrentTemplateRect.getWidth(),(int) mCurrentTemplateRect.getHeight());
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -216,9 +221,11 @@ public class MainActivity extends FragmentActivity
 
     @Override
     public void onDrawerOpened(View drawerView) {
-        mCurrentBitmapTemplate = Bitmap.createBitmap(mCurrentBitmap,
-                (int)mCurrentTemplate.getX(),(int)mCurrentTemplate.getY(),(int)mCurrentTemplate.getWidth(),(int)mCurrentTemplate.getHeight());
-        mTempatePreview.setImageBitmap(mCurrentBitmapTemplate);
+        if(mCurrentTemplateRect != null ) {
+            mCurrentBitmapTemplate = Bitmap.createBitmap(mCurrentBitmap,
+                    (int) mCurrentTemplateRect.getX(), (int) mCurrentTemplateRect.getY(), (int) mCurrentTemplateRect.getWidth(), (int) mCurrentTemplateRect.getHeight());
+            mTempatePreview.setImageBitmap(mCurrentBitmapTemplate);
+        }
     }
 
     @Override

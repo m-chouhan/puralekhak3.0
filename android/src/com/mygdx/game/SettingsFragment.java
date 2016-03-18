@@ -21,26 +21,26 @@ import java.util.ArrayList;
 public class SettingsFragment extends Fragment implements AdapterView.OnItemSelectedListener{
 
     private final String TAG = "Settings Fragment";
-    private ArrayList<String> msupportedLanguages = new ArrayList<String>();
-    private ArrayList<Integer> ResourceIds = new ArrayList<Integer>();
+    private ArrayList<String> mSupportedLanguages;
+    private ArrayList<Integer> ResourceIds;
     private FragmentFactory.UpdateViewCallback mUVCallback;
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         mUVCallback = (FragmentFactory.UpdateViewCallback) activity;
+        mSupportedLanguages = new ArrayList<String>();
+        ResourceIds = new ArrayList<Integer>();
         for( Field f: R.xml.class.getDeclaredFields() ) {
             f.setAccessible(true);
             try {
                 String str = f.getName();
                 if(str.contains("keyboard")) {
-                    msupportedLanguages.add(f.getName());
+                    mSupportedLanguages.add(f.getName());
                     ResourceIds.add((Integer) f.get(null));
                 }
                 Log.d(TAG, f.getName() + ":" + f.get(null));
             } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            } catch (IllegalArgumentException e) {
                 e.printStackTrace();
             }
         }
@@ -53,7 +53,7 @@ public class SettingsFragment extends Fragment implements AdapterView.OnItemSele
         View view = inflater.inflate(R.layout.settings_page,container,false);
         Spinner spinner = (Spinner) view.findViewById(R.id.language_selector);
         ArrayAdapter<String> spinnerArrayAdapter =
-                new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, msupportedLanguages); //selected item will look like a spinner set from XML
+                new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, mSupportedLanguages); //selected item will look like a spinner set from XML
         spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(spinnerArrayAdapter);
         spinner.setOnItemSelectedListener(this);

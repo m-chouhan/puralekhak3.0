@@ -23,9 +23,9 @@ public class ParseKeyboard extends Keyboard{
 	private final int VOWEL = 0,DIACRITICS = 1,NUMBER = 3;
 	int current_state = VOWEL;
 	private int DynamicKeyCount = 0;
-	/*Keys to be displayed currently */	
+	/**Keys to be displayed currently */
 	private List<Key> keylist = new ArrayList<Key>();
-	/*List of rows */
+	/**List of rows */
 	private List<Row> rowlist = new ArrayList<Row>();
 	
 	private List<Key> vowels = new ArrayList<Key>();
@@ -68,7 +68,6 @@ public class ParseKeyboard extends Keyboard{
 	
 	@Override
     public List<Key> getKeys() {
-		
         return keylist;
     }
 	
@@ -124,7 +123,7 @@ public class ParseKeyboard extends Keyboard{
 				
 	}
 	
-	/*Handles dynamic keys: returns true if invalidation is needed*/	
+	/**Handles dynamic keys: returns true if invalidation is needed*/
 	public boolean InvalidationNeeded(int code)
 	{
 		switch(current_state)
@@ -146,7 +145,7 @@ public class ParseKeyboard extends Keyboard{
 		return false;
 	}
 	
-	/*Switches between normal and number mode */
+	/**Switches between normal and number mode */
 	
 	public void SwitchMode()
 	{
