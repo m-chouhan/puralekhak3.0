@@ -20,7 +20,7 @@ import java.util.List;
 /**
  * Created by monty on 8/10/2015.
  */
-public class MyKeyboard extends KeyboardView  {
+public class MyKeyboard extends KeyboardView  implements KeyboardView.OnKeyboardActionListener {
 
     private final String TAG = "KeyboardView";
 
@@ -29,106 +29,92 @@ public class MyKeyboard extends KeyboardView  {
     private EditText ET = null;
     private int DataId;
 
-    private List<Keyboard.Key> keylist;
-    
-    private OnKeyboardActionListener KeyBindings = new OnKeyboardActionListener()
-    {
+    @Override
+    public void onPress(int primaryCode) {
+        Log.d(TAG,"OnPress");
+    }
 
-        @Override
-        public void onPress(int primaryCode) {
-        	Log.d(TAG,"OnPress");
-        }
+    @Override
+    public void onRelease(int primaryCode) {
+        Log.d(TAG,"OnRelease");
+    }
 
-        @Override
-        public void onRelease(int primaryCode) {
-        	Log.d(TAG,"OnRelease");        	
-        }
+    public void onKey(int primaryCode, int[] keyCodes) {
+    //InputConnection ic = getCurrentInputConnection();
+    //ET = (EditText) ((Activity)ApplicationContext).findViewById(R.id.unicodeedit);
 
-        public void onKey(int primaryCode, int[] keyCodes) {
-            //InputConnection ic = getCurrentInputConnection();
-            ET = (EditText) ((Activity)ApplicationContext).findViewById(R.id.unicodeedit);
-        
-            //if( MyKeyboard.HandleKey(primaryCode)) invalidateAllKeys();
-            
-            switch(primaryCode){
-                case Keyboard.KEYCODE_DELETE :
-                	
-                    int len = ET.getText().length();
-                    int deletedcode = 0;
-                    if(len > 0)
-                    {
-                        deletedcode = ET.getText().subSequence(len -1 , len).charAt(0);
-                        ET.getText().delete(len- 1,len);
-                        //if deleted unicode was a consonant switch to vowel mode
-                        if( MyKeyboard.con.contains(deletedcode))
-                        	MyKeyboard.SwitchToVowels();
-                        else if (MyKeyboard.dia.contains(deletedcode))
-                        	MyKeyboard.SwitchToDiacritics(0);
+    //if( MyKeyboard.HandleKey(primaryCode)) invalidateAllKeys();
+
+        switch(primaryCode){
+            case Keyboard.KEYCODE_DELETE :
+
+                int len = ET.getText().length();
+                int deletedcode = 0;
+                if(len > 0)
+                {
+                    deletedcode = ET.getText().subSequence(len -1 , len).charAt(0);
+                    ET.getText().delete(len- 1,len);
+                    //if deleted unicode was a consonant switch to vowel mode
+                    if( MyKeyboard.con.contains(deletedcode))
+                        MyKeyboard.SwitchToVowels();
+                    else if (MyKeyboard.dia.contains(deletedcode))
+                        MyKeyboard.SwitchToDiacritics(0);
+                    invalidateAllKeys();
+                }
+                break;
+            case Keyboard.KEYCODE_DONE:
+                break;
+            case Keyboard.KEYCODE_MODE_CHANGE:
+                MyKeyboard.SwitchMode();
+                invalidateAllKeys();
+                break;
+            case Keyboard.KEYCODE_SHIFT:
+                if(MyKeyboard.current_state == 0 )
+                    MyKeyboard.SwitchToDiacritics(0);
+                else if(MyKeyboard.current_state == 1)
+                    MyKeyboard.SwitchToVowels();
+                invalidateAllKeys();
+                break;
+            default:
+                char code = (char)primaryCode;
+                Log.d(TAG, "Pcode:" + primaryCode);
+                ET.append(Character.toString((char)primaryCode));
+
+                if( MyKeyboard.InvalidationNeeded(primaryCode) ) {
+                        Log.d(TAG,"Invalidating");
                         invalidateAllKeys();
                     }
-                    break;
-                case Keyboard.KEYCODE_DONE:
-                	break;
-                case Keyboard.KEYCODE_MODE_CHANGE:
-                	MyKeyboard.SwitchMode();
-                	invalidateAllKeys();
-                    break;
-                case Keyboard.KEYCODE_SHIFT:
-                	if(MyKeyboard.current_state == 0 )
-                		MyKeyboard.SwitchToDiacritics(0);
-                	else if(MyKeyboard.current_state == 1)
-                		MyKeyboard.SwitchToVowels();
-                	invalidateAllKeys();
-                	break;
-                default:
-                    char code = (char)primaryCode;
-                    Log.d(TAG, "Pcode:" + primaryCode);
-                    ET.append(Character.toString((char)primaryCode));
-                    
-                    if( MyKeyboard.InvalidationNeeded(primaryCode) ) {
-                    		Log.d(TAG,"Invalidating");
-                    		invalidateAllKeys();
-                    	}
-            }
         }
+    }
 
-        @Override
-        public void onText(CharSequence text) {
+    @Override
+    public void onText(CharSequence text) { }
 
-        }
+    @Override
+    public void swipeLeft() {
+        Log.d(TAG,"swipeDetected");
+    }
 
-        @Override
-        public void swipeLeft() {
-        	
-            Log.d(TAG,"swipeDetected");
-        }
+    @Override
+    public void swipeRight() {
+        Log.d(TAG,"swipeDetected");
+    }
 
-        @Override
-        public void swipeRight() {
-        	Log.d(TAG,"swipeDetected");
+    @Override
+    public void swipeDown() {
+        Log.d(TAG,"swipeDetected");
+    }
 
-        }
-
-        @Override
-        public void swipeDown() {
-        	Log.d(TAG,"swipeDetected");
-
-        }
-
-        @Override
-        public void swipeUp() {
-        	Log.d(TAG,"swipeDetected");
-
-        }
-    };
-    
+    @Override
+    public void swipeUp() {
+        Log.d(TAG,"swipeDetected");
+    }
 
     public MyKeyboard(Context context, AttributeSet attrs) {
         super(context, attrs);
         
         ApplicationContext = context;                
-        ET =  (EditText) ((Activity)ApplicationContext).findViewById(R.id.unicodeedit);                
-
+        ET =  (EditText) ((Activity)ApplicationContext).findViewById(R.id.unicodeedit);
     }
     
     public MyKeyboard(Context context,int dataId) {
@@ -146,7 +132,7 @@ public class MyKeyboard extends KeyboardView  {
         MyKeyboard = new ParseKeyboard(ApplicationContext, DataId,
                 displaymetrics.widthPixels, (int)(displaymetrics.heightPixels*0.7));
         setKeyboard(MyKeyboard);
-        setOnKeyboardActionListener(KeyBindings);
-        keylist = MyKeyboard.getKeys();
+        setOnKeyboardActionListener(this);
+        //List<Keyboard.Key> keylist = MyKeyboard.getKeys();
     }
 }
