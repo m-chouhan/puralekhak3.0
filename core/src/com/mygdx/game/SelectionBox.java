@@ -1,11 +1,14 @@
 package com.mygdx.game;
 
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+
+import sun.rmi.runtime.Log;
 
 /**
  * Created by maximus_prime on 12/11/15.
@@ -16,31 +19,35 @@ import com.badlogic.gdx.math.Vector2;
 
 public class SelectionBox extends InputAdapter {
 
+    private final String TAG = "SelectionBox";
     /*actual spotting area */
     private Rectangle Rect;
     private String symbol;
 
     /*GUI/Widget code follows -->*/
-    private Color default_col = Color.RED,selection_col = Color.WHITE;
-
-
-    /*All Possible states for a selection box */
+    /**Color when template is selected */
+    private final Color SELECTION_COL = Color.WHITE;
+    private final Color mTemplateColor;;
+    /**Current color for drawing*/
+    private final Color mColor;
+    /**All Possible states for a selection box */
     enum States{MOVE,STATIC,SCALE_TOP,SCALE_BOTTOM};
     States currentState = States.STATIC;
-    Color mColor = default_col;
     Rectangle Top_Right,Bottom_Left;
-    /*true if this instance is handling the input events*/
+    /**true if this instance is handling the input events*/
     private boolean disabled = false;
     private Vector2 InitialPos = new Vector2();
     private Vector2 InitialCenter = new Vector2();
 
     SelectionBox(float x,float y,float width,float height,String sym) {
 
+        mTemplateColor = new Color(Color.RED);
+        mColor = new Color(mTemplateColor);
         setSymbol(sym);
         Rect = new Rectangle(x,y,width,height);
         Top_Right = new Rectangle(0,0,width/3,height/3);
         Bottom_Left = new Rectangle(0,0,width/3,height/3);
-        Top_Right.setCenter(Rect.x + Rect.width , Rect.y + Rect.height);
+        Top_Right.setCenter(Rect.x + Rect.width, Rect.y + Rect.height);
         Bottom_Left.setCenter(Rect.x, Rect.y);
     }
 
@@ -108,7 +115,7 @@ public class SelectionBox extends InputAdapter {
         //reset to initial condition
         InitialPos.set(0,0);
         currentState = States.STATIC;
-        mColor = default_col;
+        if( !disabled ) mColor.set(mTemplateColor);
         return true;
     }
 
@@ -130,10 +137,10 @@ public class SelectionBox extends InputAdapter {
         }
         else {
             currentState = States.STATIC;
-            mColor = default_col;
+            mColor.set(mTemplateColor);
             return false;
         }
-        mColor = selection_col;
+        mColor.set(SELECTION_COL);
         InitialPos.set(point);
         return true;
     }
@@ -154,31 +161,40 @@ public class SelectionBox extends InputAdapter {
     public float getY() { return Rect.getY(); }
     public float getWidth() { return Rect.getWidth(); }
     public float getHeight() { return Rect.getHeight(); }
+
     public void enable() {
         disabled = false;
-        mColor = default_col;
+        mColor.set(mTemplateColor);
+//        Gdx.app.log(TAG,"Enable"+mColor.toString());
     }
+
     public void disable(){
         disabled = true;
-
-        mColor.set((float)(default_col.r*0.8),(float)(default_col.g*0.8),(float)(default_col.b*0.8),
-                default_col.a);
+        float r = mTemplateColor.r*0.7f;
+        float g = mTemplateColor.g*0.7f;
+        float b = mTemplateColor.b*0.7f;
+        mColor.set(r, g, b, mTemplateColor.a);
+//        Gdx.app.log(TAG, "Disable"+mColor.toString());
     }
+
     public void SwitchState() {
 
         disabled = !disabled;
 
-        if(disabled)
-            mColor.set((float)(default_col.r*0.8),(float)(default_col.g*0.8),(float)(default_col.b*0.8),
-                    default_col.a);
+        if(disabled) {
+            float r = mTemplateColor.r*0.7f;
+            float g = mTemplateColor.g*0.7f;
+            float b = mTemplateColor.b*0.7f;
+            mColor.set(r,g,b,mTemplateColor.a);
+        }
         else
-            mColor = default_col;
+            mColor.set(mTemplateColor);
     }
 
     public void setSymbol(String sym) {
         symbol = sym;
-        //default_col = Util.Rainbow(Util.UnicodetoInteger(symbol));
-        default_col = Util.ColorFromList(Util.UnicodetoInteger(symbol));
+        //mTemplateColor = Util.Rainbow(Util.UnicodetoInteger(symbol));
+        mTemplateColor.set(Util.ColorFromList(Util.UnicodetoInteger(symbol)));
     }
     public String getSymbol() {return symbol; }
 }
