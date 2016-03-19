@@ -24,13 +24,14 @@ public class KeyboardFragment extends Fragment implements View.OnClickListener{
     private FragmentFactory.UpdateViewCallback mCallback;
     private EditText unicodeTextEditor;
     private Activity parentActivity;
-    private int mKeyboard_id = R.xml.hindi;
+    private int mKeyboard_id = R.xml.keyboard_bengali;
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         mCallback = (FragmentFactory.UpdateViewCallback) activity;
         parentActivity = activity;
+        Log.d(TAG,"onAttach");
     }
 
     /** Inflate the view for the fragment based on layout XML*/
@@ -46,7 +47,7 @@ public class KeyboardFragment extends Fragment implements View.OnClickListener{
         ImageButton imageButton = (ImageButton) mFragmentView.findViewById(R.id.ok_button);
         imageButton.setOnClickListener(this);
         unicodeTextEditor = (EditText) mFragmentView.findViewById(R.id.unicodeedit);
-        Log.d(TAG, "Keyboard Inflated");
+        Log.d(TAG, "OnCreate View Keyboard Inflated");
         return mFragmentView;
     }
 
@@ -59,15 +60,24 @@ public class KeyboardFragment extends Fragment implements View.OnClickListener{
         unicodeTextEditor.setText(charSequence);
     }
 
+    /**required to solve rendering problem on opening new image
+     * */
+    public void refreshView() {
+        LinearLayout keyboardlayout = (LinearLayout) mFragmentView.findViewById(R.id.keyboardLayout);
+        keyboardlayout.removeView(mKeyboardView);
+        mKeyboardView = new MyKeyboard(parentActivity,mKeyboard_id);
+        keyboardlayout.addView(mKeyboardView);
+        mFragmentView.invalidate();
+    }
+
     public void setKeyboard(int keyboard_id) {
 
+        if(mKeyboard_id == keyboard_id ) return;
         mKeyboard_id = keyboard_id;
         KeyboardView kv = new MyKeyboard(parentActivity,mKeyboard_id);
         LinearLayout keyboardlayout = (LinearLayout) mFragmentView.findViewById(R.id.keyboardLayout);
         keyboardlayout.removeView(mKeyboardView);
         keyboardlayout.addView(kv);
-        keyboardlayout.invalidate();
-        mFragmentView.invalidate();
         mKeyboardView = kv;
     }
 }

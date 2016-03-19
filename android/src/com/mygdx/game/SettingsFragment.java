@@ -62,6 +62,9 @@ public class SettingsFragment extends Fragment implements AdapterView.OnItemSele
         return view;
     }
 
+    public void enable() { inhibit_spinner = false; }
+    public void disable() { inhibit_spinner = true; }
+
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
@@ -73,7 +76,6 @@ public class SettingsFragment extends Fragment implements AdapterView.OnItemSele
         Log.d(TAG,item+" selected");
         mUVCallback.KeyboardSelected(ResourceIds.get(position));
     }
-
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
 

@@ -16,7 +16,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -141,6 +140,8 @@ public class MainActivity extends FragmentActivity
         mTempatePreview.setImageDrawable(mDefaultPreview);
         mCvInterface.OpenImage(Image_path);
         Log.d(TAG, "BitmapSize:" + mCurrentBitmap.getWidth() + "," + mCurrentBitmap.getHeight());
+
+        FragmentFactory.getKeyboardFragment().refreshView();
     }
 
     @Override

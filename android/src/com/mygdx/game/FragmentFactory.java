@@ -46,14 +46,18 @@ public final class FragmentFactory {
             case 1:
                     if(libgdxFragment == null )
                         libgdxFragment = new LibgdxFragment();
+                    /*required since spinner keeps firing automatically*/
+//                    if(settingsFragment != null ) settingsFragment.disable();
                     return libgdxFragment;
             case 2:
                     if(keyboardFragment == null)
                         keyboardFragment = new KeyboardFragment();
+//                    if(settingsFragment != null ) settingsFragment.disable();
                     return keyboardFragment;
             case 0:
                     if(settingsFragment == null)
                         settingsFragment = new SettingsFragment();
+//                    settingsFragment.enable();
                     return settingsFragment;
         }
         return null;

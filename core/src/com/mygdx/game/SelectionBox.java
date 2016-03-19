@@ -106,7 +106,7 @@ public class SelectionBox extends InputAdapter {
 
     public boolean touchUp() {
         //reset to initial condition
-        InitialPos.set(0, 0);
+        InitialPos.set(0,0);
         currentState = States.STATIC;
         mColor = default_col;
         return true;
@@ -154,10 +154,25 @@ public class SelectionBox extends InputAdapter {
     public float getY() { return Rect.getY(); }
     public float getWidth() { return Rect.getWidth(); }
     public float getHeight() { return Rect.getHeight(); }
-    public void enable() { disabled = false;}
-    public void disable(){ disabled = true;}
+    public void enable() {
+        disabled = false;
+        mColor = default_col;
+    }
+    public void disable(){
+        disabled = true;
+
+        mColor.set((float)(default_col.r*0.8),(float)(default_col.g*0.8),(float)(default_col.b*0.8),
+                default_col.a);
+    }
     public void SwitchState() {
+
         disabled = !disabled;
+
+        if(disabled)
+            mColor.set((float)(default_col.r*0.8),(float)(default_col.g*0.8),(float)(default_col.b*0.8),
+                    default_col.a);
+        else
+            mColor = default_col;
     }
 
     public void setSymbol(String sym) {

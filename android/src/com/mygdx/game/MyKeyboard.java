@@ -41,11 +41,11 @@ public class MyKeyboard extends KeyboardView  implements KeyboardView.OnKeyboard
 
     public void onKey(int primaryCode, int[] keyCodes) {
     //InputConnection ic = getCurrentInputConnection();
-    //ET = (EditText) ((Activity)ApplicationContext).findViewById(R.id.unicodeedit);
+    ET = (EditText) ((Activity)ApplicationContext).findViewById(R.id.unicodeedit);
 
     //if( MyKeyboard.HandleKey(primaryCode)) invalidateAllKeys();
 
-        switch(primaryCode){
+        switch(primaryCode) {
             case Keyboard.KEYCODE_DELETE :
 
                 int len = ET.getText().length();
