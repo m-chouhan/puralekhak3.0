@@ -73,21 +73,27 @@ public class SelectionBox extends InputAdapter {
         Vector2 delta = new Vector2(point);
 
         delta.sub(InitialPos);
+        float new_width = 0,new_height = 0;
 
         switch (currentState) {
             case STATIC:
                     return false;
             case MOVE:
                     Move(delta.add(InitialCenter));
-                    break;
+                    return true;
             case SCALE_TOP:
                     delta.add(InitialCenter);
-                    Rect.set(Rect.x, Rect.y, delta.x - Rect.x, delta.y - Rect.y);
+                    new_width = delta.x - Rect.x;
+                    new_height = delta.y - Rect.y;
+                    if(new_width < 50 || new_height < 50 ) return true;
+                    Rect.set(Rect.x, Rect.y,new_width,new_height);
                 break;
             case SCALE_BOTTOM:
                     delta.add(InitialCenter);
-                    Rect.set(delta.x, delta.y,
-                            Rect.width + Rect.x - delta.x, Rect.height + Rect.y - delta.y);
+                    new_width = Rect.width + Rect.x - delta.x;
+                    new_height = Rect.height + Rect.y - delta.y;
+                    if(new_width < 50 || new_height < 50 ) return true;
+                    Rect.set(delta.x, delta.y,new_width,new_height);
                 break;
         }
 

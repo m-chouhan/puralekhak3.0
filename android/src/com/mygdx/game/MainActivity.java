@@ -165,7 +165,7 @@ public class MainActivity extends FragmentActivity
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
-                BackgroundProcess.helloworld(original,template,"",mCvInterface);
+                BackgroundProcess.helloworld(original,template,FragmentFactory.getLibgdxFragment().getUnicodeText(),mCvInterface);
             }
         });
         t.start();
@@ -182,9 +182,7 @@ public class MainActivity extends FragmentActivity
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Button button =
-                        (Button) FragmentFactory.getLibgdxFragment().getView().findViewById(R.id.unicodeButton);
-                button.setText(unicode);
+                FragmentFactory.getLibgdxFragment().setUnicodeText(unicode);
             }
         });
     }

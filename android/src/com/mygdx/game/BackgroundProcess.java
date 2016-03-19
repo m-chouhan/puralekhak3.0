@@ -480,9 +480,7 @@ public class BackgroundProcess {
         	  }
           }
         }
-        Log.d("Background","Imselect "+im_select.width()+","+im_select.height());
         im_select.convertTo(im_select, CvType.CV_8U);
-        Log.d("Background", "Imselect " + im_select.width() + "," + im_select.height());
         String filename = "im_select.jpg";
         File file2 = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM), filename);
         filename = file2.toString();
