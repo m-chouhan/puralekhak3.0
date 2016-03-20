@@ -85,7 +85,7 @@ import java.util.ArrayList;
         InputProcessor = new GestureProcessor(this);
         InputMultiplexer multiplexer = new InputMultiplexer();
         multiplexer.addProcessor(mButtonStage);
-        multiplexer.addProcessor(new GestureDetector(InputProcessor));
+        multiplexer.addProcessor(InputProcessor.getGestureDetector());
         Gdx.input.setInputProcessor(multiplexer);
     }
 

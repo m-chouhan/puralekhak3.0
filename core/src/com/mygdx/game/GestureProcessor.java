@@ -8,6 +8,7 @@ package com.mygdx.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.input.GestureDetector.GestureListener;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
@@ -17,6 +18,28 @@ import java.util.ArrayList;
 class GestureProcessor implements GestureListener {
 
     private final String TAG = "GestureProcessor";
+
+    /** Class for delegating *touchUp event to gesture processor class
+     * */
+    private class mGestureDetector extends GestureDetector {
+
+        private GestureProcessor mGestureProcessor;
+        public mGestureDetector(GestureProcessor listener) {
+            super(listener);
+            mGestureProcessor = listener;
+        }
+
+        @Override
+        public boolean touchUp(float x, float y, int pointer, int button) {
+            mGestureProcessor.touchUp(x,y,pointer, button);
+            return super.touchUp(x, y, pointer, button);
+        }
+    }
+
+    public GestureDetector getGestureDetector() {
+        return new mGestureDetector(this);
+    }
+
     private String message = "No gesture performed yet";
     private final MyImageViewer imageViewer;
     private final OrthographicCamera camera;
@@ -55,6 +78,10 @@ class GestureProcessor implements GestureListener {
         InitialCameraPos.set(camera.position);
 
         return true;
+    }
+
+    private boolean touchUp(float x, float y, int pointer, int button) {
+        return false;
     }
 
     @Override
