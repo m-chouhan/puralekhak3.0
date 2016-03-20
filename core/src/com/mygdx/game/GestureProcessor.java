@@ -8,10 +8,7 @@ package com.mygdx.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.input.GestureDetector.GestureListener;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 
@@ -76,19 +73,22 @@ class GestureProcessor implements GestureListener {
         return false;
     }
 
-    /* handles pinch and zoom events */
+    private float mPrevDistance;
+    /** handles pinch and zoom events */
     @Override
     public boolean zoom(float initialDistance, float distance) {
         message = "Zoom performed, initial Distance:" + Float.toString(initialDistance) +
                 " Distance: " + Float.toString(distance);
         //Gdx.app.log(TAG,message);
-        if(initialDistance > (distance+20) ) camera.zoom += 0.01;
-        else if (initialDistance < (distance-20) && camera.zoom > 0.1f ) camera.zoom -=0.01;
+//        if(initialDistance > (distance+20) ) camera.zoom += 0.01;
+//        else if (initialDistance < (distance-20) && camera.zoom > 0.1f ) camera.zoom -=0.01;
+        if(mPrevDistance > distance ) camera.zoom += 0.01;
+        else if( mPrevDistance < distance && camera.zoom > 0.1f ) camera.zoom -= 0.01;
         camera.update();
+        mPrevDistance = distance;
         return true;
     }
 
-    /*These events are not required for now */
     @Override
     public boolean longPress(float x, float y) {
         message = "Long press performed";
@@ -96,8 +96,7 @@ class GestureProcessor implements GestureListener {
         Vector2 touch2D = new Vector2(touch3D.x,touch3D.y);
         //Gdx.app.log(TAG,message);
         for(SelectionBox s:BoxList) {
-            if( s.getRect().contains(touch2D) ) {
-                s.SwitchState();
+            if( s.longPress(touch2D) ) {
                 Gdx.input.vibrate(200);
                 return true;
             }

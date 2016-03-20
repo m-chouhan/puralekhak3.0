@@ -113,7 +113,7 @@ public class SelectionBox extends InputAdapter {
 
     public boolean touchUp() {
         //reset to initial condition
-        InitialPos.set(0,0);
+        InitialPos.set(0, 0);
         currentState = States.STATIC;
         if( !disabled ) mColor.set(mTemplateColor);
         return true;
@@ -145,18 +145,21 @@ public class SelectionBox extends InputAdapter {
         return true;
     }
 
+    boolean longPress(Vector2 point) {
+
+        if( Rect.contains(point)) {
+            SwitchState();
+            return true;
+        }
+        return false;
+    }
     boolean contains(Vector2 point) {
 
         if( disabled ) return false;
-
-        if(Top_Right.contains(point)) return true;
-        else if(Bottom_Left.contains(point)) return true;
-        else if(Rect.contains(point)) return true;
-
+        if(Top_Right.contains(point) || Bottom_Left.contains(point) || Rect.contains(point) ) return true;
         return false;
     }
 
-    public Rectangle getRect() { return Rect; }
     public float getX() { return Rect.getX(); }
     public float getY() { return Rect.getY(); }
     public float getWidth() { return Rect.getWidth(); }
