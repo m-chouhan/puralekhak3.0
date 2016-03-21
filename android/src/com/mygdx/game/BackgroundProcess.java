@@ -47,6 +47,9 @@ public class BackgroundProcess {
 	static ArrayList<Point> locsCurrent = new ArrayList<Point>();
 	static private long fileSize = 0;
 
+    static public void Test() {
+
+    }
     /**
         @param template: template to be used for spotting
         @param original: original image where characters need to be spotted
@@ -82,7 +85,7 @@ public class BackgroundProcess {
      * @return
      */
     static public long helloworld(Mat OMat,Mat TMat,String unicode, ControllerViewInterface cvInterface) {
-		
+
 		if(firstSpotting){
 			//Do nothing
 		}
