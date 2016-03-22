@@ -48,7 +48,95 @@ public class BackgroundProcess {
 	static private long fileSize = 0;
 
     static public void Test() {
+        Size s = new Size(10,10);
+        ;
+        //Size s2  = s/2;
+    }
+    static public void foo(Mat template,Mat image, int fragsize) {
 
+        /**To be replaced with other code */
+        Mat roi_mag = null,image_mag1 = null;
+        int maxdilate = 0;
+
+        /*******/
+
+        Mat cg = template = roi_mag;
+        Mat ag = image = image_mag1;
+
+        Size asz = image_mag1.size();//asz = size(image_mag1)
+        Size csz = roi_mag.size();//csz = size(roi_mag)
+
+        Mat corrim = new Mat(asz,CvType.CV_32FC1);//corrim = zeros(asz(1), asz(2));
+        corrim.setTo(new Scalar(0, 0, 0, 0));//corrim.set(0);
+
+        Size cszh = new Size(Math.round(csz.width/fragsize), Math.round(csz.height / fragsize));
+        //cszh = round( csz/fragsize ); //no of iterations row nd columns wise
+
+        int fragcount = 0;
+        Size cszm = new Size(csz.width / 2, csz.height / 2);//cszm = csz/2;
+
+        Mat affineMat = new Mat(2, 3, CvType.CV_32FC1);
+        affineMat.setTo(new Scalar(0, 0, 0, 0));
+        affineMat.put(0, 0, 1);
+        affineMat.put(1, 1, 1);
+        //se = getStructuringElement(MORPH_ELLIPSE, cv::Size(9,9));/**see*/
+        //using different dilate kernel
+        Mat dilatekernel = Imgproc.getStructuringElement(Imgproc.MORPH_CROSS,
+                new Size(2 * maxdilate + 1, 2 * maxdilate + 1), new Point(maxdilate, maxdilate));
+        //rows ==> 0th element ==> height,column ==>1st element ==> width
+        for (int i = 1; i <= cszh.height; ++i) {
+            for (int j = 1; j <= cszh.width; ++j) {
+                int imin = Math.max(1, (i - 1) * fragsize + 1);
+                int imax = Math.min(i * fragsize, (int)csz.height);
+                int jmin = Math.max(1, (j - 1) * fragsize + 1);
+                int jmax = Math.min(j * fragsize, (int)csz.width);
+                Mat prt1 = roi_mag.submat(imin, imax, jmin, jmax); //prt1 = cg(imin:imax, jmin:jmax);
+                Mat matchResult =
+                        new Mat(image_mag1.rows() - prt1.rows() + 1, image_mag1.cols() - prt1.cols() + 1, CvType.CV_32FC1);
+                Imgproc.matchTemplate(image_mag1, prt1, matchResult, Imgproc.TM_CCOEFF_NORMED);
+
+                Imgproc.dilate(matchResult, matchResult, dilatekernel, new Point(-1, -1), 5);
+                Mat corrim2 = matchResult;
+                //imdilate(normxcorr2e(prt1,ag,'same'),se);/**see*/
+
+                float[] prtm = new float[]{(imax + imin) / 2, (jmax + jmin) / 2};
+                float[] prtsz = new float[]{(imax - imin), (jmax - jmin)};
+                float[] posind =
+                        new float[]{Math.round(cszm.height - prtm[0]), Math.round(cszm.width - prtm[1])};
+
+                Size corr2sz = corrim2.size();
+
+                if (posind[0] >= 0 && posind[1] >= 0) {
+                    //corrim2 = shiftd(corrim2,0,posind[0]);
+                    //corrim2 = shiftr(corrim2,0,posind[1]);
+                    affineMat.put(0, 2, posind[1]);//0 is x-axis
+                    affineMat.put(1, 2, posind[0]);//1 is y-axis
+                    Imgproc.warpAffine(corrim2, corrim2, affineMat, corrim2.size());
+
+                } else if (posind[0] >= 0 && posind[1] < 0) {
+                    //corrim2 = shiftd(corrim2,0,posind[0]);
+                    //corrim2 = shiftl(corrim2,0,Math.abs(posind[2]));
+                    affineMat.put(0, 2, -posind[1]);
+                    affineMat.put(1, 2, posind[0]);
+                    Imgproc.warpAffine(corrim2, corrim2, affineMat, corrim2.size());
+                } else if (posind[0] < 0 && posind[1] >= 0) {
+                    //corrim2 = shiftu(corrim2,0,abs(posind[0]));
+                    //corrim2 = shiftr(corrim2,0,posind[2]);
+                    affineMat.put(0, 2, posind[1]);
+                    affineMat.put(1, 2, -posind[0]);
+                    Imgproc.warpAffine(corrim2, corrim2, affineMat, corrim2.size());
+                } else {
+                    //corrim2 = shiftu(corrim2,0,abs(posind[0]));
+                    //corrim2 = shiftl(corrim2,0,abs(posind[1]));
+                    affineMat.put(0, 2, -posind[1]);
+                    affineMat.put(1, 2, -posind[0]);
+                    Imgproc.warpAffine(corrim2, corrim2, affineMat, corrim2.size());
+                }
+                corr2sz = corrim2.size();
+                Core.add(corrim, corrim2, corrim);//corrim = corrim+corrim2;
+                fragcount = fragcount + 1;
+            }
+        }
     }
     /**
         @param template: template to be used for spotting
