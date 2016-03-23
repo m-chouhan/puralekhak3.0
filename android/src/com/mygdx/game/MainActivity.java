@@ -166,7 +166,7 @@ public class MainActivity extends FragmentActivity
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
-                BackgroundProcess.helloworld(original,template,FragmentFactory.getLibgdxFragment().getUnicodeText(),mCvInterface);
+                BackgroundProcess.Spot(original,template,8,FragmentFactory.getLibgdxFragment().getUnicodeText(),mCvInterface);
             }
         });
         t.start();

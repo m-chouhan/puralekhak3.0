@@ -49,16 +49,89 @@ public class BackgroundProcess {
 
     static public void Test() {
         Size s = new Size(10,10);
-        ;
         //Size s2  = s/2;
     }
-    static public void foo(Mat template,Mat image, int fragsize) {
 
-        /**To be replaced with other code */
-        Mat roi_mag = null,image_mag1 = null;
-        int maxdilate = 0;
+    static public void Spot(Mat image,Mat template, int fragsize,String unicode, ControllerViewInterface cvInterface) {
 
         /*******/
+
+        Mat OMat = image,TMat = template;
+        if(firstSpotting){
+            //Do nothing
+        }
+        else {
+            if(locsPre.size()!=0){
+                locsCurrent.addAll(locsPre);
+            }
+            if(!preUndo){
+                tmpPre = tmp.clone();
+                im_selectPre = im_select.clone();
+            }
+        }
+        double Oheight=0;
+        double Owidth=0;
+        double Theight=0;
+        double Twidth=0;
+
+        long lStartTime = new Date().getTime();
+
+        int result_cols =  OMat.cols() - TMat.cols() + 1;
+        int result_rows = OMat.rows() - TMat.rows() + 1;
+        Mat result= new Mat(result_rows,result_cols,CvType.CV_32FC1);
+        OMatg= new Mat(result_rows,result_cols,CvType.CV_8UC1);
+        TMatg= new Mat(result_rows,result_cols,CvType.CV_8UC1);
+
+        Imgproc.cvtColor(OMat, OMatg, Imgproc.COLOR_BGR2GRAY);
+        Imgproc.cvtColor(TMat, TMatg, Imgproc.COLOR_BGR2GRAY);
+
+        System.out.println("Height: " + result.height() + " Width: " + result.width());
+
+        Oheight=OMatg.rows();
+        Owidth=OMatg.cols();
+        Theight=TMatg.rows();
+        Twidth=TMatg.cols();
+
+        //to make matrix dimensions even
+        if ((OMatg.rows() % 2)!=0) { Oheight=Oheight+1;}
+        if ((OMatg.width() % 2)!=0) { Owidth=Owidth+1;}
+        if ((TMatg.rows() % 2)!=0) {Theight=Theight+1;}
+        if ((TMatg.width() % 2)!=0) {Twidth=Twidth+1;}
+
+        Imgproc.resize(OMatg, OMatg, new Size(Owidth,Oheight), 0, 0, Imgproc.INTER_LINEAR);
+        Imgproc.resize(TMatg, TMatg, new Size(Twidth,Theight), 0, 0, Imgproc.INTER_LINEAR);
+
+        Mat roi_grad_x = new Mat();
+        Mat roi_grad_y = new Mat();
+        Mat image_grad_x = new Mat();
+        Mat image_grad_y = new Mat();
+
+        System.out.println("Calculating gradients of roi and original image using sobel\n");
+        /// Gradient X of the Original image
+        Imgproc.Sobel(OMatg, image_grad_x, CvType.CV_32F, 1, 0, 3,1,0);
+        /// Gradient Y of the roi image
+        Imgproc.Sobel(OMatg, image_grad_y, CvType.CV_32F, 0, 1, 3,1,0);
+        /// Gradient X of the original image
+        Imgproc.Sobel(TMatg, roi_grad_x, CvType.CV_32F, 1, 0, 3,1,0);
+        /// Gradient Y of the roi image
+        Imgproc.Sobel(TMatg, roi_grad_y, CvType.CV_32F, 0, 1, 3,1,0);
+
+        Mat image_mag = new Mat();
+        Mat roi_mag = new Mat();
+
+        Core.magnitude(image_grad_x, image_grad_y, image_mag);
+        Core.magnitude(roi_grad_x, roi_grad_y, roi_mag);
+
+        Mat image_grad = new Mat();
+        Mat roi_grad = new Mat();
+        Core.convertScaleAbs(image_mag, image_grad);
+        Core.convertScaleAbs(roi_mag, roi_grad );
+
+        Mat image_mag1 = new Mat();Mat image_mag2 = new Mat();
+        image_mag.copyTo( image_mag1 );
+        image_mag.copyTo( image_mag2 );
+
+        // normalized cross correlation starts..
 
         Mat cg = template = roi_mag;
         Mat ag = image = image_mag1;
@@ -81,6 +154,7 @@ public class BackgroundProcess {
         affineMat.put(1, 1, 1);
         //se = getStructuringElement(MORPH_ELLIPSE, cv::Size(9,9));/**see*/
         //using different dilate kernel
+        int maxdilate=2;
         Mat dilatekernel = Imgproc.getStructuringElement(Imgproc.MORPH_CROSS,
                 new Size(2 * maxdilate + 1, 2 * maxdilate + 1), new Point(maxdilate, maxdilate));
         //rows ==> 0th element ==> height,column ==>1st element ==> width
@@ -137,6 +211,254 @@ public class BackgroundProcess {
                 fragcount = fragcount + 1;
             }
         }
+
+        Mat cf = corrim;
+
+        Mat bw = new Mat(OMatg.rows(), OMatg.cols(), CvType.CV_32FC1 );
+        Imgproc.threshold(cf, bw, 2.3, 1, Imgproc.THRESH_BINARY);
+
+        int erosion_size=2;
+
+        // set 2nd row to '1'
+        Mat kernel = Imgproc.getStructuringElement(Imgproc.MORPH_CROSS, new Size(2 * erosion_size + 1, 2 * erosion_size + 1), new Point(erosion_size, erosion_size));
+        Imgproc.dilate(bw, bw, kernel, new Point(-1,-1), 2);
+
+        Mat bw2 = new Mat();
+
+        bw.convertTo(bw2, CvType.CV_8U);
+        // find contours
+        List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
+        Mat hierarchy = new Mat();
+        Imgproc.findContours(bw2, contours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
+
+        //get moments
+        List<Moments> mu = new ArrayList<Moments>(contours.size());
+        for( int i = 0; i < contours.size(); i++ )
+        {
+            mu.add(i,Imgproc.moments( contours.get(i), false ));
+        }
+        //get moment centers
+        List<Point> mc = new ArrayList<Point>(contours.size());
+        for( int i = 0; i < contours.size(); i++ )
+        {
+            Point p = new Point((int) (mu.get(i).get_m10() / mu.get(i).get_m00()) , (int)(mu.get(i).get_m01()/mu.get(i).get_m00()) );
+            mc.add(i, p);
+        }
+
+        bw1=new Mat(OMatg.rows(), OMatg.cols(), CvType.CV_8U );
+        bw1.setTo(new Scalar(0,0,0,0));
+
+        for(int i=0; i<mc.size(); i++){
+
+            if( ((mc.get(i).x)>0) && ((mc.get(i).y)>0))
+            {
+                bw1.put((int)mc.get(i).y,(int)mc.get(i).x,255);
+            }
+        }
+
+        int nz;
+        nz = Core.countNonZero(bw1);
+        System.out.println("No of points are:"+nz);
+
+        List<Point> idx = new ArrayList<Point>(nz);
+        int pcntr=0;
+        for(  int m = 0; m < bw1.rows(); m++ )
+        {
+            for( int n = 0; n < bw1.cols(); n++ )
+            {
+                double[] data = bw1.get(m, n);
+                if(data[0] > 0)
+                {
+                    Point p = new Point(m,n);
+                    idx.add(pcntr,p);
+                    pcntr++;
+                }
+            }
+        }
+
+        System.out.println("This is "+idx.size());
+        for(int i=0;i<idx.size();i++)
+        {
+            System.out.println(idx.get(i).x+","+idx.get(i).y);
+        }
+
+        //Parts based HOG feature matching starts
+        Mat score = new Mat(TMatg.rows(), TMatg.cols(), CvType.CV_32FC1);
+        //Mat det_imwt = new Mat.zeros(OMatg.rows(),OMatg.cols(),CvType.CV_32FC3);
+        Mat det_imwt = Mat.zeros(OMatg.rows(),OMatg.cols(),CvType.CV_32FC3);
+        //Vector<Point> locs;
+        ArrayList<Point> locs = new ArrayList<Point>();
+        for(int i=0;i<idx.size();i++)
+        {
+            System.out.println("now for"+i);
+            System.out.println("x is"+idx.get(i).x+"y is"+idx.get(i).y);
+
+            if( (idx.get(i).x>Math.ceil(roi_grad.rows()/2))&&(idx.get(i).x<(image_mag1.rows()-Math.floor(roi_grad.rows()/2)))&&(idx.get(i).y>Math.ceil(roi_grad.cols()/2)) && (idx.get(i).y<(image_mag1.cols()-Math.floor(roi_grad.cols()/2))) )
+            {
+                Mat temp = OMatg.submat((int)idx.get(i).x-roi_grad.rows()/2,(int)idx.get(i).x+roi_grad.rows()/2,(int)idx.get(i).y-roi_grad.cols()/2,(int)idx.get(i).y+roi_grad.cols()/2);
+                score = partialhogmatch4frags(temp,TMatg);
+                double[] data1 = score.get(2,2);
+
+                System.out.println(data1[0]);
+                if (data1[0]>=0.80)
+                {
+                    System.out.println("inside if");
+                    det_imwt.submat((int)idx.get(i).x-roi_grad.rows()/2,(int)idx.get(i).x+roi_grad.rows()/2,(int)idx.get(i).y-roi_grad.cols()/2,(int)idx.get(i).y+roi_grad.cols()/2).setTo(new Scalar(data1[0],0,0));
+                    Point p1 = new Point( idx.get(i).x , idx.get(i).y );
+                    locs.add(p1);
+                }
+            }
+        }
+        locsPre.clear();
+        locsPre.addAll(locs);
+        if(locsCurrent.size()!=0)
+            locs.addAll(locsCurrent);
+
+        numberOfMatchings = locs.size()-locsCurrent.size();
+        System.out.println("Points after HOG are "+numberOfMatchings);
+
+        //tmp= new Mat( OMatg.rows(), OMatg.cols(), CvType.CV_8UC1 );
+
+        if(firstSpotting){
+            tmp = OMatg.clone();
+            im_select = OMatg.clone();
+        }
+        else{
+            tmp = tmpPre.clone();
+            im_select = im_selectPre.clone();
+        }
+
+        for(  int m = 0; m < det_imwt.rows(); m++ )
+        {
+            for( int n = 0; n < det_imwt.cols(); n++ )
+            {
+                double[] data = det_imwt.get(m, n);
+                double[] odata = OMatg.get(m,n);
+                if(data[0] > 0.80)
+                {
+                    //Log.d("Background",""+m+","+n);
+                    tmp.put(m, n, data[0] * 55) ;
+                    im_select.put(m, n, odata[0]*55);
+                }
+            }
+        }
+        im_select.convertTo(im_select, CvType.CV_8U);
+        String filename = "im_select.jpg";
+        File file2 = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM), filename);
+        filename = file2.toString();
+        Highgui.imwrite(filename, im_select);
+
+        List<Mat> ch = new ArrayList<Mat>();
+        fin_img = new Mat();
+        ch.add(tmp);
+        ch.add(OMatg);
+        ch.add(OMatg);
+
+        Core.merge(ch, fin_img);
+        fin_img.convertTo(fin_img, CvType.CV_8U);
+        // convert to bitmap:
+        bm2 = Bitmap.createBitmap(fin_img.cols(), fin_img.rows(),Bitmap.Config.ARGB_8888);
+        Utils.matToBitmap(fin_img, bm2);
+
+        OutputStream outStream = null;
+        File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM), "displaySpotted.jpg");
+        try
+        {
+            outStream = new FileOutputStream(file);
+            //saving as a JPEG image
+            bm2.compress(Bitmap.CompressFormat.JPEG, 100, outStream);
+            outStream.flush();
+            outStream.close();
+            //Toast.makeText(this, "Saved", Toast.LENGTH_LONG).show();
+        }
+        catch(FileNotFoundException e)
+        {
+            e.printStackTrace();
+        }
+        catch(IOException e)
+        {
+            e.printStackTrace();
+        }
+        //
+        ArrayList<item>  stuctpoints = new ArrayList<item>();
+
+        for(int i=0;i<locs.size();i++)
+        {
+            for(  int m = 0; m < det_imwt.rows(); m++ )
+            {
+                for( int n = 0; n < det_imwt.cols(); n++ )
+                {
+                    double[] data = det_imwt.get(m, n);
+                    if ( ( locs.get(i).x==m )&&( locs.get(i).y==n )&& (data[0]>=0.70))
+                    {
+
+                        item it1 = new item();
+                        it1.setx(locs.get(i).x);
+                        it1.sety(locs.get(i).y);
+
+                        it1.setposx(TMatg.rows());
+                        it1.setposy(TMatg.cols());
+
+                        it1.setScore(data[0]);
+                        stuctpoints.add(it1);
+                        System.out.println("Item Added:"+it1.getx()+","+it1.gety());
+                    }
+                }
+            }
+        }
+
+        // now starting to write to file
+        String gettexts = "\u0905";
+        System.out.println(gettexts);
+
+        File f = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM),"inscription.txt");
+        FileWriter fw;
+        try {
+            fw = new FileWriter(f,true);
+            BufferedWriter bufwr = new BufferedWriter(fw);
+            bufwr.write("$New$");bufwr.write("\n");
+            bufwr.write(Double.toString(TMatg.rows()));bufwr.write(" ");bufwr.write(Double.toString(TMatg.cols()));bufwr.write(" ");
+            bufwr.write(Double.toString(stuctpoints.size()));bufwr.write(" ");bufwr.write(gettexts);bufwr.write("\n");
+            for(int i=0;i<stuctpoints.size();i++)
+            {
+                item st = stuctpoints.get(i);
+                bufwr.write(Double.toString(st.getx()));bufwr.write(" ");
+                bufwr.write(Double.toString(st.gety()));bufwr.write(" ");
+                bufwr.write(Double.toString(st.getScore()));
+                bufwr.write("\n");
+            }
+            bufwr.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+        // now starting to write to file ends
+
+        long lEndTime = new Date().getTime();
+        System.out.println("structPoint Size:" + stuctpoints.size() + "\tOMat Size :"+OMatg.size().toString()
+                +"\tdet_imwt size "+ det_imwt.size().toString());
+        //second parameter is unicode
+        cvInterface.SpottingUpdated(Utility.convertToVector(stuctpoints,result.width(),result.height()),unicode);
+        // find the imageview and draw it!
+        System.out.println("He He");
+        fileSize = 1000000;
+        updateProgressBar((int)fileSize/10000);
+        undoToDefault=false;
+        if(firstSpotting){
+            firstSpotting = false;
+            undoToDefault = true;
+        }
+        if(preUndo){
+            preUndo = false;
+        }
+        /*
+        runOnUiThread(new Runnable() {
+		    public void run() {
+		    	button4.setEnabled(true);
+		    }
+		});*/
     }
     /**
         @param template: template to be used for spotting
