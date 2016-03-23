@@ -20,6 +20,7 @@ import org.opencv.core.MatOfInt;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.Point;
 import org.opencv.core.Range;
+import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.highgui.Highgui;
@@ -52,7 +53,7 @@ public class BackgroundProcess {
         //Size s2  = s/2;
     }
 
-    static public void Spot(Mat image,Mat template, int fragsize,String unicode, ControllerViewInterface cvInterface) {
+    static public void Spot(Mat image,Mat template, int fragsize, String unicode, ControllerViewInterface cvInterface) {
 
         /*******/
 
@@ -160,16 +161,24 @@ public class BackgroundProcess {
         //rows ==> 0th element ==> height,column ==>1st element ==> width
         for (int i = 1; i <= cszh.height; ++i) {
             for (int j = 1; j <= cszh.width; ++j) {
-                int imin = Math.max(1, (i - 1) * fragsize + 1);
-                int imax = Math.min(i * fragsize, (int)csz.height);
-                int jmin = Math.max(1, (j - 1) * fragsize + 1);
-                int jmax = Math.min(j * fragsize, (int)csz.width);
+                int imin = Math.max(0, (i - 1) * fragsize );
+                int imax = Math.min(i * fragsize, (int) csz.height);
+                int jmin = Math.max(0, (j - 1) * fragsize );
+                int jmax = Math.min(j * fragsize, (int) csz.width);
                 Mat prt1 = roi_mag.submat(imin, imax, jmin, jmax); //prt1 = cg(imin:imax, jmin:jmax);
-                Mat matchResult =
-                        new Mat(image_mag1.rows() - prt1.rows() + 1, image_mag1.cols() - prt1.cols() + 1, CvType.CV_32FC1);
-                Imgproc.matchTemplate(image_mag1, prt1, matchResult, Imgproc.TM_CCOEFF_NORMED);
 
+                Size matchSize = new Size(image_mag1.cols() - prt1.cols() + 1,image_mag1.rows() - prt1.rows() + 1);
+
+                int leftPad = (int)(image_mag1.cols() - matchSize.width)/2;
+                int rightPad = (int) (image_mag1.cols() - matchSize.width - leftPad);
+                int topPad = (int)(image_mag1.rows() - matchSize.height)/2;
+                int bottomPad = (int)(image_mag1.rows() - matchSize.height - topPad);
+                //new Mat(asz,CvType.CV_32FC1);
+                Mat matchResult = new Mat(asz, CvType.CV_32FC1);
+                Imgproc.matchTemplate(image_mag1, prt1, matchResult.submat(
+                        new Rect(leftPad,topPad,(int)matchSize.width,(int)matchSize.height)), Imgproc.TM_CCOEFF_NORMED);
                 Imgproc.dilate(matchResult, matchResult, dilatekernel, new Point(-1, -1), 5);
+
                 Mat corrim2 = matchResult;
                 //imdilate(normxcorr2e(prt1,ag,'same'),se);/**see*/
 
