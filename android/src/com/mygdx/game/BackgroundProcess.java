@@ -35,10 +35,13 @@ import android.util.Log;
 /*Entry point for image processing code >:|
 * this will run on a separate thread
                 don't touch ---- Handle With Care
-* TODO: Improve / Clean / Replace */
+* TODO: Improve / Clean
+* TODO: change loop to clip max_value in last iterations
+* */
 
 public class BackgroundProcess {
-	
+
+    static final String TAG = "BackgroundProcess";
 	static private boolean firstSpotting = true, undoToDefault=false, preUndo=false;
 	static private Mat m,OMatg,TMatg,theImageMat,bw1,fin_img,im_select,tmp,new_mat,tmpPre,im_selectPre;
 	static private int numberOfMatchings;
@@ -46,7 +49,6 @@ public class BackgroundProcess {
     
 	static ArrayList<Point> locsPre = new ArrayList<Point>();
 	static ArrayList<Point> locsCurrent = new ArrayList<Point>();
-	static private long fileSize = 0;
 
     static public void Spot(Mat image,Mat template, int fragsize, String unicode, ControllerViewInterface cvInterface) {
 
@@ -149,7 +151,7 @@ public class BackgroundProcess {
         affineMat.setTo(new Scalar(0, 0, 0, 0));
         affineMat.put(0, 0, 1);
         affineMat.put(1, 1, 1);
-        //se = getStructuringElement(MORPH_ELLIPSE, cv::Size(9,9));/**see*/
+
         //using different dilate kernel
         int maxdilate=2;
         Mat dilatekernel = Imgproc.getStructuringElement(Imgproc.MORPH_CROSS,
@@ -159,9 +161,9 @@ public class BackgroundProcess {
         for (int i = 0; i < total_iterations.height; ++i) {
             for (int j = 0; j < total_iterations.width; ++j) {
                 int imin = i*fragsize;//Math.max(0, (i - 1) * fragsize );
-                int imax = (i+1)*fragsize;//Math.min(i * fragsize, (int) template_size.height);
+                int imax = Math.min((i+1)*fragsize,(int)template_size.height);
                 int jmin = j*fragsize;//Math.max(0, (j - 1) * fragsize );
-                int jmax = (j+1)*fragsize;//Math.min(j * fragsize, (int) template_size.width);
+                int jmax = Math.min((j+1)*fragsize, (int) template_size.width);
                 Mat prt1 = roi_mag.submat(imin, imax, jmin, jmax); //prt1 = cg(imin:imax, jmin:jmax);
 
                 Size matchSize = new Size(image_mag1.cols() - prt1.cols() + 1,image_mag1.rows() - prt1.rows() + 1);
@@ -317,6 +319,7 @@ public class BackgroundProcess {
                 }
             }
         }
+
         locsPre.clear();
         locsPre.addAll(locs);
         if(locsCurrent.size()!=0)
@@ -365,7 +368,7 @@ public class BackgroundProcess {
 
         Core.merge(ch, fin_img);
         fin_img.convertTo(fin_img, CvType.CV_8U);
-        
+
         /** not required */
         /*
         // convert to bitmap:
@@ -421,8 +424,6 @@ public class BackgroundProcess {
         }
 
         // now starting to write to file
-        String gettexts = "\u0905";
-        System.out.println(gettexts);
 
         File f = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM),"inscription.txt");
         FileWriter fw;
@@ -431,7 +432,7 @@ public class BackgroundProcess {
             BufferedWriter bufwr = new BufferedWriter(fw);
             bufwr.write("$New$");bufwr.write("\n");
             bufwr.write(Double.toString(TMatg.rows()));bufwr.write(" ");bufwr.write(Double.toString(TMatg.cols()));bufwr.write(" ");
-            bufwr.write(Double.toString(stuctpoints.size()));bufwr.write(" ");bufwr.write(gettexts);bufwr.write("\n");
+            bufwr.write(Double.toString(stuctpoints.size()));bufwr.write(" ");bufwr.write(unicode);bufwr.write("\n");
             for(int i=0;i<stuctpoints.size();i++)
             {
                 item st = stuctpoints.get(i);
@@ -446,18 +447,16 @@ public class BackgroundProcess {
             e.printStackTrace();
         }
 
-
         // now starting to write to file ends
 
         long lEndTime = new Date().getTime();
-        System.out.println("structPoint Size:" + stuctpoints.size() + "\tOMat Size :"+OMatg.size().toString()
+        Log.d(TAG,"structPoint Size:" + stuctpoints.size() + "\tOMat Size :"+OMatg.size().toString()
                 +"\tdet_imwt size "+ det_imwt.size().toString());
-        //second parameter is unicode
-        cvInterface.SpottingUpdated(Utility.convertToVector(stuctpoints,result.width(),result.height()),unicode);
+        /**second parameter is unicode*/
+        cvInterface.SpottingUpdated(Utility.convertToVector(stuctpoints, result.width(), result.height()), unicode);
         // find the imageview and draw it!
         System.out.println("He He");
-        fileSize = 1000000;
-        updateProgressBar((int)fileSize/10000);
+        updateProgressBar(100);
         undoToDefault=false;
         if(firstSpotting){
             firstSpotting = false;
@@ -466,12 +465,6 @@ public class BackgroundProcess {
         if(preUndo){
             preUndo = false;
         }
-        /*
-        runOnUiThread(new Runnable() {
-		    public void run() {
-		    	button4.setEnabled(true);
-		    }
-		});*/
     }
     /**
         @param template: template to be used for spotting
@@ -509,6 +502,7 @@ public class BackgroundProcess {
      */
     static public long helloworld(Mat OMat,Mat TMat,String unicode, ControllerViewInterface cvInterface) {
 
+        long fileSize = 0;
 		if(firstSpotting){
 			//Do nothing
 		}
