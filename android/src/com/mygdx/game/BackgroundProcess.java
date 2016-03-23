@@ -170,7 +170,7 @@ public class BackgroundProcess {
                 int rightPad = (int) (image_mag1.cols() - matchSize.width - leftPad);
                 int topPad = (int)(image_mag1.rows() - matchSize.height)/2;
                 int bottomPad = (int)(image_mag1.rows() - matchSize.height - topPad);
-                
+
                 Mat matchResult = new Mat(image_size, CvType.CV_32FC1);
                 Imgproc.matchTemplate(image_mag1, prt1, matchResult.submat(
                         new Rect(leftPad,topPad,(int)matchSize.width,(int)matchSize.height)), Imgproc.TM_CCOEFF_NORMED);
@@ -290,9 +290,9 @@ public class BackgroundProcess {
             System.out.println(idx.get(i).x+","+idx.get(i).y);
         }
 
-        //Parts based HOG feature matching starts
+        /**Parts based HOG feature matching starts*/
+
         Mat score = new Mat(TMatg.rows(), TMatg.cols(), CvType.CV_32FC1);
-        //Mat det_imwt = new Mat.zeros(OMatg.rows(),OMatg.cols(),CvType.CV_32FC3);
         Mat det_imwt = Mat.zeros(OMatg.rows(),OMatg.cols(),CvType.CV_32FC3);
         //Vector<Point> locs;
         ArrayList<Point> locs = new ArrayList<Point>();
@@ -350,11 +350,12 @@ public class BackgroundProcess {
                 }
             }
         }
+        /*
         im_select.convertTo(im_select, CvType.CV_8U);
         String filename = "im_select.jpg";
         File file2 = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM), filename);
         filename = file2.toString();
-        Highgui.imwrite(filename, im_select);
+        Highgui.imwrite(filename, im_select);*/
 
         List<Mat> ch = new ArrayList<Mat>();
         fin_img = new Mat();
@@ -364,6 +365,9 @@ public class BackgroundProcess {
 
         Core.merge(ch, fin_img);
         fin_img.convertTo(fin_img, CvType.CV_8U);
+        
+        /** not required */
+        /*
         // convert to bitmap:
         bm2 = Bitmap.createBitmap(fin_img.cols(), fin_img.rows(),Bitmap.Config.ARGB_8888);
         Utils.matToBitmap(fin_img, bm2);
@@ -387,7 +391,8 @@ public class BackgroundProcess {
         {
             e.printStackTrace();
         }
-        //
+        */
+
         ArrayList<item>  stuctpoints = new ArrayList<item>();
 
         for(int i=0;i<locs.size();i++)
