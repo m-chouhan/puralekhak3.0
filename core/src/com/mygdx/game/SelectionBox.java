@@ -92,14 +92,14 @@ public class SelectionBox extends InputAdapter {
                     delta.add(InitialCenter);
                     new_width = delta.x - Rect.x;
                     new_height = delta.y - Rect.y;
-                    if(new_width < 50 || new_height < 50 ) return true;
+                    if(new_width < 40 || new_height < 40 ) return true;
                     Rect.set(Rect.x, Rect.y,new_width,new_height);
                 break;
             case SCALE_BOTTOM:
                     delta.add(InitialCenter);
                     new_width = Rect.width + Rect.x - delta.x;
                     new_height = Rect.height + Rect.y - delta.y;
-                    if(new_width < 50 || new_height < 50 ) return true;
+                    if(new_width < 40 || new_height < 40 ) return true;
                     Rect.set(delta.x, delta.y,new_width,new_height);
                 break;
         }

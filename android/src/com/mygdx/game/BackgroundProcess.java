@@ -138,17 +138,17 @@ public class BackgroundProcess {
         Mat ag = image = image_mag1;
         fragsize = roi_mag.rows()/3;
 
-        Size asz = image_mag1.size();//asz = size(image_mag1)
-        Size csz = roi_mag.size();//csz = size(roi_mag)
+        Size image_size = image_mag1.size();//asz = size(image_mag1)
+        Size template_size = roi_mag.size();//csz = size(roi_mag)
 
-        Mat corrim = new Mat(asz,CvType.CV_32FC1);//corrim = zeros(asz(1), asz(2));
+        Mat corrim = new Mat(image_size,CvType.CV_32FC1);//corrim = zeros(asz(1), asz(2));
         corrim.setTo(new Scalar(0, 0, 0, 0));//corrim.set(0);
 
-        Size cszh = new Size(Math.round(csz.width/fragsize), Math.round(csz.height / fragsize));
+        Size total_iterations = new Size(Math.round(template_size.width/fragsize), Math.round(template_size.height / fragsize));
         //cszh = round( csz/fragsize ); //no of iterations row nd columns wise
 
         int fragcount = 0;
-        Size cszm = new Size(csz.width / 2, csz.height / 2);//cszm = csz/2;
+        Point template_center = new Point(template_size.width / 2, template_size.height / 2);//cszm = csz/2;
 
         Mat affineMat = new Mat(2, 3, CvType.CV_32FC1);
         affineMat.setTo(new Scalar(0, 0, 0, 0));
@@ -161,12 +161,12 @@ public class BackgroundProcess {
                 new Size(2 * maxdilate + 1, 2 * maxdilate + 1), new Point(maxdilate, maxdilate));
         //rows ==> 0th element ==> height,column ==>1st element ==> width
 
-        for (int i = 1; i <= cszh.height; ++i) {
-            for (int j = 1; j <= cszh.width; ++j) {
-                int imin = Math.max(0, (i - 1) * fragsize );
-                int imax = Math.min(i * fragsize, (int) csz.height);
-                int jmin = Math.max(0, (j - 1) * fragsize );
-                int jmax = Math.min(j * fragsize, (int) csz.width);
+        for (int i = 0; i < total_iterations.height; ++i) {
+            for (int j = 0; j < total_iterations.width; ++j) {
+                int imin = i*fragsize;//Math.max(0, (i - 1) * fragsize );
+                int imax = (i+1)*fragsize;//Math.min(i * fragsize, (int) template_size.height);
+                int jmin = j*fragsize;//Math.max(0, (j - 1) * fragsize );
+                int jmax = (j+1)*fragsize;//Math.min(j * fragsize, (int) template_size.width);
                 Mat prt1 = roi_mag.submat(imin, imax, jmin, jmax); //prt1 = cg(imin:imax, jmin:jmax);
 
                 Size matchSize = new Size(image_mag1.cols() - prt1.cols() + 1,image_mag1.rows() - prt1.rows() + 1);
@@ -176,24 +176,25 @@ public class BackgroundProcess {
                 int topPad = (int)(image_mag1.rows() - matchSize.height)/2;
                 int bottomPad = (int)(image_mag1.rows() - matchSize.height - topPad);
                 //new Mat(asz,CvType.CV_32FC1);
-                Mat matchResult = new Mat(asz, CvType.CV_32FC1);
+                Mat matchResult = new Mat(image_size, CvType.CV_32FC1);
                 Imgproc.matchTemplate(image_mag1, prt1, matchResult.submat(
                         new Rect(leftPad,topPad,(int)matchSize.width,(int)matchSize.height)), Imgproc.TM_CCOEFF_NORMED);
                 Imgproc.dilate(matchResult, matchResult, dilatekernel, new Point(-1, -1), 5);
 
                 Mat corrim2 = matchResult;
-                //imdilate(normxcorr2e(prt1,ag,'same'),se);/**see*/
 
-                float[] prtm = new float[]{(imax + imin) / 2, (jmax + jmin) / 2};
-                float[] prtsz = new float[]{(imax - imin), (jmax - jmin)};
-                float[] posind =
-                        new float[]{Math.round(cszm.height - prtm[0]), Math.round(cszm.width - prtm[1])};
-
+                Point prtm = new Point((jmax + jmin)/2, (imax + imin)/2 );
+                Size prtsz = new Size((jmax - jmin) , (imax - imin));
                 Size corr2sz = corrim2.size();
 
+                Point translation_vector =
+                        new Point(Math.round(template_center.x - prtm.x) ,Math.round(template_center.y - prtm.y));
+
+                affineMat.put(0, 2, translation_vector.x);//0 is x-axis //
+                affineMat.put(1, 2, translation_vector.y);//1 is y-axis //
+                Imgproc.warpAffine(corrim2, corrim2, affineMat, corrim2.size());
+                /*
                 if (posind[0] >= 0 && posind[1] >= 0) {
-                    //corrim2 = shiftd(corrim2,0,posind[0]);
-                    //corrim2 = shiftr(corrim2,0,posind[1]);
                     affineMat.put(0, 2, posind[1]);//0 is x-axis
                     affineMat.put(1, 2, posind[0]);//1 is y-axis
                     Imgproc.warpAffine(corrim2, corrim2, affineMat, corrim2.size());
@@ -216,7 +217,7 @@ public class BackgroundProcess {
                     affineMat.put(0, 2, -posind[1]);
                     affineMat.put(1, 2, -posind[0]);
                     Imgproc.warpAffine(corrim2, corrim2, affineMat, corrim2.size());
-                }
+                }*/
                 corr2sz = corrim2.size();
                 Core.add(corrim, corrim2, corrim);//corrim = corrim+corrim2;
                 fragcount = fragcount + 1;
