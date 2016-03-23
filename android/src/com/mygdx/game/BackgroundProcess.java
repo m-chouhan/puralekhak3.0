@@ -48,11 +48,6 @@ public class BackgroundProcess {
 	static ArrayList<Point> locsCurrent = new ArrayList<Point>();
 	static private long fileSize = 0;
 
-    static public void Test() {
-        Size s = new Size(10,10);
-        //Size s2  = s/2;
-    }
-
     static public void Spot(Mat image,Mat template, int fragsize, String unicode, ControllerViewInterface cvInterface) {
 
         /*******/
@@ -175,7 +170,7 @@ public class BackgroundProcess {
                 int rightPad = (int) (image_mag1.cols() - matchSize.width - leftPad);
                 int topPad = (int)(image_mag1.rows() - matchSize.height)/2;
                 int bottomPad = (int)(image_mag1.rows() - matchSize.height - topPad);
-                //new Mat(asz,CvType.CV_32FC1);
+                
                 Mat matchResult = new Mat(image_size, CvType.CV_32FC1);
                 Imgproc.matchTemplate(image_mag1, prt1, matchResult.submat(
                         new Rect(leftPad,topPad,(int)matchSize.width,(int)matchSize.height)), Imgproc.TM_CCOEFF_NORMED);
@@ -221,6 +216,7 @@ public class BackgroundProcess {
                 corr2sz = corrim2.size();
                 Core.add(corrim, corrim2, corrim);//corrim = corrim+corrim2;
                 fragcount = fragcount + 1;
+                updateProgressBar(fragcount);
             }
         }
 
