@@ -146,13 +146,14 @@ public class MainActivity extends FragmentActivity
 
     @Override
     public void ConvertToText() {
-
+        OpenCVModule.ConvertToText();
     }
 
     @Override
     public void StartSpotting() {
 
         Rectangle r = new Rectangle(0,0,mCurrentBitmap.getWidth(),mCurrentBitmap.getHeight());
+
         if(mCurrentTemplateRect == null || !r.contains(mCurrentTemplateRect) ) {
             Toast.makeText(this,"Please select a valid template first !!",Toast.LENGTH_SHORT).show();
             return;
@@ -161,12 +162,14 @@ public class MainActivity extends FragmentActivity
         Log.d(TAG, mCurrentTemplateRect.toString());
         Log.d(TAG,"Bitmap Size: "+mCurrentBitmap.getWidth()+","+mCurrentBitmap.getHeight());
         final Mat original = new Mat(),template = new Mat();
-        Utils.bitmapToMat(mCurrentBitmap,original);
+        Utils.bitmapToMat(mCurrentBitmap, original);
         Utils.bitmapToMat(mCurrentBitmapTemplate, template);
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
-                BackgroundProcess.Spot(original,template,8,FragmentFactory.getLibgdxFragment().getUnicodeText(),mCvInterface);
+                OpenCVModule.SpotCharacters(original, template,
+                        FragmentFactory.getSettingsFragment().getmFragmentRows(),
+                        FragmentFactory.getLibgdxFragment().getUnicodeText(), mCvInterface);
             }
         });
         t.start();
@@ -195,7 +198,7 @@ public class MainActivity extends FragmentActivity
 
     @Override
     public void TemplateResized(int x, int y, int width, int height, String unicode) {
-        TemplateSelected(x,y,width,height,unicode);
+        TemplateSelected(x, y, width, height, unicode);
     }
 
     @Override
@@ -221,7 +224,7 @@ public class MainActivity extends FragmentActivity
     }
 
     @Override
-    public void FragmentSizeChanged(int newFragmentSize) {
+    public void FragmentSizeChanged(int row_size, int col_size) {
 
     }
 

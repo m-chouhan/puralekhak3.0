@@ -4,6 +4,13 @@
     android:layout_height="match_parent"
     android:background="#e0e2e6">
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Settings"
+        android:textSize="60sp"
+        android:layout_gravity="center_horizontal"/>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -29,13 +36,33 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:text="Template Size:"
+            android:text="Fragment number (row): "
             android:textSize="20sp"/>
         <SeekBar
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:id="@+id/seekBar1" />
+            android:max="10"
+            android:progress="9"
+            android:id="@+id/seekBarRow" />
+    </LinearLayout>
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:text="Fragment number (column): "
+            android:textSize="20sp"/>
+        <SeekBar
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:max="10"
+            android:progress="9"
+            android:id="@+id/seekBarCol" />
 
     </LinearLayout>
 

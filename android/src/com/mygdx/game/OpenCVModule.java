@@ -39,9 +39,9 @@ import android.util.Log;
 * TODO: change loop to clip max_value in last iterations
 * */
 
-public class BackgroundProcess {
+public class OpenCVModule {
 
-    static final String TAG = "BackgroundProcess";
+    static final String TAG = "OpenCVModule";
 	static private boolean firstSpotting = true, undoToDefault=false, preUndo=false;
 	static private Mat m,OMatg,TMatg,theImageMat,bw1,fin_img,im_select,tmp,new_mat,tmpPre,im_selectPre;
 	static private int numberOfMatchings;
@@ -50,11 +50,16 @@ public class BackgroundProcess {
 	static ArrayList<Point> locsPre = new ArrayList<Point>();
 	static ArrayList<Point> locsCurrent = new ArrayList<Point>();
 
-    static public void Spot(Mat image,Mat template, int fragsize, String unicode, ControllerViewInterface cvInterface) {
-
-        /*******/
+    /**
+    @param template: template to be used for spotting
+    @param image: original image where characters need to be spotted
+    @param fragsize: size of fragments for spotting template
+    @param cvInterface : callback method to update GUI
+    @param unicode :unicode corresponding to the template*/
+    static public void SpotCharacters(Mat image,Mat template, int fragsize, String unicode, ControllerViewInterface cvInterface) {
 
         Mat OMat = image,TMat = template;
+
         if(firstSpotting){
             //Do nothing
         }
@@ -133,7 +138,8 @@ public class BackgroundProcess {
 
         Mat cg = template = roi_mag;
         Mat ag = image = image_mag1;
-        fragsize = roi_mag.rows()/3;
+
+        fragsize = (int)(roi_mag.rows()/Math.sqrt(fragsize));
 
         Size image_size = image_mag1.size();//asz = size(image_mag1)
         Size template_size = roi_mag.size();//csz = size(roi_mag)
@@ -218,7 +224,7 @@ public class BackgroundProcess {
                 corr2sz = corrim2.size();
                 Core.add(corrim, corrim2, corrim);//corrim = corrim+corrim2;
                 fragcount = fragcount + 1;
-                updateProgressBar(fragcount);
+                updateProgressBar(fragcount*5);
             }
         }
 
@@ -466,13 +472,7 @@ public class BackgroundProcess {
             preUndo = false;
         }
     }
-    /**
-        @param template: template to be used for spotting
-        @param original: original image where characters need to be spotted
-    */
-    static public void SpotCharacters(Mat template,Mat original) {
 
-    }
     /*Converts the symbols into textfile */
     static public void ConvertToText() {
 

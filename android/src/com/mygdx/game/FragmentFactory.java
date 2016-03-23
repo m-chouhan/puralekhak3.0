@@ -31,12 +31,14 @@ public final class FragmentFactory {
     private static LibgdxFragment libgdxFragment = null;
     private static KeyboardFragment keyboardFragment = null;
     private static SettingsFragment settingsFragment = null;
+
     /*for passing messages to main activity */
     public interface UpdateViewCallback{
+
         void UnicodeSelected(String unicode);
         void ImageviewerReady(ControllerViewInterface cvInterface);
         void KeyboardSelected(int keyboard_id);
-        void FragmentSizeChanged(int newFragmentSize);
+        void FragmentSizeChanged(int row_size,int col_size);
     };
 
     static Fragment getInstance(int position) {
@@ -46,23 +48,22 @@ public final class FragmentFactory {
             case 1:
                     if(libgdxFragment == null )
                         libgdxFragment = new LibgdxFragment();
-                    /*required since spinner keeps firing automatically*/
-//                    if(settingsFragment != null ) settingsFragment.disable();
                     return libgdxFragment;
             case 2:
                     if(keyboardFragment == null)
                         keyboardFragment = new KeyboardFragment();
-//                    if(settingsFragment != null ) settingsFragment.disable();
                     return keyboardFragment;
             case 0:
                     if(settingsFragment == null)
                         settingsFragment = new SettingsFragment();
-//                    settingsFragment.enable();
                     return settingsFragment;
         }
         return null;
     }
 
+    public static SettingsFragment getSettingsFragment() {
+        return settingsFragment;
+    }
     public static KeyboardFragment getKeyboardFragment() {
         return keyboardFragment;
     }

@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.SeekBar;
 import android.widget.Spinner;
 
 import java.lang.reflect.Field;
@@ -17,8 +18,9 @@ import java.util.ArrayList;
 
 /**
  * Created by monty on 2/14/2016.
+ * Changes default configuration values used in the application
  */
-public class SettingsFragment extends Fragment implements AdapterView.OnItemSelectedListener{
+public class SettingsFragment extends Fragment implements AdapterView.OnItemSelectedListener ,SeekBar.OnSeekBarChangeListener{
 
     private final String TAG = "Settings Fragment";
     private ArrayList<String> mSupportedLanguages;
@@ -26,6 +28,10 @@ public class SettingsFragment extends Fragment implements AdapterView.OnItemSele
     private FragmentFactory.UpdateViewCallback mUVCallback;
 
     private boolean inhibit_spinner = true;//to stop first automatic call to spinner on initialization
+    /** no of fragment rows */
+    private int mFragmentRows;
+    /** no of fragment columns */
+    private int mFragmentCols;
 
     @Override
     public void onAttach(Activity activity) {
@@ -59,6 +65,14 @@ public class SettingsFragment extends Fragment implements AdapterView.OnItemSele
         spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(spinnerArrayAdapter);
         spinner.setOnItemSelectedListener(this);
+
+        SeekBar rowSeek = (SeekBar)view.findViewById(R.id.seekBarRow);
+        SeekBar colSeek = (SeekBar)view.findViewById(R.id.seekBarCol);
+        rowSeek.setOnSeekBarChangeListener(this);
+        colSeek.setOnSeekBarChangeListener(this);
+        mFragmentRows = rowSeek.getProgress();
+        mFragmentCols = colSeek.getProgress();
+
         return view;
     }
 
@@ -79,5 +93,32 @@ public class SettingsFragment extends Fragment implements AdapterView.OnItemSele
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
 
+        Log.d(TAG,"Nothing selected");
     }
+
+    @Override
+    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+
+        switch (seekBar.getId()) {
+            case R.id.seekBarRow:
+                mFragmentRows = progress;
+                break;
+            case R.id.seekBarCol:
+                mFragmentCols = progress;
+                break;
+        }
+        mUVCallback.FragmentSizeChanged(mFragmentRows,mFragmentCols);
+    }
+
+    @Override
+    public void onStartTrackingTouch(SeekBar seekBar) {
+
+    }
+
+    @Override
+    public void onStopTrackingTouch(SeekBar seekBar) {
+
+    }
+    public int getmFragmentRows() { return mFragmentRows; }
+    public int getmFragmentCols() { return mFragmentCols; }
 }
