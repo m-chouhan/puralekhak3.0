@@ -136,6 +136,7 @@ public class BackgroundProcess {
 
         Mat cg = template = roi_mag;
         Mat ag = image = image_mag1;
+        fragsize = roi_mag.rows()/3;
 
         Size asz = image_mag1.size();//asz = size(image_mag1)
         Size csz = roi_mag.size();//csz = size(roi_mag)
@@ -159,6 +160,7 @@ public class BackgroundProcess {
         Mat dilatekernel = Imgproc.getStructuringElement(Imgproc.MORPH_CROSS,
                 new Size(2 * maxdilate + 1, 2 * maxdilate + 1), new Point(maxdilate, maxdilate));
         //rows ==> 0th element ==> height,column ==>1st element ==> width
+
         for (int i = 1; i <= cszh.height; ++i) {
             for (int j = 1; j <= cszh.width; ++j) {
                 int imin = Math.max(0, (i - 1) * fragsize );
