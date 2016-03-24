@@ -15,9 +15,12 @@ import com.badlogic.gdx.math.Vector3;
 
 import java.util.ArrayList;
 
+import sun.rmi.runtime.Log;
+
 class GestureProcessor implements GestureListener {
 
     private final String TAG = "GestureProcessor";
+    private ArrayList<Integer> ActivePointerList = new ArrayList<Integer>();
 
     /** Class for delegating *touchUp event to gesture processor class
      * */
@@ -58,9 +61,10 @@ class GestureProcessor implements GestureListener {
     @Override
     public boolean touchDown(float x, float y, int pointer, int button) {
 
+        ActivePointerList.add(pointer);
         Vector3 touch3D = camera.unproject(new Vector3(x,y,0));
         Vector2 touch2D = new Vector2(touch3D.x,touch3D.y);
-        Gdx.app.log(TAG,"touchDown"+touch2D);
+        Gdx.app.log(TAG,"touchDown"+touch2D+","+pointer);
 
         if( selectedBox != null && selectedBox.contains(touch2D) ) {
             selectedBox.touchDown(touch2D);
@@ -81,7 +85,18 @@ class GestureProcessor implements GestureListener {
     }
 
     private boolean touchUp(float x, float y, int pointer, int button) {
-        return false;
+
+        ActivePointerList.remove(new Integer(pointer));
+        Gdx.app.log(TAG, "TouchUp:" + pointer);
+        if( !ActivePointerList.isEmpty() ) {
+            Integer active_pointer = ActivePointerList.get(0);
+            Gdx.app.log(TAG,"Still Active:"+active_pointer);
+            //touchDown(Gdx.input.getX(active_pointer), Gdx.input.getY(active_pointer),active_pointer,0);
+            Vector3 touch3D = camera.unproject(new Vector3(Gdx.input.getX(active_pointer), Gdx.input.getY(active_pointer), 0));
+            InitialTouchPos.set(touch3D);
+            InitialCameraPos.set(camera.position);
+        }
+        return true;
     }
 
     @Override
