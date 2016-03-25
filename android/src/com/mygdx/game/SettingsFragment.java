@@ -25,7 +25,7 @@ public class SettingsFragment extends Fragment implements AdapterView.OnItemSele
     private final String TAG = "Settings Fragment";
     private ArrayList<String> mSupportedLanguages;
     private ArrayList<Integer> ResourceIds;
-    private FragmentFactory.UpdateViewCallback mUVCallback;
+    private UpdateViewCallback mUVCallback;
 
     private boolean inhibit_spinner = true;//to stop first automatic call to spinner on initialization
     /** no of fragment rows */
@@ -36,7 +36,7 @@ public class SettingsFragment extends Fragment implements AdapterView.OnItemSele
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        mUVCallback = (FragmentFactory.UpdateViewCallback) activity;
+        mUVCallback = (UpdateViewCallback) activity;
         mSupportedLanguages = new ArrayList<String>();
         ResourceIds = new ArrayList<Integer>();
         for( Field f: R.xml.class.getDeclaredFields() ) {

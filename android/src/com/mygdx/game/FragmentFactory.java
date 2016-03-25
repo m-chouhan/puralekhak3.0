@@ -16,6 +16,10 @@ import android.view.SurfaceView;
 import android.inputmethodservice.KeyboardView;
 import android.view.ViewGroup.LayoutParams;
 
+import com.badlogic.gdx.math.Rectangle;
+
+import java.util.ArrayList;
+
 
 /**
  * Generates Fragment View for PagerActivity
@@ -31,15 +35,6 @@ public final class FragmentFactory {
     private static LibgdxFragment libgdxFragment = null;
     private static KeyboardFragment keyboardFragment = null;
     private static SettingsFragment settingsFragment = null;
-
-    /*for passing messages to main activity */
-    public interface UpdateViewCallback{
-
-        void UnicodeSelected(String unicode);
-        void ImageviewerReady(ControllerViewInterface cvInterface);
-        void KeyboardSelected(int keyboard_id);
-        void PatchSizeChanged(int row_size, int col_size);
-    };
 
     static Fragment getInstance(int position) {
 

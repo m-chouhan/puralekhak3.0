@@ -53,10 +53,12 @@ public class OpenCVModule {
     /**
     @param template: template to be used for spotting
     @param image: original image where characters need to be spotted
-    @param fragsize: size of fragments for spotting template
-    @param cvInterface : callback method to update GUI
+    @param patch_rows: no of rows of patches inside template
+    @param patch_columns: no of columns of patches inside template
+    @param updateViewCallback : callback method to update GUI
     @param unicode :unicode corresponding to the template*/
-    static public void SpotCharacters(Mat image,Mat template, int fragsize, String unicode, ControllerViewInterface cvInterface) {
+    static public void SpotCharacters(Mat image,Mat template, int patch_rows,int patch_columns,
+                                      String unicode, UpdateViewCallback updateViewCallback) {
 
         Mat OMat = image,TMat = template;
 
@@ -139,7 +141,7 @@ public class OpenCVModule {
         Mat cg = template = roi_mag;
         Mat ag = image = image_mag1;
 
-        fragsize = (int)(roi_mag.rows()/Math.sqrt(fragsize));
+        int fragsize = (int)(roi_mag.rows()/3);
 
         Size image_size = image_mag1.size();//asz = size(image_mag1)
         Size template_size = roi_mag.size();//csz = size(roi_mag)
@@ -224,7 +226,7 @@ public class OpenCVModule {
                 corr2sz = corrim2.size();
                 Core.add(corrim, corrim2, corrim);//corrim = corrim+corrim2;
                 fragcount = fragcount + 1;
-                updateProgressBar(fragcount*5);
+                updateViewCallback.UpdateProgress(fragcount*5);
             }
         }
 
@@ -458,8 +460,8 @@ public class OpenCVModule {
         long lEndTime = new Date().getTime();
         Log.d(TAG,"structPoint Size:" + stuctpoints.size() + "\tOMat Size :"+OMatg.size().toString()
                 +"\tdet_imwt size "+ det_imwt.size().toString());
-        /**second parameter is unicode*/
-        cvInterface.SpottingUpdated(Utility.convertToVector(stuctpoints, result.width(), result.height()), unicode);
+
+        updateViewCallback.SpottingUpdated(stuctpoints,unicode);
         // find the imageview and draw it!
         System.out.println("He He");
         updateProgressBar(100);
@@ -489,7 +491,7 @@ public class OpenCVModule {
         @param progress : 0< < 100
     */
     static private void updateProgressBar(int progress) {
-        FragmentFactory.getLibgdxFragment().UpdateProgressBar(progress);
+
     }
 
     /** Old code starts here
@@ -998,7 +1000,7 @@ public class OpenCVModule {
         System.out.println("structPoint Size:" + stuctpoints.size() + "\tOMat Size :"+OMatg.size().toString()
                 +"\tdet_imwt size "+ det_imwt.size().toString());
         //second parameter is unicode
-        cvInterface.SpottingUpdated(Utility.convertToVector(stuctpoints,result.width(),result.height()),unicode);
+        cvInterface.SpottingUpdated(Utility.convertToVector(stuctpoints),unicode);
     	// find the imageview and draw it!
         System.out.println("He He");
         fileSize = 1000000;

@@ -289,4 +289,19 @@ import java.util.ArrayList;
     public void UnFreezTemplates() {
         for(SelectionBox box:BoxList) box.enable();
     }
+
+    @Override
+    public void UpdateProgress(int progress) {
+
+    }
+
+    @Override
+    public void ShowProgressBar() {
+
+    }
+
+    @Override
+    public void DismissProgressBar() {
+
+    }
 }

@@ -1,5 +1,6 @@
 package com.mygdx.game;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -27,13 +28,15 @@ import org.opencv.android.OpenCVLoader;
 import org.opencv.android.Utils;
 import org.opencv.core.Mat;
 
+import java.util.ArrayList;
+
 /**
  * TODO: remove absolute path dependency
  */
 
 public class MainActivity extends FragmentActivity
         implements AndroidFragmentApplication.Callbacks, AdapterView.OnItemClickListener,
-        ViewControllerInterface , FragmentFactory.UpdateViewCallback,DrawerLayout.DrawerListener{
+        ViewControllerInterface , UpdateViewCallback,DrawerLayout.DrawerListener{
 
     /** to identify onactivityresult */
     private static final int IMAGE_BROWSER = 2;
@@ -70,6 +73,8 @@ public class MainActivity extends FragmentActivity
     private DrawerLayout mNavigation_drawer;
     /**Dimensions of patch inside a template*/
     private int mPatchRows = 0,mPatchColumns = 0;
+    /**Unicode corresponding to current template*/
+    private String mUnicode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,7 +98,7 @@ public class MainActivity extends FragmentActivity
         mTempatePreview = (ImageView) findViewById(R.id.template_preview);
         mDefaultPreview = getResources().getDrawable(R.drawable.titleimg);
         mTempatePreview.setImageDrawable(mDefaultPreview);
-
+        mCurrentTemplateRect = new Rectangle(-1,-1,-1,-1);
     }
 
     @Override
@@ -137,7 +142,7 @@ public class MainActivity extends FragmentActivity
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         if( resultCode == RESULT_CANCELED ) return;
-        
+
         String Image_path = Utility.getRealPathFromURI(this, data.getData());
         Log.d(TAG, Image_path);
 
@@ -157,15 +162,22 @@ public class MainActivity extends FragmentActivity
     @Override
     public void StartSpotting() {
 
-        Rectangle r = new Rectangle(0,0,mCurrentBitmap.getWidth(),mCurrentBitmap.getHeight());
-
-        if(mCurrentTemplateRect == null || !r.contains(mCurrentTemplateRect) ) {
-            Toast.makeText(this,"Please select a valid template first !!",Toast.LENGTH_SHORT).show();
-            return;
-        }
+//        Rectangle r = new Rectangle(0,0,mCurrentBitmap.getWidth(),mCurrentBitmap.getHeight());
+//        if(mCurrentTemplateRect == null || !r.contains(mCurrentTemplateRect) ) {
+//            runOnUiThread(new Runnable() {
+//                @Override
+//                public void run() {
+//                    Toast.makeText(getApplicationContext(), "Please select a valid template first !!", Toast.LENGTH_SHORT).show();
+//                }
+//            });
+//            return;
+//        }
 
         Log.d(TAG, mCurrentTemplateRect.toString());
         Log.d(TAG,"Bitmap Size: "+mCurrentBitmap.getWidth()+","+mCurrentBitmap.getHeight());
+
+        final UpdateViewCallback uvcallback = this;
+
         final Mat original = new Mat(),template = new Mat();
         Utils.bitmapToMat(mCurrentBitmap, original);
         Utils.bitmapToMat(mCurrentBitmapTemplate, template);
@@ -174,7 +186,7 @@ public class MainActivity extends FragmentActivity
             public void run() {
                 OpenCVModule.SpotCharacters(original, template,
                         mPatchRows,mPatchColumns,
-                        mUnicode, mCvInterface);
+                        mUnicode,uvcallback);
             }
         });
         t.start();
@@ -184,12 +196,17 @@ public class MainActivity extends FragmentActivity
     @Override
     public void TemplateSelected(final int x, final int y, final int width, final int height, final String unicode) {
 
-        Rectangle r = new Rectangle(0,0,mCurrentBitmap.getWidth(),mCurrentBitmap.getHeight());
-
-        if(mCurrentTemplateRect == null || !r.contains(mCurrentTemplateRect) ) {
-            Toast.makeText(this,"Please select a valid template first !!",Toast.LENGTH_SHORT).show();
-            return;
-        }
+//        Rectangle r = new Rectangle(0,0,mCurrentBitmap.getWidth(),mCurrentBitmap.getHeight());
+//
+//        if(mCurrentTemplateRect == null || !r.contains(mCurrentTemplateRect) ) {
+//            runOnUiThread(new Runnable() {
+//                @Override
+//                public void run() {
+//                    Toast.makeText(getApplicationContext(), "Please select a valid template first !!", Toast.LENGTH_SHORT).show();
+//                }
+//            });
+//            return;
+//        }
 
         Log.d(TAG,"Template Selected "+x+","+y+","+width+","+height);
         mCurrentTemplateRect = new Rectangle(x,y,width,height);
@@ -220,8 +237,9 @@ public class MainActivity extends FragmentActivity
     }
 
     @Override
-    public void UnicodeSelected(String unicode) {
+    public void UnicodeEdited(String unicode) {
         FragmentFactory.getLibgdxFragment().setUnicodeText(unicode);
+        mUnicode = unicode;
         mPager.setCurrentItem(IMAGE_FRAGMENT);
     }
 
@@ -239,6 +257,16 @@ public class MainActivity extends FragmentActivity
     public void PatchSizeChanged(int row_size, int col_size) {
         mPatchRows = row_size;
         mPatchColumns = col_size;
+    }
+
+    @Override
+    public void UpdateProgress(int progress) {
+        FragmentFactory.getLibgdxFragment().UpdateProgressBar(progress);
+    }
+
+    @Override
+    public void SpottingUpdated(ArrayList<item> itemArrayList, String unicode) {
+        mCvInterface.SpottingUpdated(Utility.convertToVector(itemArrayList),unicode);
     }
 
     @Override

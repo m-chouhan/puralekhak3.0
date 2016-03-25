@@ -21,7 +21,7 @@ public class KeyboardFragment extends Fragment implements View.OnClickListener{
 
     private View mFragmentView = null;
     private KeyboardView mKeyboardView = null;
-    private FragmentFactory.UpdateViewCallback mCallback;
+    private UpdateViewCallback mCallback;
     private EditText unicodeTextEditor;
     private Activity parentActivity;
     private int mKeyboard_id = R.xml.keyboard_bengali;
@@ -29,7 +29,7 @@ public class KeyboardFragment extends Fragment implements View.OnClickListener{
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        mCallback = (FragmentFactory.UpdateViewCallback) activity;
+        mCallback = (UpdateViewCallback) activity;
         parentActivity = activity;
         Log.d(TAG,"onAttach");
     }
@@ -53,7 +53,7 @@ public class KeyboardFragment extends Fragment implements View.OnClickListener{
 
     @Override
     public void onClick(View v) {
-        mCallback.UnicodeSelected(unicodeTextEditor.getText().toString());
+        mCallback.UnicodeEdited(unicodeTextEditor.getText().toString());
     }
 
     public void setText(CharSequence charSequence) {

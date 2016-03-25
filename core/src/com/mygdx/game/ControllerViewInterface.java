@@ -17,4 +17,7 @@ public interface ControllerViewInterface {
     void UnicodeSelected(String unicode);
     void FreezTemplates();
     void UnFreezTemplates();
+    void UpdateProgress(int progress);
+    void ShowProgressBar();
+    void DismissProgressBar();
 }
