@@ -98,7 +98,6 @@ public class MainActivity extends FragmentActivity
         mTempatePreview = (ImageView) findViewById(R.id.template_preview);
         mDefaultPreview = getResources().getDrawable(R.drawable.titleimg);
         mTempatePreview.setImageDrawable(mDefaultPreview);
-        mCurrentTemplateRect = new Rectangle(-1,-1,-1,-1);
     }
 
     @Override

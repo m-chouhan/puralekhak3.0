@@ -171,12 +171,12 @@ import java.util.ArrayList;
     * x,y,w,h are according to the view
     * actual pixel values for template selection will be different hence need to be calculated
     * */
-    float horizontalRatio;
-    float verticalRatio;
+//    float horizontalRatio;
+//    float verticalRatio;
     private Rectangle TransformToPixelCoordinates(SelectionBox box) {
         Rectangle rect = new Rectangle();
-        horizontalRatio = myImageTexture.getWidth()/myImage.getWidth();
-        verticalRatio = myImageTexture.getHeight()/myImage.getHeight();
+        float horizontalRatio = myImageTexture.getWidth()/myImage.getWidth();
+        float verticalRatio = myImageTexture.getHeight()/myImage.getHeight();
         /*calculating actual pixel coordinates */
         rect.x = box.getX()*horizontalRatio;
         rect.y = box.getY()*verticalRatio;
@@ -196,18 +196,22 @@ import java.util.ArrayList;
 //    }
     /*Sends message to the controller to update template and adds a new selection box*/
     void CreateSelectionBoxAt( float x,float y,float width ,float height,String unicode ) {
+
         SelectionBox box = new SelectionBox(x, y, width, height,unicode);
-        BoxList.add(box);
         Rectangle rect = TransformToPixelCoordinates(box);
-        UpdateTemplatePreview(rect);
-        viewControllerInterface.TemplateSelected((int) rect.x, (int) rect.y, (int) rect.width, (int) rect.height,unicode );
+        if( UpdateTemplatePreview(rect)) {
+            BoxList.add(box);
+            viewControllerInterface.TemplateSelected((int) rect.x, (int) rect.y, (int) rect.width, (int) rect.height, unicode);
+        }
     }
 
     void SelectBoxAt(SelectionBox box) {
         Rectangle rect = TransformToPixelCoordinates(box);
-        UpdateTemplatePreview(rect);
-        viewControllerInterface.TemplateSelected((int) rect.x, (int) rect.y, (int) rect.width, (int) rect.height,box.getSymbol() );
+        if (UpdateTemplatePreview(rect)) {
+            viewControllerInterface.TemplateSelected((int) rect.x, (int) rect.y, (int) rect.width, (int) rect.height, box.getSymbol());
+        }
     }
+
     void RemoveCurrentSelection() {
         SelectionBox s = InputProcessor.getSelectedBox();
         BoxList.remove(s);
@@ -217,21 +221,24 @@ import java.util.ArrayList;
     /*for updating template */
     void SelectionBoxMoved( SelectionBox box) {
         Rectangle rect = TransformToPixelCoordinates(box);
-        UpdateTemplatePreview(rect);
-        viewControllerInterface.TemplateMoved((int) rect.x, (int) rect.y, (int) rect.width, (int) rect.height, box.getSymbol());
+        if( UpdateTemplatePreview(rect))
+            viewControllerInterface.TemplateMoved((int) rect.x, (int) rect.y, (int) rect.width, (int) rect.height, box.getSymbol());
     }
 
     void SelectionBoxScaled(SelectionBox box) {
         Rectangle rect = TransformToPixelCoordinates(box);
-        UpdateTemplatePreview(rect);
-        viewControllerInterface.TemplateResized((int) rect.x, (int) rect.y, (int) rect.width, (int) rect.height, box.getSymbol());
+        if(UpdateTemplatePreview(rect))
+            viewControllerInterface.TemplateResized((int) rect.x, (int) rect.y, (int) rect.width, (int) rect.height, box.getSymbol());
     }
 
-    /**Quick preview of template
+    /**Quick preview of template,
      * Updates the local copy of template (since dynamically creating bitmap in android might be heavy)
      * @param rect : new coordinates of template
+     * @return : true if update was successful
     * */
-    private void UpdateTemplatePreview(final Rectangle rect) {
+    private boolean UpdateTemplatePreview(final Rectangle rect) {
+        Rectangle imageRect = new Rectangle(0,0,myImageTexture.getWidth(),myImageTexture.getHeight());
+        if( !imageRect.contains(rect) ) return false;
         Gdx.app.postRunnable(new Runnable() {
             @Override
             public void run() {
@@ -240,6 +247,7 @@ import java.util.ArrayList;
                 myTemplatePreview.setDrawable(new SpriteDrawable(new Sprite(region)));
             }
         });
+        return true;
     }
 
     @Override
