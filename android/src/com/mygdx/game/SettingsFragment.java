@@ -29,9 +29,9 @@ public class SettingsFragment extends Fragment implements AdapterView.OnItemSele
 
     private boolean inhibit_spinner = true;//to stop first automatic call to spinner on initialization
     /** no of fragment rows */
-    private int mFragmentRows;
+    private int mPatchRows;
     /** no of fragment columns */
-    private int mFragmentCols;
+    private int mPatchColumns;
 
     @Override
     public void onAttach(Activity activity) {
@@ -70,15 +70,16 @@ public class SettingsFragment extends Fragment implements AdapterView.OnItemSele
         SeekBar colSeek = (SeekBar)view.findViewById(R.id.seekBarCol);
         rowSeek.setOnSeekBarChangeListener(this);
         colSeek.setOnSeekBarChangeListener(this);
-        mFragmentRows = rowSeek.getProgress();
-        mFragmentCols = colSeek.getProgress();
-
+        mPatchRows = rowSeek.getProgress();
+        mPatchColumns = colSeek.getProgress();
+        mUVCallback.PatchSizeChanged(mPatchRows, mPatchColumns);
         return view;
     }
 
+    /*might be required due to illegal firing of itemselected event
     public void enable() { inhibit_spinner = false; }
     public void disable() { inhibit_spinner = true; }
-
+    */
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
@@ -101,13 +102,13 @@ public class SettingsFragment extends Fragment implements AdapterView.OnItemSele
 
         switch (seekBar.getId()) {
             case R.id.seekBarRow:
-                mFragmentRows = progress;
+                mPatchRows = progress;
                 break;
             case R.id.seekBarCol:
-                mFragmentCols = progress;
+                mPatchColumns = progress;
                 break;
         }
-        mUVCallback.FragmentSizeChanged(mFragmentRows,mFragmentCols);
+        mUVCallback.PatchSizeChanged(mPatchRows, mPatchColumns);
     }
 
     @Override
@@ -119,6 +120,6 @@ public class SettingsFragment extends Fragment implements AdapterView.OnItemSele
     public void onStopTrackingTouch(SeekBar seekBar) {
 
     }
-    public int getmFragmentRows() { return mFragmentRows; }
-    public int getmFragmentCols() { return mFragmentCols; }
+    public int getmPatchRows() { return mPatchRows; }
+    public int getmPatchColumns() { return mPatchColumns; }
 }

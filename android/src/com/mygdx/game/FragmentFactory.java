@@ -38,7 +38,7 @@ public final class FragmentFactory {
         void UnicodeSelected(String unicode);
         void ImageviewerReady(ControllerViewInterface cvInterface);
         void KeyboardSelected(int keyboard_id);
-        void FragmentSizeChanged(int row_size,int col_size);
+        void PatchSizeChanged(int row_size, int col_size);
     };
 
     static Fragment getInstance(int position) {

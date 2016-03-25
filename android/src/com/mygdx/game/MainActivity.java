@@ -34,6 +34,7 @@ import org.opencv.core.Mat;
 public class MainActivity extends FragmentActivity
         implements AndroidFragmentApplication.Callbacks, AdapterView.OnItemClickListener,
         ViewControllerInterface , FragmentFactory.UpdateViewCallback,DrawerLayout.DrawerListener{
+
     /** to identify onactivityresult */
     private static final int IMAGE_BROWSER = 2;
     private final String TAG = "MainActivity";
@@ -67,6 +68,8 @@ public class MainActivity extends FragmentActivity
     /**Actual inscription image as a bitmap for processing */
     private Bitmap mCurrentBitmap;
     private DrawerLayout mNavigation_drawer;
+    /**Dimensions of patch inside a template*/
+    private int mPatchRows = 0,mPatchColumns = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,7 +90,6 @@ public class MainActivity extends FragmentActivity
 
         mCurrentBitmap = BitmapFactory.decodeResource(getResources(),
                 R.drawable.inscription);
-        //mCurrentTemplateRect = new Rectangle(0,0,mCurrentBitmap.getWidth(),mCurrentBitmap.getHeight());
         mTempatePreview = (ImageView) findViewById(R.id.template_preview);
         mDefaultPreview = getResources().getDrawable(R.drawable.titleimg);
         mTempatePreview.setImageDrawable(mDefaultPreview);
@@ -117,7 +119,7 @@ public class MainActivity extends FragmentActivity
 
 	    	case IMAGE_FRAGMENT: super.onBackPressed();
                     break;
-	    	default:	mPager.setCurrentItem(IMAGE_FRAGMENT);
+            default:mPager.setCurrentItem(IMAGE_FRAGMENT);
                     break;
     	}
     }
@@ -130,9 +132,12 @@ public class MainActivity extends FragmentActivity
         startActivityForResult(Intent.createChooser(i, "Select Inscription"), IMAGE_BROWSER);
     }
 
-    /**Sends path of the image to be opened to myImageViewr */
+    /**Sends path of the image to be opened to myImageViewer */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if( resultCode == RESULT_CANCELED ) return;
+        
         String Image_path = Utility.getRealPathFromURI(this, data.getData());
         Log.d(TAG, Image_path);
 
@@ -168,8 +173,8 @@ public class MainActivity extends FragmentActivity
             @Override
             public void run() {
                 OpenCVModule.SpotCharacters(original, template,
-                        FragmentFactory.getSettingsFragment().getmFragmentRows(),
-                        FragmentFactory.getLibgdxFragment().getUnicodeText(), mCvInterface);
+                        mPatchRows,mPatchColumns,
+                        mUnicode, mCvInterface);
             }
         });
         t.start();
@@ -178,6 +183,13 @@ public class MainActivity extends FragmentActivity
 
     @Override
     public void TemplateSelected(final int x, final int y, final int width, final int height, final String unicode) {
+
+        Rectangle r = new Rectangle(0,0,mCurrentBitmap.getWidth(),mCurrentBitmap.getHeight());
+
+        if(mCurrentTemplateRect == null || !r.contains(mCurrentTemplateRect) ) {
+            Toast.makeText(this,"Please select a valid template first !!",Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         Log.d(TAG,"Template Selected "+x+","+y+","+width+","+height);
         mCurrentTemplateRect = new Rectangle(x,y,width,height);
@@ -224,8 +236,9 @@ public class MainActivity extends FragmentActivity
     }
 
     @Override
-    public void FragmentSizeChanged(int row_size, int col_size) {
-
+    public void PatchSizeChanged(int row_size, int col_size) {
+        mPatchRows = row_size;
+        mPatchColumns = col_size;
     }
 
     @Override
