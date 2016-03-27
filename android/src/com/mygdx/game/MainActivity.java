@@ -161,17 +161,6 @@ public class MainActivity extends FragmentActivity
     @Override
     public void StartSpotting() {
 
-//        Rectangle r = new Rectangle(0,0,mCurrentBitmap.getWidth(),mCurrentBitmap.getHeight());
-//        if(mCurrentTemplateRect == null || !r.contains(mCurrentTemplateRect) ) {
-//            runOnUiThread(new Runnable() {
-//                @Override
-//                public void run() {
-//                    Toast.makeText(getApplicationContext(), "Please select a valid template first !!", Toast.LENGTH_SHORT).show();
-//                }
-//            });
-//            return;
-//        }
-
         Log.d(TAG, mCurrentTemplateRect.toString());
         Log.d(TAG,"Bitmap Size: "+mCurrentBitmap.getWidth()+","+mCurrentBitmap.getHeight());
 
@@ -194,18 +183,6 @@ public class MainActivity extends FragmentActivity
 
     @Override
     public void TemplateSelected(final int x, final int y, final int width, final int height, final String unicode) {
-
-//        Rectangle r = new Rectangle(0,0,mCurrentBitmap.getWidth(),mCurrentBitmap.getHeight());
-//
-//        if(mCurrentTemplateRect == null || !r.contains(mCurrentTemplateRect) ) {
-//            runOnUiThread(new Runnable() {
-//                @Override
-//                public void run() {
-//                    Toast.makeText(getApplicationContext(), "Please select a valid template first !!", Toast.LENGTH_SHORT).show();
-//                }
-//            });
-//            return;
-//        }
 
         Log.d(TAG,"Template Selected "+x+","+y+","+width+","+height);
         mCurrentTemplateRect = new Rectangle(x,y,width,height);

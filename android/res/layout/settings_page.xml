@@ -36,14 +36,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:text="Fragment number (row): "
+            android:text="Patch Count (row): "
             android:textSize="20sp"/>
         <SeekBar
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:max="10"
-            android:progress="9"
+            android:progress="3"
             android:id="@+id/seekBarRow" />
     </LinearLayout>
     <LinearLayout
@@ -54,14 +54,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:text="Fragment number (column): "
+            android:text="Patch Count (column): "
             android:textSize="20sp"/>
         <SeekBar
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:max="10"
-            android:progress="9"
+            android:progress="3"
             android:id="@+id/seekBarCol" />
 
     </LinearLayout>

@@ -90,7 +90,7 @@ public class OpenCVModule {
         Imgproc.cvtColor(OMat, OMatg, Imgproc.COLOR_BGR2GRAY);
         Imgproc.cvtColor(TMat, TMatg, Imgproc.COLOR_BGR2GRAY);
 
-        System.out.println("Height: " + result.height() + " Width: " + result.width());
+        System.out.println("Result Height: " + result.height() + "Result Width: " + result.width());
 
         Oheight=OMatg.rows();
         Owidth=OMatg.cols();
@@ -141,7 +141,7 @@ public class OpenCVModule {
         Mat cg = template = roi_mag;
         Mat ag = image = image_mag1;
 
-        int fragsize = (int)(roi_mag.rows()/3);
+        //int fragsize = (int)(roi_mag.rows()/3);
 
         Size image_size = image_mag1.size();//asz = size(image_mag1)
         Size template_size = roi_mag.size();//csz = size(roi_mag)
@@ -149,8 +149,10 @@ public class OpenCVModule {
         Mat corrim = new Mat(image_size,CvType.CV_32FC1);//corrim = zeros(asz(1), asz(2));
         corrim.setTo(new Scalar(0, 0, 0, 0));//corrim.set(0);
 
-        Size total_iterations = new Size(Math.round(template_size.width/fragsize), Math.round(template_size.height / fragsize));
+        //Size total_iterations = new Size(Math.round(template_size.width/fragsize), Math.round(template_size.height / fragsize));
         //cszh = round( csz/fragsize ); //no of iterations row nd columns wise
+
+        int patch_dim_row = roi_mag.rows()/patch_rows,patch_dim_col = roi_mag.cols()/patch_columns;
 
         int fragcount = 0;
         Point template_center = new Point(template_size.width / 2, template_size.height / 2);//cszm = csz/2;
@@ -166,12 +168,12 @@ public class OpenCVModule {
                 new Size(2 * maxdilate + 1, 2 * maxdilate + 1), new Point(maxdilate, maxdilate));
         //rows ==> 0th element ==> height,column ==>1st element ==> width
 
-        for (int i = 0; i < total_iterations.height; ++i) {
-            for (int j = 0; j < total_iterations.width; ++j) {
-                int imin = i*fragsize;//Math.max(0, (i - 1) * fragsize );
-                int imax = Math.min((i+1)*fragsize,(int)template_size.height);
-                int jmin = j*fragsize;//Math.max(0, (j - 1) * fragsize );
-                int jmax = Math.min((j+1)*fragsize, (int) template_size.width);
+        for (int i = 0; i < patch_rows; ++i) {
+            for (int j = 0; j < patch_columns; ++j) {
+                int imin = i*patch_dim_row;//Math.max(0, (i - 1) * fragsize );
+                int imax = Math.min((i+1)*patch_dim_row,(int)template_size.height);
+                int jmin = j*patch_dim_col;//Math.max(0, (j - 1) * fragsize );
+                int jmax = Math.min((j+1)*patch_dim_col, (int) template_size.width);
                 Mat prt1 = roi_mag.submat(imin, imax, jmin, jmax); //prt1 = cg(imin:imax, jmin:jmax);
 
                 Size matchSize = new Size(image_mag1.cols() - prt1.cols() + 1,image_mag1.rows() - prt1.rows() + 1);
@@ -188,12 +190,12 @@ public class OpenCVModule {
 
                 Mat corrim2 = matchResult;
 
-                Point prtm = new Point((jmax + jmin)/2, (imax + imin)/2 );
+                Point patch_center = new Point((jmax + jmin)/2, (imax + imin)/2 );
                 Size prtsz = new Size((jmax - jmin) , (imax - imin));
                 Size corr2sz = corrim2.size();
 
                 Point translation_vector =
-                        new Point(Math.round(template_center.x - prtm.x) ,Math.round(template_center.y - prtm.y));
+                        new Point(Math.round(template_center.x - patch_center.x) ,Math.round(template_center.y - patch_center.y));
 
                 affineMat.put(0, 2, translation_vector.x);//0 is x-axis //
                 affineMat.put(1, 2, translation_vector.y);//1 is y-axis //
@@ -458,10 +460,10 @@ public class OpenCVModule {
         // now starting to write to file ends
 
         long lEndTime = new Date().getTime();
-        Log.d(TAG,"structPoint Size:" + stuctpoints.size() + "\tOMat Size :"+OMatg.size().toString()
-                +"\tdet_imwt size "+ det_imwt.size().toString());
+        Log.d(TAG, "structPoint Size:" + stuctpoints.size() + "\tOMat Size :" + OMatg.size().toString()
+                + "\tdet_imwt size " + det_imwt.size().toString());
 
-        updateViewCallback.SpottingUpdated(stuctpoints,unicode);
+        updateViewCallback.SpottingUpdated(stuctpoints, unicode);
         // find the imageview and draw it!
         System.out.println("Done!!");
         updateViewCallback.UpdateProgress(100);
