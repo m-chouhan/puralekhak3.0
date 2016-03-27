@@ -74,6 +74,7 @@ public class OpenCVModule {
                 im_selectPre = im_select.clone();
             }
         }
+
         double Oheight=0;
         double Owidth=0;
         double Theight=0;
@@ -370,14 +371,14 @@ public class OpenCVModule {
         filename = file2.toString();
         Highgui.imwrite(filename, im_select);*/
 
-        List<Mat> ch = new ArrayList<Mat>();
-        fin_img = new Mat();
-        ch.add(tmp);
-        ch.add(OMatg);
-        ch.add(OMatg);
+//        List<Mat> ch = new ArrayList<Mat>();
+//        fin_img = new Mat();
+//        ch.add(tmp);
+//        ch.add(OMatg);
+//        ch.add(OMatg);
 
-        Core.merge(ch, fin_img);
-        fin_img.convertTo(fin_img, CvType.CV_8U);
+        //Core.merge(ch, fin_img);
+        //fin_img.convertTo(fin_img, CvType.CV_8U);
 
         /** not required */
         /*
