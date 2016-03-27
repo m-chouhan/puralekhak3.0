@@ -12,6 +12,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.SeekBar;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -33,6 +34,7 @@ public class SettingsFragment extends Fragment implements AdapterView.OnItemSele
     /** no of fragment columns */
     private int mPatchColumns;
 
+    private TextView mRowText,mColumnText;
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -73,6 +75,9 @@ public class SettingsFragment extends Fragment implements AdapterView.OnItemSele
         mPatchRows = rowSeek.getProgress();
         mPatchColumns = colSeek.getProgress();
         mUVCallback.PatchSizeChanged(mPatchRows, mPatchColumns);
+        mRowText = (TextView)view.findViewById(R.id.rowText);
+        mColumnText = (TextView)view.findViewById(R.id.colText);
+
         return view;
     }
 
@@ -109,6 +114,8 @@ public class SettingsFragment extends Fragment implements AdapterView.OnItemSele
                 break;
         }
         mUVCallback.PatchSizeChanged(mPatchRows, mPatchColumns);
+        mRowText.setText("Patch Rows ["+mPatchRows+"]" );
+        mColumnText.setText("Patch Column ["+mPatchColumns+"]" );
     }
 
     @Override
