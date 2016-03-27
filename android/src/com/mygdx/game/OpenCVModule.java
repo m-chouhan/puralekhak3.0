@@ -463,8 +463,8 @@ public class OpenCVModule {
 
         updateViewCallback.SpottingUpdated(stuctpoints,unicode);
         // find the imageview and draw it!
-        System.out.println("He He");
-        updateProgressBar(100);
+        System.out.println("Done!!");
+        updateViewCallback.UpdateProgress(100);
         undoToDefault=false;
         if(firstSpotting){
             firstSpotting = false;

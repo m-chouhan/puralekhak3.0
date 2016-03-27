@@ -74,7 +74,7 @@ public class MainActivity extends FragmentActivity
     /**Dimensions of patch inside a template*/
     private int mPatchRows = 0,mPatchColumns = 0;
     /**Unicode corresponding to current template*/
-    private String mUnicode;
+    private String mUnicode = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
