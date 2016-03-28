@@ -246,6 +246,11 @@ public class MainActivity extends FragmentActivity
     }
 
     @Override
+    public void ThresholdChanged(float mFragment_threshold, float mMatching_threshold) {
+
+    }
+
+    @Override
     public void onDrawerOpened(View drawerView) {
         if(mCurrentTemplateRect != null ) {
             mCurrentBitmapTemplate = Bitmap.createBitmap(mCurrentBitmap,

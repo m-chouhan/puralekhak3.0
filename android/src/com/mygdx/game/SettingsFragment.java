@@ -34,7 +34,11 @@ public class SettingsFragment extends Fragment implements AdapterView.OnItemSele
     /** no of fragment columns */
     private int mPatchColumns;
 
-    private TextView mRowText,mColumnText;
+    private TextView mRowText,mColumnText,mFragText,mMatchingText;
+    /** threshold for accumulating correlation results (tc)*/
+    private float mFragment_threshold = 0.3f;
+    /**HOG matching threshold*/
+    private float mMatching_threshold = 0.8f;
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -70,14 +74,26 @@ public class SettingsFragment extends Fragment implements AdapterView.OnItemSele
 
         SeekBar rowSeek = (SeekBar)view.findViewById(R.id.seekBarRow);
         SeekBar colSeek = (SeekBar)view.findViewById(R.id.seekBarCol);
+        SeekBar fragSeek = (SeekBar)view.findViewById(R.id.frag_thresh);
+        SeekBar matchingSeek = (SeekBar)view.findViewById(R.id.matching_thresh);
+
         rowSeek.setOnSeekBarChangeListener(this);
         colSeek.setOnSeekBarChangeListener(this);
+        fragSeek.setOnSeekBarChangeListener(this);
+        matchingSeek.setOnSeekBarChangeListener(this);
+
         mPatchRows = rowSeek.getProgress();
         mPatchColumns = colSeek.getProgress();
         mUVCallback.PatchSizeChanged(mPatchRows, mPatchColumns);
+
+        mFragment_threshold = fragSeek.getProgress()/10;
+        mMatching_threshold = matchingSeek.getProgress()/10;
+        mUVCallback.ThresholdChanged(mFragment_threshold,mMatching_threshold);
+
         mRowText = (TextView)view.findViewById(R.id.rowText);
         mColumnText = (TextView)view.findViewById(R.id.colText);
-
+        mFragText = (TextView) view.findViewById(R.id.fragment_threshold_text);
+        mMatchingText = (TextView) view.findViewById(R.id.matching_threshold_text);
         return view;
     }
 
@@ -108,14 +124,24 @@ public class SettingsFragment extends Fragment implements AdapterView.OnItemSele
         switch (seekBar.getId()) {
             case R.id.seekBarRow:
                 mPatchRows = progress;
+                mUVCallback.PatchSizeChanged(mPatchRows, mPatchColumns);
                 break;
             case R.id.seekBarCol:
                 mPatchColumns = progress;
+                mUVCallback.PatchSizeChanged(mPatchRows, mPatchColumns);
                 break;
+            case R.id.frag_thresh:
+                mFragment_threshold = progress/10;
+                mUVCallback.ThresholdChanged(mFragment_threshold,mMatching_threshold);
+                break;
+            case R.id.matching_thresh:
+                mMatching_threshold = progress/10;
+                mUVCallback.ThresholdChanged(mFragment_threshold,mMatching_threshold);
         }
-        mUVCallback.PatchSizeChanged(mPatchRows, mPatchColumns);
         mRowText.setText("Patch Rows ["+mPatchRows+"]" );
         mColumnText.setText("Patch Column ["+mPatchColumns+"]" );
+        mFragText.setText("Fragment threshold ["+mFragment_threshold+"]");
+        mMatchingText.setText("Matching threshold ["+mMatching_threshold+"]");
     }
 
     @Override

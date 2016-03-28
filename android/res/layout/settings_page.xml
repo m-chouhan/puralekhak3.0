@@ -63,5 +63,36 @@
             android:layout_alignBottom="@id/seekBarCol"
             android:text="Patch Columns [3] "
             android:textSize="20sp"/>
+        <SeekBar
+            android:layout_width="350dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/seekBarCol"
+            android:layout_alignParentRight="true"
+            android:max="10"
+            android:progress="3"
+            android:id="@+id/frag_thresh" />
+        <TextView
+            android:id="@+id/fragment_threshold_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/frag_thresh"
+            android:text="Fragment threshold [0.30]"
+            android:textSize="20sp"/>
+        <SeekBar
+            android:layout_width="350dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/frag_thresh"
+            android:layout_alignParentRight="true"
+            android:max="10"
+            android:progress="8"
+            android:id="@+id/matching_thresh" />
+        <TextView
+            android:id="@+id/matching_threshold_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/matching_thresh"
+            android:text="Matching threshold [0.80]"
+            android:textSize="20sp"/>
+
     </RelativeLayout>
 </LinearLayout>

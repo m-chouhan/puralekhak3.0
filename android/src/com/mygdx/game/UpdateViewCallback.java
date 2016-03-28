@@ -13,4 +13,5 @@ public interface UpdateViewCallback{
     void PatchSizeChanged(int row_size, int col_size);
     void UpdateProgress(int progress);
     void SpottingUpdated(ArrayList<item> itemArrayList, String unicode);
+    void ThresholdChanged(float mFragment_threshold, float mMatching_threshold);
 };

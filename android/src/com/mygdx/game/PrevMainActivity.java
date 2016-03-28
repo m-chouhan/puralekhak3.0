@@ -660,7 +660,7 @@ public class PrevMainActivity extends FragmentActivity{
 		});
 	}
 	
-	public void setTotalProgressBar(){
+	public void setTotalProgressBar() {
 		Log.d(TAG, "Inside total progress setup");
 		Bitmap img = Bitmap.createBitmap(m.cols(), m.rows(),Bitmap.Config.ARGB_8888);
 		Utils.matToBitmap(m, img);

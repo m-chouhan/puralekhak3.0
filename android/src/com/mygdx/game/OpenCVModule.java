@@ -229,14 +229,14 @@ public class OpenCVModule {
                 corr2sz = corrim2.size();
                 Core.add(corrim, corrim2, corrim);//corrim = corrim+corrim2;
                 fragcount = fragcount + 1;
-                updateViewCallback.UpdateProgress(fragcount*5);
+                updateViewCallback.UpdateProgress(fragcount*4);
             }
         }
 
         Mat cf = corrim;
 
         Mat bw = new Mat(OMatg.rows(), OMatg.cols(), CvType.CV_32FC1 );
-        Imgproc.threshold(cf, bw, 2.3, 1, Imgproc.THRESH_BINARY);
+        Imgproc.threshold(cf, bw, fragcount*0.30, 1, Imgproc.THRESH_BINARY);
 
         int erosion_size=2;
 
@@ -338,7 +338,7 @@ public class OpenCVModule {
 
         numberOfMatchings = locs.size()-locsCurrent.size();
         System.out.println("Points after HOG are "+numberOfMatchings);
-
+        updateViewCallback.UpdateProgress(50);
         //tmp= new Mat( OMatg.rows(), OMatg.cols(), CvType.CV_8UC1 );
 
         if(firstSpotting){
@@ -435,6 +435,7 @@ public class OpenCVModule {
         }
 
         // now starting to write to file
+        updateViewCallback.UpdateProgress(80);
 
         File f = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM),"inscription.txt");
         FileWriter fw;

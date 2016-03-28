@@ -22,6 +22,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 
 /** TODO:Port the custom widgets to user Actor class
  * TODO: default image not mapping properly to image display
@@ -97,7 +98,9 @@ import java.util.ArrayList;
         Gdx.gl20.glLineWidth(8);
         mCustomWidgetStage.draw();
         WidgetRenderer.setProjectionMatrix(camera.combined);
-        for(SelectionBox s:BoxList) s.Draw(WidgetRenderer);
+        try {
+            for (SelectionBox s : BoxList) s.Draw(WidgetRenderer);
+        } catch (ConcurrentModificationException e) {}
         mButtonStage.draw();
 	}
 
