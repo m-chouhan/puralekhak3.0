@@ -3,17 +3,17 @@ package com.mygdx.game;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.PixmapIO;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.TextureData;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -27,6 +27,7 @@ import java.util.ConcurrentModificationException;
 
 /** TODO:Port the custom widgets to user Actor class
  * TODO: default image not mapping properly to image display
+ * TODO: Refactor
  *  Displays image for spotting
  *  Main GUI Renderer
  */
@@ -40,6 +41,7 @@ public class MyImageViewer extends ApplicationAdapter implements ControllerViewI
     int Width,Height;
 
     private String imagePath;
+    SpriteBatch mImageDrawingBatch;
     /** represents image from gui's perspective*/
     Image myImage;
     Image myTemplatePreview;
@@ -70,6 +72,10 @@ public class MyImageViewer extends ApplicationAdapter implements ControllerViewI
 
         /*Opens internal image in assest/ folder as default */
         myImageTexture = new Texture(imagePath);
+        TextureData textureData = myImageTexture.getTextureData();
+        textureData.prepare();
+        Pixmap pixmap = textureData.consumePixmap();
+        PixmapIO.writePNG("file.png",pixmap);
         /*Buttons Initialization */
         loadUI();
         mCustomWidgetStage = new Stage();
@@ -90,10 +96,9 @@ public class MyImageViewer extends ApplicationAdapter implements ControllerViewI
         multiplexer.addProcessor(mButtonStage);
         multiplexer.addProcessor(InputProcessor.getGestureDetector());
         Gdx.input.setInputProcessor(multiplexer);
-        batch = new SpriteBatch();
+        mImageDrawingBatch = new SpriteBatch();
     }
 
-    SpriteBatch batch ;
     @Override
     public void render () {
 
@@ -101,10 +106,10 @@ public class MyImageViewer extends ApplicationAdapter implements ControllerViewI
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         Gdx.gl20.glLineWidth(8);
         //mCustomWidgetStage.draw();
-        batch.setProjectionMatrix(camera.combined);
-        batch.begin();
-        batch.draw(myImageTexture, 0, 0 + myImageTexture.getHeight(), myImageTexture.getWidth(), -myImageTexture.getHeight());
-        batch.end();
+        mImageDrawingBatch.setProjectionMatrix(camera.combined);
+        mImageDrawingBatch.begin();
+        mImageDrawingBatch.draw(myImageTexture, 0, 0 + myImageTexture.getHeight(), myImageTexture.getWidth(), -myImageTexture.getHeight());
+        mImageDrawingBatch.end();
 
         WidgetRenderer.setProjectionMatrix(camera.combined);
         try {
