@@ -155,7 +155,7 @@ public class OpenCVModule {
 
         int patch_dim_row = roi_mag.rows()/patch_rows,patch_dim_col = roi_mag.cols()/patch_columns;
 
-        int fragcount = 0;
+        float fragcount = 0;
         Point template_center = new Point(template_size.width / 2, template_size.height / 2);//cszm = csz/2;
 
         Mat affineMat = new Mat(2, 3, CvType.CV_32FC1);
@@ -229,14 +229,14 @@ public class OpenCVModule {
                 corr2sz = corrim2.size();
                 Core.add(corrim, corrim2, corrim);//corrim = corrim+corrim2;
                 fragcount = fragcount + 1;
-                updateViewCallback.UpdateProgress(fragcount*4);
+                updateViewCallback.UpdateProgress((int)fragcount*4);
             }
         }
 
         Mat cf = corrim;
 
         Mat bw = new Mat(OMatg.rows(), OMatg.cols(), CvType.CV_32FC1 );
-        Imgproc.threshold(cf, bw, fragcount*0.30, 1, Imgproc.THRESH_BINARY);
+        Imgproc.threshold(cf, bw, fragcount*0.35, 1, Imgproc.THRESH_BINARY);
 
         int erosion_size=2;
 
@@ -409,29 +409,30 @@ public class OpenCVModule {
 
         ArrayList<item>  stuctpoints = new ArrayList<item>();
 
-        for(int i=0;i<locs.size();i++)
+        for(Point p : locs)
         {
-            for(  int m = 0; m < det_imwt.rows(); m++ )
+//            for(  int m = 0; m < det_imwt.rows(); m++ )
+//            {
+//                for( int n = 0; n < det_imwt.cols(); n++ )
+//                {
+            int m = (int) p.x,n = (int)p.y;
+            double[] data = det_imwt.get(m, n);
+            if ( data[0]>=0.70 )
             {
-                for( int n = 0; n < det_imwt.cols(); n++ )
-                {
-                    double[] data = det_imwt.get(m, n);
-                    if ( ( locs.get(i).x==m )&&( locs.get(i).y==n )&& (data[0]>=0.70))
-                    {
 
-                        item it1 = new item();
-                        it1.setx(locs.get(i).x);
-                        it1.sety(locs.get(i).y);
+                item it1 = new item();
+                it1.setx(p.x);
+                it1.sety(p.y);
 
-                        it1.setposx(TMatg.rows());
-                        it1.setposy(TMatg.cols());
+                it1.setposx(TMatg.rows());
+                it1.setposy(TMatg.cols());
 
-                        it1.setScore(data[0]);
-                        stuctpoints.add(it1);
-                        System.out.println("Item Added:"+it1.getx()+","+it1.gety());
-                    }
-                }
+                it1.setScore(data[0]);
+                stuctpoints.add(it1);
+                System.out.println("Item Added:"+it1.getx()+","+it1.gety());
             }
+//                }
+//            }
         }
 
         // now starting to write to file

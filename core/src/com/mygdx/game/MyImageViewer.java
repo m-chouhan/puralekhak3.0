@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.input.GestureDetector;
@@ -22,14 +23,13 @@ import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import java.util.ArrayList;
-import java.util.ConcurrentModificationException;
 
 /** TODO:Port the custom widgets to user Actor class
  * TODO: default image not mapping properly to image display
  *  Displays image for spotting
  *  Main GUI Renderer
  */
- public class MyImageViewer extends ApplicationAdapter implements ControllerViewInterface {
+public class MyImageViewer extends ApplicationAdapter implements ControllerViewInterface {
 
     private final String TAG = "MyImageViewer";
 
@@ -40,7 +40,7 @@ import java.util.ConcurrentModificationException;
 
     private String imagePath;
     /** represents image from gui's perspective*/
-	Image myImage;
+    Image myImage;
     Image myTemplatePreview;
     Texture myImageTexture;
     /**For zoomIn,zoomOut and moving image*/
@@ -59,13 +59,14 @@ import java.util.ConcurrentModificationException;
         this.imagePath = imagePath;
     }
 
-	@Override
-	public void create () {
+    @Override
+    public void create () {
 
         Width = Gdx.graphics.getWidth(); Height = Gdx.graphics.getHeight();
 
         /*Initializing View elements */
         WidgetRenderer = new ShapeRenderer();
+
         /*Opens internal image in assest/ folder as default */
         myImageTexture = new Texture(imagePath);
         /*Buttons Initialization */
@@ -88,21 +89,26 @@ import java.util.ConcurrentModificationException;
         multiplexer.addProcessor(mButtonStage);
         multiplexer.addProcessor(InputProcessor.getGestureDetector());
         Gdx.input.setInputProcessor(multiplexer);
+        batch = new SpriteBatch();
     }
 
-	@Override
-	public void render () {
+    SpriteBatch batch ;
+    @Override
+    public void render () {
 
-		Gdx.gl.glClearColor(0.5f, 0.5f, 0.5f, 0.5f);
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        Gdx.gl.glClearColor(0.5f, 0.5f, 0.5f, 0.5f);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         Gdx.gl20.glLineWidth(8);
-        mCustomWidgetStage.draw();
+        //mCustomWidgetStage.draw();
+        batch.setProjectionMatrix(camera.combined);
+        batch.begin();
+        batch.draw(myImageTexture,0,0+myImageTexture.getHeight(),myImageTexture.getWidth(),-myImageTexture.getHeight());
+        batch.end();
+
         WidgetRenderer.setProjectionMatrix(camera.combined);
-        try {
-            for (SelectionBox s : BoxList) s.Draw(WidgetRenderer);
-        } catch (ConcurrentModificationException e) {}
+        for(SelectionBox s:BoxList) s.Draw(WidgetRenderer);
         mButtonStage.draw();
-	}
+    }
 
     /*Loads UI elements */
     public void loadUI() {
@@ -177,18 +183,18 @@ import java.util.ConcurrentModificationException;
 //    float horizontalRatio;
 //    float verticalRatio;
     private Rectangle TransformToPixelCoordinates(SelectionBox box) {
-        Rectangle rect = new Rectangle();
-        float horizontalRatio = myImageTexture.getWidth()/myImage.getWidth();
-        float verticalRatio = myImageTexture.getHeight()/myImage.getHeight();
-        /*calculating actual pixel coordinates */
-        rect.x = box.getX()*horizontalRatio;
-        rect.y = box.getY()*verticalRatio;
-        rect.width = box.getWidth()*horizontalRatio;
-        rect.height = box.getHeight()*verticalRatio;
+        Rectangle rect = new Rectangle(box.getX(),box.getY(),box.getWidth(),box.getHeight());
+//        float horizontalRatio = myImageTexture.getWidth()/myImage.getWidth();
+//        float verticalRatio = myImageTexture.getHeight()/myImage.getHeight();
+//        /*calculating actual pixel coordinates */
+//        rect.x = box.getX()*horizontalRatio;
+//        rect.y = box.getY()*verticalRatio;
+//        rect.width = box.getWidth()*horizontalRatio;
+//        rect.height = box.getHeight()*verticalRatio;
         return rect;
     }
 
-//    private Vector2 TransformToCameraCoordinates(Vector2 point) {
+    //    private Vector2 TransformToCameraCoordinates(Vector2 point) {
 //
 //        float horizontalRatio = myImageTexture.getWidth()/myImage.getWidth();
 //        float verticalRatio = myImageTexture.getHeight()/myImage.getHeight();
@@ -238,7 +244,7 @@ import java.util.ConcurrentModificationException;
      * Updates the local copy of template (since dynamically creating bitmap in android might be heavy)
      * @param rect : new coordinates of template
      * @return : true if update was successful
-    * */
+     * */
     private boolean UpdateTemplatePreview(final Rectangle rect) {
         Rectangle imageRect = new Rectangle(0,0,myImageTexture.getWidth(),myImageTexture.getHeight());
         if( !imageRect.contains(rect) ) return false;
