@@ -75,6 +75,7 @@ public class MainActivity extends FragmentActivity
     private int mPatchRows = 0,mPatchColumns = 0;
     /**Unicode corresponding to current template*/
     private String mUnicode = "";
+    private float mFragmentThreshold;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -173,8 +174,8 @@ public class MainActivity extends FragmentActivity
             @Override
             public void run() {
                 OpenCVModule.SpotCharacters(original, template,
-                        mPatchRows,mPatchColumns,
-                        mUnicode,uvcallback);
+                        mPatchRows,mPatchColumns,mUnicode,mFragmentThreshold,
+                        uvcallback);
             }
         });
         t.start();
@@ -248,6 +249,7 @@ public class MainActivity extends FragmentActivity
     @Override
     public void ThresholdChanged(float mFragment_threshold, float mMatching_threshold) {
 
+        mFragmentThreshold = mFragment_threshold;
     }
 
     @Override

@@ -57,7 +57,7 @@ public class OpenCVModule {
     @param patch_columns: no of columns of patches inside template
     @param updateViewCallback : callback method to update GUI
     @param unicode :unicode corresponding to the template*/
-    static public void SpotCharacters(Mat image,Mat template, int patch_rows,int patch_columns,
+    static public void SpotCharacters(Mat image,Mat template, int patch_rows,int patch_columns,float fragment_thresh,
                                       String unicode, UpdateViewCallback updateViewCallback) {
 
         Mat OMat = image,TMat = template;
@@ -238,7 +238,7 @@ public class OpenCVModule {
         Mat cf = corrim;
 
         Mat bw = new Mat(OMatg.rows(), OMatg.cols(), CvType.CV_32FC1 );
-        Imgproc.threshold(cf, bw, fragcount*0.45, 1, Imgproc.THRESH_BINARY);
+        Imgproc.threshold(cf, bw, fragcount*fragment_thresh, 1, Imgproc.THRESH_BINARY);
 
         int erosion_size=2;
 

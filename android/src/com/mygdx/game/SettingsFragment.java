@@ -86,8 +86,8 @@ public class SettingsFragment extends Fragment implements AdapterView.OnItemSele
         mPatchColumns = colSeek.getProgress();
         mUVCallback.PatchSizeChanged(mPatchRows, mPatchColumns);
 
-        mFragment_threshold = fragSeek.getProgress()/10;
-        mMatching_threshold = matchingSeek.getProgress()/10;
+        mFragment_threshold = fragSeek.getProgress()/20f;
+        mMatching_threshold = matchingSeek.getProgress()/10f;
         mUVCallback.ThresholdChanged(mFragment_threshold,mMatching_threshold);
 
         mRowText = (TextView)view.findViewById(R.id.rowText);
@@ -131,11 +131,11 @@ public class SettingsFragment extends Fragment implements AdapterView.OnItemSele
                 mUVCallback.PatchSizeChanged(mPatchRows, mPatchColumns);
                 break;
             case R.id.frag_thresh:
-                mFragment_threshold = progress/10;
+                mFragment_threshold = progress/20f;
                 mUVCallback.ThresholdChanged(mFragment_threshold,mMatching_threshold);
                 break;
             case R.id.matching_thresh:
-                mMatching_threshold = progress/10;
+                mMatching_threshold = progress/10f;
                 mUVCallback.ThresholdChanged(mFragment_threshold,mMatching_threshold);
         }
         mRowText.setText("Patch Rows ["+mPatchRows+"]" );
