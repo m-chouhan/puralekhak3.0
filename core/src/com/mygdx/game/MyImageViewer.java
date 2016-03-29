@@ -23,6 +23,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 
 /** TODO:Port the custom widgets to user Actor class
  * TODO: default image not mapping properly to image display
@@ -102,11 +103,13 @@ public class MyImageViewer extends ApplicationAdapter implements ControllerViewI
         //mCustomWidgetStage.draw();
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
-        batch.draw(myImageTexture,0,0+myImageTexture.getHeight(),myImageTexture.getWidth(),-myImageTexture.getHeight());
+        batch.draw(myImageTexture, 0, 0 + myImageTexture.getHeight(), myImageTexture.getWidth(), -myImageTexture.getHeight());
         batch.end();
 
         WidgetRenderer.setProjectionMatrix(camera.combined);
-        for(SelectionBox s:BoxList) s.Draw(WidgetRenderer);
+        try {
+            for (SelectionBox s : BoxList) s.Draw(WidgetRenderer);
+        } catch (ConcurrentModificationException e) {}
         mButtonStage.draw();
     }
 

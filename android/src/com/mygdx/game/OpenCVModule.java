@@ -91,6 +91,8 @@ public class OpenCVModule {
         Imgproc.cvtColor(OMat, OMatg, Imgproc.COLOR_BGR2GRAY);
         Imgproc.cvtColor(TMat, TMatg, Imgproc.COLOR_BGR2GRAY);
 
+        System.out.println("OMat Height: " + OMat.height() + "OMat Width: " + OMat.width());
+        System.out.println("TMat Height: " + TMat.height() + "TMat Width: " + TMat.width());
         System.out.println("Result Height: " + result.height() + "Result Width: " + result.width());
 
         Oheight=OMatg.rows();
@@ -236,7 +238,7 @@ public class OpenCVModule {
         Mat cf = corrim;
 
         Mat bw = new Mat(OMatg.rows(), OMatg.cols(), CvType.CV_32FC1 );
-        Imgproc.threshold(cf, bw, fragcount*0.35, 1, Imgproc.THRESH_BINARY);
+        Imgproc.threshold(cf, bw, fragcount*0.45, 1, Imgproc.THRESH_BINARY);
 
         int erosion_size=2;
 
@@ -339,7 +341,6 @@ public class OpenCVModule {
         numberOfMatchings = locs.size()-locsCurrent.size();
         System.out.println("Points after HOG are "+numberOfMatchings);
         updateViewCallback.UpdateProgress(50);
-        //tmp= new Mat( OMatg.rows(), OMatg.cols(), CvType.CV_8UC1 );
 
         if(firstSpotting){
             tmp = OMatg.clone();
@@ -411,13 +412,9 @@ public class OpenCVModule {
 
         for(Point p : locs)
         {
-//            for(  int m = 0; m < det_imwt.rows(); m++ )
-//            {
-//                for( int n = 0; n < det_imwt.cols(); n++ )
-//                {
             int m = (int) p.x,n = (int)p.y;
             double[] data = det_imwt.get(m, n);
-            if ( data[0]>=0.70 )
+            if ( data != null && data[0]>=0.70 )
             {
 
                 item it1 = new item();
@@ -431,8 +428,6 @@ public class OpenCVModule {
                 stuctpoints.add(it1);
                 System.out.println("Item Added:"+it1.getx()+","+it1.gety());
             }
-//                }
-//            }
         }
 
         // now starting to write to file
