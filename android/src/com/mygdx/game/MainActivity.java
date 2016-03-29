@@ -174,7 +174,7 @@ public class MainActivity extends FragmentActivity
             @Override
             public void run() {
                 OpenCVModule.SpotCharacters(original, template,
-                        mPatchRows,mPatchColumns,mUnicode,mFragmentThreshold,
+                        mPatchRows,mPatchColumns,mFragmentThreshold,mUnicode,
                         uvcallback);
             }
         });
