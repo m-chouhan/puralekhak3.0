@@ -20,4 +20,5 @@ public interface ControllerViewInterface {
     void UpdateProgress(int progress);
     void ShowProgressBar();
     void DismissProgressBar();
+    void WriteTemplatesToFile(String fileName);
 }

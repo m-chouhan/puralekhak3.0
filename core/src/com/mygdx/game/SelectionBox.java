@@ -200,4 +200,11 @@ public class SelectionBox extends InputAdapter {
         mTemplateColor.set(Util.ColorFromList(Util.UnicodetoInteger(symbol)));
     }
     public String getSymbol() {return symbol; }
+
+    public boolean isSelected() {
+        if( currentState == States.MOVE || currentState == States.SCALE_BOTTOM ||
+                currentState == States.SCALE_TOP )
+            return true;
+        return false;
+    }
 }

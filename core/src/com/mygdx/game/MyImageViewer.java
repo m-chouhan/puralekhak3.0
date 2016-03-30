@@ -72,10 +72,6 @@ public class MyImageViewer extends ApplicationAdapter implements ControllerViewI
 
         /*Opens internal image in assest/ folder as default */
         myImageTexture = new Texture(imagePath);
-        TextureData textureData = myImageTexture.getTextureData();
-        textureData.prepare();
-        Pixmap pixmap = textureData.consumePixmap();
-        PixmapIO.writePNG("file.png",pixmap);
         /*Buttons Initialization */
         loadUI();
         mCustomWidgetStage = new Stage();
@@ -328,5 +324,20 @@ public class MyImageViewer extends ApplicationAdapter implements ControllerViewI
     @Override
     public void DismissProgressBar() {
 
+    }
+
+    @Override
+    public void WriteTemplatesToFile(String fileName) {
+        TextureData textureData = myImageTexture.getTextureData();
+        textureData.prepare();
+        Pixmap pixmap = textureData.consumePixmap();
+
+        for(SelectionBox box:BoxList) {
+            if(box.isSelected()) pixmap.setColor(1, 1, 1, 0.5f);
+            else pixmap.setColor(1,0,0,0.5f);
+            pixmap.fillRectangle((int)box.getX(), (int)box.getY(), (int)box.getWidth(), (int)box.getHeight());
+        }
+        PixmapIO.writePNG(Gdx.files.external(fileName),pixmap);
+        pixmap.dispose();
     }
 }
