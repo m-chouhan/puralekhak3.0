@@ -322,6 +322,11 @@ public class MyImageViewer extends ApplicationAdapter implements ControllerViewI
     }
 
     @Override
+    public void Reset() {
+        BoxList.clear();
+    }
+
+    @Override
     public void DismissProgressBar() {
 
     }

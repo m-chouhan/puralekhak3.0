@@ -183,11 +183,13 @@ public class MainActivity extends FragmentActivity
             public void run() {
                 for( mPatchRows = 2;mPatchRows <= 4;++mPatchRows)
                     for(mPatchColumns = 2;mPatchColumns<=4;++mPatchColumns)
-                        for(mFragmentThreshold = 0.2f;mFragmentThreshold<= 0.6;mFragmentThreshold += 0.5f)
+                        for(mFragmentThreshold = 0.3f;mFragmentThreshold<= 0.62f;mFragmentThreshold += 0.05f)
                         {
-                            OpenCVModule.SpotCharacters(original, template,
+                            Log.d(TAG,"["+mPatchRows+","+mPatchColumns+","+mFragmentThreshold+"]");
+                            OpenCVModule.SpotCharacters(original.clone(), template,
                                     mPatchRows, mPatchColumns, mFragmentThreshold, mUnicode,
                                     uvcallback);
+                            mCvInterface.Reset();
                         }
             }
         });
@@ -256,8 +258,8 @@ public class MainActivity extends FragmentActivity
 
     @Override
     public void SpottingUpdated(ArrayList<item> itemArrayList, String unicode, Mat image) {
-        mCvInterface.SpottingUpdated(Utility.convertToVector(itemArrayList), unicode);
-        Long tsLong = System.currentTimeMillis()/1000;
+        //mCvInterface.SpottingUpdated(Utility.convertToVector(itemArrayList), unicode);
+        Long tsLong = (System.currentTimeMillis()/1000)%1000;
         String ts = tsLong.toString();
         String filename = mPatchRows +"_"+ mPatchColumns +"_"+ mFragmentThreshold +
                 "_"+ ts + mImage_path.substring(mImage_path.lastIndexOf("/")+1);
@@ -275,11 +277,11 @@ public class MainActivity extends FragmentActivity
 
         Mat roi = image.submat(new Rect( (int)mCurrentTemplateRect.getX(),(int) mCurrentTemplateRect.getY(),
                 (int) mCurrentTemplateRect.getWidth(), (int) mCurrentTemplateRect.getHeight() ));
-        Mat color = new Mat(roi.size(),image.type(),new Scalar(125,0,0));
+        Mat color = new Mat(roi.size(),image.type(),new Scalar(150,0,0));
         double alpha = 0.2;
         Core.addWeighted(color, alpha, roi, 1.0 - alpha, 0.0, roi);
         image.convertTo(image, CvType.CV_8U);
-        File file2 = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM), filename);
+        File file2 = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), filename);
         filename = file2.toString();
         Highgui.imwrite(filename, image);
     }

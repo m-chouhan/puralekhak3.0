@@ -90,7 +90,7 @@ public class LibgdxFragment extends AndroidFragmentApplication
     }
 
     public void UpdateProgressBar(final int progress) {
-        if (progress >= 100 ) progressBar.dismiss();
+        //if (progress >= 100 ) progressBar.hide();
         postRunnable(new Runnable() {
             @Override
             public void run() {

@@ -63,19 +63,21 @@ public class OpenCVModule {
                                       String unicode, UpdateViewCallback updateViewCallback) {
 
         Mat OMat = image,TMat = template;
+        locsPre = new ArrayList<Point>();
+        locsCurrent = new ArrayList<Point>();
 
-        if(firstSpotting){
-            //Do nothing
-        }
-        else {
-            if(locsPre.size()!=0){
-                locsCurrent.addAll(locsPre);
-            }
-            if(!preUndo){
-                tmpPre = tmp.clone();
-                im_selectPre = im_select.clone();
-            }
-        }
+//        if(firstSpotting){
+//            //Do nothing
+//        }
+//        else {
+//            if(locsPre.size()!=0){
+//                locsCurrent.addAll(locsPre);
+//            }
+//            if(!preUndo){
+//                tmpPre = tmp.clone();
+//                im_selectPre = im_select.clone();
+//            }
+//        }
 
         double Oheight=0;
         double Owidth=0;
@@ -475,14 +477,14 @@ public class OpenCVModule {
         // find the imageview and draw it!
         System.out.println("Done!!");
         updateViewCallback.UpdateProgress(100);
-        undoToDefault=false;
-        if(firstSpotting){
-            firstSpotting = false;
-            undoToDefault = true;
-        }
-        if(preUndo){
-            preUndo = false;
-        }
+//        undoToDefault=false;
+//        if(firstSpotting){
+//            firstSpotting = false;
+//            undoToDefault = true;
+//        }
+//        if(preUndo){
+//            preUndo = false;
+//        }
     }
 
     /*Converts the symbols into textfile */
