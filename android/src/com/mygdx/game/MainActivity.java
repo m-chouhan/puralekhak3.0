@@ -181,9 +181,9 @@ public class MainActivity extends FragmentActivity
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
-                for( mPatchRows = 2;mPatchRows <= 4;++mPatchRows)
-                    for(mPatchColumns = 2;mPatchColumns<=4;++mPatchColumns)
-                        for(mFragmentThreshold = 0.3f;mFragmentThreshold<= 0.62f;mFragmentThreshold += 0.05f)
+                for( ;mPatchRows <= 4;++mPatchRows)
+                    for(;mPatchColumns<=4;++mPatchColumns)
+                        for(;mFragmentThreshold<= 0.62f;mFragmentThreshold += 0.05f)
                         {
                             Log.d(TAG,"["+mPatchRows+","+mPatchColumns+","+mFragmentThreshold+"]");
                             OpenCVModule.SpotCharacters(original.clone(), template,

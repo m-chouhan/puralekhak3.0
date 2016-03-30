@@ -38,7 +38,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:max="10"
-            android:progress="3"
+            android:progress="2"
             android:id="@+id/seekBarRow" />
         <TextView
             android:id="@+id/rowText"
@@ -54,7 +54,7 @@
             android:layout_below="@id/seekBarRow"
             android:layout_alignParentRight="true"
             android:max="10"
-            android:progress="3"
+            android:progress="2"
             android:id="@+id/seekBarCol" />
         <TextView
             android:id="@+id/colText"
