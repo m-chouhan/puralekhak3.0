@@ -32,6 +32,8 @@ import android.graphics.Bitmap;
 import android.os.Environment;
 import android.util.Log;
 
+import com.badlogic.gdx.math.Rectangle;
+
 /*Entry point for image processing code >:|
 * this will run on a separate thread
                 don't touch ---- Handle With Care
@@ -417,24 +419,27 @@ public class OpenCVModule {
             if ( data != null && data[0]>=0.70 )
             {
 
-                item it1 = new item();
-                it1.setx(p.x);
-                it1.sety(p.y);
+                item it = new item();
+                it.setx(p.x);
+                it.sety(p.y);
 
-                it1.setposx(TMatg.rows());
-                it1.setposy(TMatg.cols());
+                it.setposx(TMatg.rows());
+                it.setposy(TMatg.cols());
 
-                it1.setScore(data[0]);
-                stuctpoints.add(it1);
-                System.out.println("Item Added:" + it1.getx() + "," + it1.gety()+
-                        "," + it1.getposx()+"," + it1.getposy());
-                Mat roi = OMat.submat(new Rect((int)p.x,(int)p.y,TMatg.rows(),TMatg.cols()));
-                Mat color = new Mat(roi.size(),CvType.CV_8UC3,new Scalar(0,125,125));
-                double alpha = 0.3;
+                it.setScore(data[0]);
+                stuctpoints.add(it);
+                System.out.println("Item Added:" + it.getx() + "," + it.gety() +
+                        "," + it.getposx() + "," + it.getposy());
+                System.out.println("Omat:" + OMat.rows() + "," + OMat.cols());
+
+                Mat roi = OMat.submat(new Rect((int) (it.gety() - it.getposy() / 2), (int) (it.getx() - it.getposx() / 2),
+                        (int) it.getposy(), (int) it.getposx()));
+                Mat color = new Mat(roi.size(),OMat.type(),new Scalar(0,125,125));
+                double alpha = 0.2;
                 Core.addWeighted(color,alpha,roi,1.0-alpha,0.0,roi);
             }
         }
-        updateViewCallback.SaveFile("OcvTestImage.png",OMat);
+        //updateViewCallback.SaveFile("OcvTestImage.png",OMat);
         // now starting to write to file
         updateViewCallback.UpdateProgress(80);
 
@@ -466,7 +471,7 @@ public class OpenCVModule {
         Log.d(TAG, "structPoint Size:" + stuctpoints.size() + "\tOMat Size :" + OMatg.size().toString()
                 + "\tdet_imwt size " + det_imwt.size().toString());
 
-        updateViewCallback.SpottingUpdated(stuctpoints, unicode);
+        updateViewCallback.SpottingUpdated(stuctpoints, unicode,OMat);
         // find the imageview and draw it!
         System.out.println("Done!!");
         updateViewCallback.UpdateProgress(100);

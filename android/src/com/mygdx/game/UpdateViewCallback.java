@@ -14,7 +14,7 @@ public interface UpdateViewCallback{
     void KeyboardSelected(int keyboard_id);
     void PatchSizeChanged(int row_size, int col_size);
     void UpdateProgress(int progress);
-    void SpottingUpdated(ArrayList<item> itemArrayList, String unicode);
+    void SpottingUpdated(ArrayList<item> itemArrayList, String unicode,Mat image);
     void ThresholdChanged(float mFragment_threshold, float mMatching_threshold);
     void SaveFile(String filename,Mat image);
 };

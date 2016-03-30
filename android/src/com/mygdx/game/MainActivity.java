@@ -27,8 +27,11 @@ import com.badlogic.gdx.math.Rectangle;
 
 import org.opencv.android.OpenCVLoader;
 import org.opencv.android.Utils;
+import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
+import org.opencv.core.Rect;
+import org.opencv.core.Scalar;
 import org.opencv.highgui.Highgui;
 
 import java.io.File;
@@ -80,6 +83,8 @@ public class MainActivity extends FragmentActivity
     /**Unicode corresponding to current template*/
     private String mUnicode = "";
     private float mFragmentThreshold;
+    /**Path to currently open Image*/
+    private String mImage_path;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -147,12 +152,11 @@ public class MainActivity extends FragmentActivity
 
         if( resultCode == RESULT_CANCELED ) return;
 
-        String Image_path = Utility.getRealPathFromURI(this, data.getData());
-        Log.d(TAG, Image_path);
-
-        mCurrentBitmap = BitmapFactory.decodeFile(Image_path);
+        mImage_path = Utility.getRealPathFromURI(this, data.getData());
+        Log.d(TAG, mImage_path);
+        mCurrentBitmap = BitmapFactory.decodeFile(mImage_path);
         mTempatePreview.setImageDrawable(mDefaultPreview);
-        mCvInterface.OpenImage(Image_path);
+        mCvInterface.OpenImage(mImage_path);
         Log.d(TAG, "BitmapSize:" + mCurrentBitmap.getWidth() + "," + mCurrentBitmap.getHeight());
 
         FragmentFactory.getKeyboardFragment().refreshView();
@@ -177,9 +181,14 @@ public class MainActivity extends FragmentActivity
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
-                OpenCVModule.SpotCharacters(original, template,
-                        mPatchRows,mPatchColumns,mFragmentThreshold,mUnicode,
-                        uvcallback);
+                for( mPatchRows = 2;mPatchRows <= 4;++mPatchRows)
+                    for(mPatchColumns = 2;mPatchColumns<=4;++mPatchColumns)
+                        for(mFragmentThreshold = 0.2f;mFragmentThreshold<= 0.6;mFragmentThreshold += 0.5f)
+                        {
+                            OpenCVModule.SpotCharacters(original, template,
+                                    mPatchRows, mPatchColumns, mFragmentThreshold, mUnicode,
+                                    uvcallback);
+                        }
             }
         });
         t.start();
@@ -246,8 +255,13 @@ public class MainActivity extends FragmentActivity
     }
 
     @Override
-    public void SpottingUpdated(ArrayList<item> itemArrayList, String unicode) {
+    public void SpottingUpdated(ArrayList<item> itemArrayList, String unicode, Mat image) {
         mCvInterface.SpottingUpdated(Utility.convertToVector(itemArrayList), unicode);
+        Long tsLong = System.currentTimeMillis()/1000;
+        String ts = tsLong.toString();
+        String filename = mPatchRows +"_"+ mPatchColumns +"_"+ mFragmentThreshold +
+                "_"+ ts + mImage_path.substring(mImage_path.lastIndexOf("/")+1);
+        SaveFile(filename,image);
     }
 
     @Override
@@ -258,6 +272,12 @@ public class MainActivity extends FragmentActivity
 
     @Override
     public void SaveFile(String filename,Mat image) {
+
+        Mat roi = image.submat(new Rect( (int)mCurrentTemplateRect.getX(),(int) mCurrentTemplateRect.getY(),
+                (int) mCurrentTemplateRect.getWidth(), (int) mCurrentTemplateRect.getHeight() ));
+        Mat color = new Mat(roi.size(),image.type(),new Scalar(125,0,0));
+        double alpha = 0.2;
+        Core.addWeighted(color, alpha, roi, 1.0 - alpha, 0.0, roi);
         image.convertTo(image, CvType.CV_8U);
         File file2 = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM), filename);
         filename = file2.toString();
