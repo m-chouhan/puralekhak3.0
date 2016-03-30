@@ -426,10 +426,15 @@ public class OpenCVModule {
 
                 it1.setScore(data[0]);
                 stuctpoints.add(it1);
-                System.out.println("Item Added:"+it1.getx()+","+it1.gety());
+                System.out.println("Item Added:" + it1.getx() + "," + it1.gety()+
+                        "," + it1.getposx()+"," + it1.getposy());
+                Mat roi = OMat.submat(new Rect((int)p.x,(int)p.y,TMatg.rows(),TMatg.cols()));
+                Mat color = new Mat(roi.size(),CvType.CV_8UC3,new Scalar(0,125,125));
+                double alpha = 0.3;
+                Core.addWeighted(color,alpha,roi,1.0-alpha,0.0,roi);
             }
         }
-
+        updateViewCallback.SaveFile("OcvTestImage.png",OMat);
         // now starting to write to file
         updateViewCallback.UpdateProgress(80);
 

@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory;
 
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -26,8 +27,11 @@ import com.badlogic.gdx.math.Rectangle;
 
 import org.opencv.android.OpenCVLoader;
 import org.opencv.android.Utils;
+import org.opencv.core.CvType;
 import org.opencv.core.Mat;
+import org.opencv.highgui.Highgui;
 
+import java.io.File;
 import java.util.ArrayList;
 
 /**
@@ -185,7 +189,7 @@ public class MainActivity extends FragmentActivity
     @Override
     public void TemplateSelected(final int x, final int y, final int width, final int height, final String unicode) {
 
-        Log.d(TAG,"Template Selected "+x+","+y+","+width+","+height);
+        Log.d(TAG, "Template Selected " + x + "," + y + "," + width + "," + height);
         mCurrentTemplateRect = new Rectangle(x,y,width,height);
         mCurrentBitmapTemplate = Bitmap.createBitmap(mCurrentBitmap,
                 (int) mCurrentTemplateRect.getX(),(int) mCurrentTemplateRect.getY(),(int) mCurrentTemplateRect.getWidth(),(int) mCurrentTemplateRect.getHeight());
@@ -199,7 +203,7 @@ public class MainActivity extends FragmentActivity
 
     @Override
     public void TemplateMoved(int x, int y, int width, int height, String unicode) {
-        TemplateSelected(x,y,width,height,unicode);
+        TemplateSelected(x, y, width, height, unicode);
     }
 
     @Override
@@ -243,7 +247,7 @@ public class MainActivity extends FragmentActivity
 
     @Override
     public void SpottingUpdated(ArrayList<item> itemArrayList, String unicode) {
-        mCvInterface.SpottingUpdated(Utility.convertToVector(itemArrayList),unicode);
+        mCvInterface.SpottingUpdated(Utility.convertToVector(itemArrayList), unicode);
     }
 
     @Override
@@ -252,6 +256,13 @@ public class MainActivity extends FragmentActivity
         mFragmentThreshold = mFragment_threshold;
     }
 
+    @Override
+    public void SaveFile(String filename,Mat image) {
+        image.convertTo(image, CvType.CV_8U);
+        File file2 = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM), filename);
+        filename = file2.toString();
+        Highgui.imwrite(filename, image);
+    }
     @Override
     public void onDrawerOpened(View drawerView) {
         if(mCurrentTemplateRect != null ) {

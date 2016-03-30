@@ -1,5 +1,7 @@
 package com.mygdx.game;
 
+import org.opencv.core.Mat;
+
 import java.util.ArrayList;
 
 /**An interface for local control-view messages
@@ -14,4 +16,5 @@ public interface UpdateViewCallback{
     void UpdateProgress(int progress);
     void SpottingUpdated(ArrayList<item> itemArrayList, String unicode);
     void ThresholdChanged(float mFragment_threshold, float mMatching_threshold);
+    void SaveFile(String filename,Mat image);
 };
