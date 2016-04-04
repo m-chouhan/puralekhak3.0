@@ -114,6 +114,13 @@ public class MyImageViewer extends ApplicationAdapter implements ControllerViewI
         mButtonStage.draw();
     }
 
+    @Override
+    public void FreeMemory() {
+        mCustomWidgetStage.clear();
+        myImageTexture.dispose();
+        mButtonStage.clear();
+    }
+
     /*Loads UI elements */
     public void loadUI() {
 

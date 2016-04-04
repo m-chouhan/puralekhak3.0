@@ -199,8 +199,8 @@ public class OpenCVModule {
                 Mat corrim2 = matchResult;
 
                 Point patch_center = new Point((jmax + jmin)/2, (imax + imin)/2 );
-                Size prtsz = new Size((jmax - jmin) , (imax - imin));
-                Size corr2sz = corrim2.size();
+                //Size prtsz = new Size((jmax - jmin) , (imax - imin));
+                //Size corr2sz = corrim2.size();
 
                 Point translation_vector =
                         new Point(Math.round(template_center.x - patch_center.x) ,Math.round(template_center.y - patch_center.y));
@@ -208,7 +208,7 @@ public class OpenCVModule {
                 affineMat.put(0, 2, translation_vector.x);//0 is x-axis //
                 affineMat.put(1, 2, translation_vector.y);//1 is y-axis //
                 Imgproc.warpAffine(corrim2, corrim2, affineMat, corrim2.size());
-                corr2sz = corrim2.size();
+                //corr2sz = corrim2.size();
                 Core.add(corrim, corrim2, corrim);//corrim = corrim+corrim2;
                 fragcount = fragcount + 1;
                 updateViewCallback.UpdateProgress((int)fragcount*4);
