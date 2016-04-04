@@ -145,9 +145,9 @@ public class MyImageViewer extends ApplicationAdapter implements ControllerViewI
         Table table = new Table();
         table.setFillParent(true);
         //table.setDebug(true); //shows table elements using lines
-        table.left().top().padLeft(50).padTop(150);
+        table.left().bottom().pad(50);
         table.add(plusButton).width(80).height(80);
-        table.row();
+        //table.row();
         table.add(minusButton).width(80).height(80);
 
         Table templatepreviewTable = new Table();

@@ -87,13 +87,19 @@ public class SettingsFragment extends Fragment implements AdapterView.OnItemSele
         mUVCallback.PatchSizeChanged(mPatchRows, mPatchColumns);
 
         mFragment_threshold = fragSeek.getProgress()/20f;
-        mMatching_threshold = matchingSeek.getProgress()/10f;
+        mMatching_threshold = matchingSeek.getProgress()/20f;
         mUVCallback.ThresholdChanged(mFragment_threshold,mMatching_threshold);
 
         mRowText = (TextView)view.findViewById(R.id.rowText);
         mColumnText = (TextView)view.findViewById(R.id.colText);
         mFragText = (TextView) view.findViewById(R.id.fragment_threshold_text);
         mMatchingText = (TextView) view.findViewById(R.id.matching_threshold_text);
+
+        mRowText.setText("Patch Rows ["+mPatchRows+"]" );
+        mColumnText.setText("Patch Column ["+mPatchColumns+"]" );
+        mFragText.setText("Fragment threshold ["+mFragment_threshold+"]");
+        mMatchingText.setText("Matching threshold ["+mMatching_threshold+"]");
+
         return view;
     }
 
@@ -135,7 +141,7 @@ public class SettingsFragment extends Fragment implements AdapterView.OnItemSele
                 mUVCallback.ThresholdChanged(mFragment_threshold,mMatching_threshold);
                 break;
             case R.id.matching_thresh:
-                mMatching_threshold = progress/10f;
+                mMatching_threshold = progress/20f;
                 mUVCallback.ThresholdChanged(mFragment_threshold,mMatching_threshold);
         }
         mRowText.setText("Patch Rows ["+mPatchRows+"]" );

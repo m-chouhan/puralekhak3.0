@@ -86,17 +86,23 @@ public class LibgdxFragment extends AndroidFragmentApplication
      * Progress bar to display spotting progress
      */
     public void ShowProgressBar() {
-        progressBar.show();
+//        postRunnable(new Runnable() {
+//            @Override
+//            public void run() {
+//                progressBar.show();
+//            }
+//        });
     }
 
     public void UpdateProgressBar(final int progress) {
-        //if (progress >= 100 ) progressBar.hide();
-        postRunnable(new Runnable() {
-            @Override
-            public void run() {
-                progressBar.setProgress(progress);
-            }
-        });
+        Log.d(TAG,"Progress:"+progress);
+//        postRunnable(new Runnable() {
+//            @Override
+//            public void run() {
+//                if (progress >= 100 ) progressBar.hide();
+//                else progressBar.setProgress(progress);
+//            }
+//        });
     }
 
     public String getUnicodeText() {

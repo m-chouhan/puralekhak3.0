@@ -83,6 +83,7 @@ public class MainActivity extends FragmentActivity
     /**Unicode corresponding to current template*/
     private String mUnicode = "";
     private float mFragmentThreshold;
+    private float mMatchingThreshold;
     /**Path to currently open Image*/
     private String mImage_path;
 
@@ -108,6 +109,30 @@ public class MainActivity extends FragmentActivity
         mTempatePreview = (ImageView) findViewById(R.id.template_preview);
         mDefaultPreview = getResources().getDrawable(R.drawable.titleimg);
         mTempatePreview.setImageDrawable(mDefaultPreview);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d(TAG, "OnResume!!");
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.d(TAG,"OnStop!!");
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG, "OnDestroy!!");
+    }
+
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+        Log.d(TAG, "OnLowMemory!!");
     }
 
     @Override
@@ -181,16 +206,27 @@ public class MainActivity extends FragmentActivity
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
-                for( ;mPatchRows <= 4;++mPatchRows)
-                    for(;mPatchColumns<=4;++mPatchColumns)
-                        for(;mFragmentThreshold<= 0.62f;mFragmentThreshold += 0.05f)
-                        {
-                            Log.d(TAG,"["+mPatchRows+","+mPatchColumns+","+mFragmentThreshold+"]");
-                            OpenCVModule.SpotCharacters(original.clone(), template,
-                                    mPatchRows, mPatchColumns, mFragmentThreshold, mUnicode,
-                                    uvcallback);
-                            mCvInterface.Reset();
+                /*initial values for starting loop */
+                int prevPatchCol = mPatchColumns;
+                float prevMatchThresh = mMatchingThreshold,prevfragThresh = mFragmentThreshold;
+
+                for(;mPatchRows <= 4;++mPatchRows) {
+                    for (mPatchColumns = prevPatchCol;mPatchColumns <= 4; ++mPatchColumns) {
+                        for (mFragmentThreshold = prevfragThresh; mFragmentThreshold <= 0.51f; mFragmentThreshold += 0.05f) {
+                            for(mMatchingThreshold = prevMatchThresh;mMatchingThreshold <= 0.9f;mMatchingThreshold += 0.04f) {
+                                Log.d(TAG, "[" + mPatchRows + "," + mPatchColumns + "," + mFragmentThreshold + "," + mMatchingThreshold + "]");
+
+                                OpenCVModule.SpotCharacters(original.clone(), template,
+                                        mPatchRows, mPatchColumns, mFragmentThreshold, mMatchingThreshold,
+                                        mUnicode, uvcallback);
+                                mCvInterface.Reset();
+                            }
+                            prevMatchThresh = 0.75f;
                         }
+                        prevfragThresh = 0.25f;
+                    }
+                    prevPatchCol = 2;
+                }
             }
         });
         t.start();
@@ -261,8 +297,8 @@ public class MainActivity extends FragmentActivity
         //mCvInterface.SpottingUpdated(Utility.convertToVector(itemArrayList), unicode);
         Long tsLong = (System.currentTimeMillis()/1000)%1000;
         String ts = tsLong.toString();
-        String filename = mPatchRows +"_"+ mPatchColumns +"_"+ mFragmentThreshold +
-                "_"+ ts + mImage_path.substring(mImage_path.lastIndexOf("/")+1);
+        String filename = mPatchRows +"_"+ mPatchColumns +"_"+ mFragmentThreshold + "_" +mMatchingThreshold + "_" +
+                "__"+ ts + mImage_path.substring(mImage_path.lastIndexOf("/")+1);
         SaveFile(filename,image);
     }
 
@@ -270,6 +306,7 @@ public class MainActivity extends FragmentActivity
     public void ThresholdChanged(float mFragment_threshold, float mMatching_threshold) {
 
         mFragmentThreshold = mFragment_threshold;
+        mMatchingThreshold = mMatching_threshold;
     }
 
     @Override

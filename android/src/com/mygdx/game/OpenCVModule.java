@@ -59,7 +59,8 @@ public class OpenCVModule {
     @param patch_columns: no of columns of patches inside template
     @param updateViewCallback : callback method to update GUI
     @param unicode :unicode corresponding to the template*/
-    static public void SpotCharacters(Mat image,Mat template, int patch_rows,int patch_columns,float fragment_thresh,
+    static public void SpotCharacters(Mat image,Mat template, int patch_rows,int patch_columns,
+                                      float fragment_thresh,float matching_thresh,
                                       String unicode, UpdateViewCallback updateViewCallback) {
 
         Mat OMat = image,TMat = template;
@@ -207,31 +208,6 @@ public class OpenCVModule {
                 affineMat.put(0, 2, translation_vector.x);//0 is x-axis //
                 affineMat.put(1, 2, translation_vector.y);//1 is y-axis //
                 Imgproc.warpAffine(corrim2, corrim2, affineMat, corrim2.size());
-                /*
-                if (posind[0] >= 0 && posind[1] >= 0) {
-                    affineMat.put(0, 2, posind[1]);//0 is x-axis
-                    affineMat.put(1, 2, posind[0]);//1 is y-axis
-                    Imgproc.warpAffine(corrim2, corrim2, affineMat, corrim2.size());
-
-                } else if (posind[0] >= 0 && posind[1] < 0) {
-                    //corrim2 = shiftd(corrim2,0,posind[0]);
-                    //corrim2 = shiftl(corrim2,0,Math.abs(posind[2]));
-                    affineMat.put(0, 2, -posind[1]);
-                    affineMat.put(1, 2, posind[0]);
-                    Imgproc.warpAffine(corrim2, corrim2, affineMat, corrim2.size());
-                } else if (posind[0] < 0 && posind[1] >= 0) {
-                    //corrim2 = shiftu(corrim2,0,abs(posind[0]));
-                    //corrim2 = shiftr(corrim2,0,posind[2]);
-                    affineMat.put(0, 2, posind[1]);
-                    affineMat.put(1, 2, -posind[0]);
-                    Imgproc.warpAffine(corrim2, corrim2, affineMat, corrim2.size());
-                } else {
-                    //corrim2 = shiftu(corrim2,0,abs(posind[0]));
-                    //corrim2 = shiftl(corrim2,0,abs(posind[1]));
-                    affineMat.put(0, 2, -posind[1]);
-                    affineMat.put(1, 2, -posind[0]);
-                    Imgproc.warpAffine(corrim2, corrim2, affineMat, corrim2.size());
-                }*/
                 corr2sz = corrim2.size();
                 Core.add(corrim, corrim2, corrim);//corrim = corrim+corrim2;
                 fragcount = fragcount + 1;
@@ -304,10 +280,10 @@ public class OpenCVModule {
         }
 
         System.out.println("This is "+idx.size());
-        for(int i=0;i<idx.size();i++)
-        {
-            System.out.println(idx.get(i).x+","+idx.get(i).y);
-        }
+//        for(int i=0;i<idx.size();i++)
+//        {
+//            System.out.println(idx.get(i).x+","+idx.get(i).y);
+//        }
 
         /**Parts based HOG feature matching starts*/
 
@@ -327,7 +303,7 @@ public class OpenCVModule {
                 double[] data1 = score.get(2,2);
 
                 System.out.println(data1[0]);
-                if (data1[0]>=0.80)
+                if (data1[0]>= matching_thresh)
                 {
                     System.out.println("inside if");
                     det_imwt.submat((int)idx.get(i).x-roi_grad.rows()/2,(int)idx.get(i).x+roi_grad.rows()/2,(int)idx.get(i).y-roi_grad.cols()/2,(int)idx.get(i).y+roi_grad.cols()/2).setTo(new Scalar(data1[0],0,0));
@@ -346,6 +322,7 @@ public class OpenCVModule {
         System.out.println("Points after HOG are "+numberOfMatchings);
         updateViewCallback.UpdateProgress(50);
 
+        /*
         if(firstSpotting){
             tmp = OMatg.clone();
             im_select = OMatg.clone();
@@ -368,7 +345,7 @@ public class OpenCVModule {
                     im_select.put(m, n, odata[0]*55);
                 }
             }
-        }
+        } */
         /*
         im_select.convertTo(im_select, CvType.CV_8U);
         String filename = "im_select.jpg";
