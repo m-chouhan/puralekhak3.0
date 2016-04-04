@@ -22,4 +22,5 @@ public interface ControllerViewInterface {
     void DismissProgressBar();
     void WriteTemplatesToFile(String fileName);
     void Reset();
+    void FreeMemory();
 }

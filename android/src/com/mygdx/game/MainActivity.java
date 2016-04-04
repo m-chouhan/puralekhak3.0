@@ -119,9 +119,25 @@ public class MainActivity extends FragmentActivity
     }
 
     @Override
+    public void onTrimMemory(int level) {
+        super.onTrimMemory(level);
+        Log.d(TAG, "OnTrim!!");
+        mCurrentBitmap = null;
+        mCurrentBitmapTemplate = null;
+        mDefaultPreview = null;
+
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         Log.d(TAG, "OnResume!!");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.d(TAG, "OnPause!!");
     }
 
     @Override
@@ -139,6 +155,12 @@ public class MainActivity extends FragmentActivity
     @Override
     public void onLowMemory() {
         super.onLowMemory();
+        mCvInterface.FreeMemory();
+        mCurrentBitmap.recycle();
+        mCurrentBitmapTemplate.recycle();
+        mCurrentBitmap = null;
+        mCurrentBitmapTemplate = null;
+        mDefaultPreview = null;
         Log.d(TAG, "OnLowMemory!!");
     }
 
