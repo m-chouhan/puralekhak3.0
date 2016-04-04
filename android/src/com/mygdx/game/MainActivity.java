@@ -227,7 +227,7 @@ public class MainActivity extends FragmentActivity
                                 OpenCVModule.SpotCharacters(original.clone(), template,
                                         mPatchRows, mPatchColumns, mFragmentThreshold, mMatchingThreshold,
                                         mUnicode, uvcallback);
-                                mCvInterface.Reset();
+                                //mCvInterface.Reset();
                             }
                             prevMatchThresh = 0.75f;
                         }
@@ -236,6 +236,7 @@ public class MainActivity extends FragmentActivity
                     prevPatchCol = 2;
                 }
                 mWakeLock.release();
+                Log.d(TAG,"Finished!!");
             }
         });
         t.start();
