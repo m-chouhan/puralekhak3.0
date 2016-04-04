@@ -8,6 +8,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.PowerManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -86,6 +87,8 @@ public class MainActivity extends FragmentActivity
     private float mMatchingThreshold;
     /**Path to currently open Image*/
     private String mImage_path;
+    /**For preventing sleep during processing*/
+    private PowerManager.WakeLock mWakeLock;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,6 +112,10 @@ public class MainActivity extends FragmentActivity
         mTempatePreview = (ImageView) findViewById(R.id.template_preview);
         mDefaultPreview = getResources().getDrawable(R.drawable.titleimg);
         mTempatePreview.setImageDrawable(mDefaultPreview);
+
+        PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
+        mWakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
+                "MyWakelockTag");
     }
 
     @Override
@@ -195,6 +202,7 @@ public class MainActivity extends FragmentActivity
     @Override
     public void StartSpotting() {
 
+        mWakeLock.acquire();
         Log.d(TAG, mCurrentTemplateRect.toString());
         Log.d(TAG,"Bitmap Size: "+mCurrentBitmap.getWidth()+","+mCurrentBitmap.getHeight());
 
@@ -227,6 +235,7 @@ public class MainActivity extends FragmentActivity
                     }
                     prevPatchCol = 2;
                 }
+                mWakeLock.release();
             }
         });
         t.start();
