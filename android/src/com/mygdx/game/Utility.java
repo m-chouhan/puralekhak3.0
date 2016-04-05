@@ -121,6 +121,7 @@ public class Utility {
             @Override
             public void run() {
                 //bitmap.getByteCount();
+
                 int[] pixels = new int[bitmap.getWidth()*bitmap.getHeight()];
                 bitmap.getPixels(pixels, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
                 for (int i = 0; i< pixels.length; i++) {

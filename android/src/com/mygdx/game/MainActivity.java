@@ -222,8 +222,8 @@ public class MainActivity extends FragmentActivity
         mCvInterface.OpenImage(mImage_path);
         //Utility.BitmapToTex(mCurrentBitmap,mCvInterface);
         Log.d(TAG, "BitmapSize:" + mCurrentBitmap.getWidth() + "," + mCurrentBitmap.getHeight());
-
         FragmentFactory.getKeyboardFragment().refreshView();
+
     }
 
     @Override

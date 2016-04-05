@@ -73,7 +73,7 @@ public class MyImageViewer extends ApplicationAdapter implements ControllerViewI
         /*Buttons Initialization */
         loadUI();
         camera = new OrthographicCamera(Width,Height);
-        camera.position.set(camera.viewportWidth / 2f, camera.viewportHeight / 2f, 0);
+        camera.position.set(myImageTexture.getWidth() / 2f, myImageTexture.getHeight()/2f, 0);
         camera.update();
         //OrthographicCamera) mCustomWidgetStage.getCamera();
         /*To match the libgdx coordinate system with android coordinate system */
@@ -272,6 +272,8 @@ public class MyImageViewer extends ApplicationAdapter implements ControllerViewI
 //                pixels.dispose();
                 myImageTexture.dispose();
                 myImageTexture = new Texture(Gdx.files.absolute(imagePath));
+                camera.position.set(myImageTexture.getWidth() / 2f, myImageTexture.getHeight() / 2f, 0);
+                camera.update();
                 Gdx.app.log(TAG, "OpenImage:" + myImageTexture.getWidth()+"," + myImageTexture.getHeight() +","+ myImageTexture.getDepth());
             }
         });
@@ -286,6 +288,8 @@ public class MyImageViewer extends ApplicationAdapter implements ControllerViewI
         involving OpenGL need to be executed on the rendering thread. */
         myImageTexture.dispose();
         myImageTexture = tex;
+        camera.position.set(myImageTexture.getWidth() / 2f, myImageTexture.getHeight()/2f, 0);
+        camera.update();
         Gdx.app.log(TAG, "OpenTexture:" + myImageTexture.getWidth() + "," + myImageTexture.getHeight() + "," + myImageTexture.getDepth());
     }
 
