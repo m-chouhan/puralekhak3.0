@@ -37,13 +37,11 @@ public class MyImageViewer extends ApplicationAdapter implements ControllerViewI
 
     /*responsible for buttons */
     private Stage mButtonStage;
-    private Stage mCustomWidgetStage;
     int Width,Height;
 
     private String imagePath;
     SpriteBatch mImageDrawingBatch;
     /** represents image from gui's perspective*/
-    Image myImage;
     Image myTemplatePreview;
     Texture myImageTexture;
     /**For zoomIn,zoomOut and moving image*/
@@ -74,14 +72,6 @@ public class MyImageViewer extends ApplicationAdapter implements ControllerViewI
         myImageTexture = new Texture(imagePath);
         /*Buttons Initialization */
         loadUI();
-        mCustomWidgetStage = new Stage();
-        /*required for correct rendering in android coordinate system */
-        TextureRegion region = new TextureRegion(myImageTexture);
-        region.flip(false,true);
-        myImage = new Image(region);
-
-        mCustomWidgetStage.addActor(myImage);
-        myImage.setDrawable(new SpriteDrawable(new Sprite(region)));
         camera = new OrthographicCamera(Width,Height);
         camera.position.set(camera.viewportWidth / 2f, camera.viewportHeight / 2f, 0);
         camera.update();
@@ -104,7 +94,6 @@ public class MyImageViewer extends ApplicationAdapter implements ControllerViewI
         Gdx.gl.glClearColor(0.5f, 0.5f, 0.5f, 0.5f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         Gdx.gl20.glLineWidth(8);
-        //mCustomWidgetStage.draw();
         mImageDrawingBatch.setProjectionMatrix(camera.combined);
         mImageDrawingBatch.begin();
         mImageDrawingBatch.draw(myImageTexture, 0, 0 + myImageTexture.getHeight(), myImageTexture.getWidth(), -myImageTexture.getHeight());
@@ -120,13 +109,7 @@ public class MyImageViewer extends ApplicationAdapter implements ControllerViewI
     @Override
     public void FreeMemory() {
         Gdx.app.log(TAG,"Freeing Memory !!");
-        mCustomWidgetStage.clear();
         myImageTexture.dispose();
-        if(myImage != null) {
-            myImage.clear();
-            myImage = null;
-        }
-
         mButtonStage.clear();
     }
 
@@ -199,10 +182,8 @@ public class MyImageViewer extends ApplicationAdapter implements ControllerViewI
     * x,y,w,h are according to the view
     * actual pixel values for template selection will be different hence need to be calculated
     * */
-//    float horizontalRatio;
-//    float verticalRatio;
     private Rectangle TransformToPixelCoordinates(SelectionBox box) {
-        Rectangle rect = new Rectangle(box.getX(),box.getY(),box.getWidth(),box.getHeight());
+        return new Rectangle(box.getX(),box.getY(),box.getWidth(),box.getHeight());
 //        float horizontalRatio = myImageTexture.getWidth()/myImage.getWidth();
 //        float verticalRatio = myImageTexture.getHeight()/myImage.getHeight();
 //        /*calculating actual pixel coordinates */
@@ -210,7 +191,6 @@ public class MyImageViewer extends ApplicationAdapter implements ControllerViewI
 //        rect.y = box.getY()*verticalRatio;
 //        rect.width = box.getWidth()*horizontalRatio;
 //        rect.height = box.getHeight()*verticalRatio;
-        return rect;
     }
 
     /*Sends message to the controller to update template and adds a new selection box*/
@@ -307,19 +287,9 @@ public class MyImageViewer extends ApplicationAdapter implements ControllerViewI
     public void OpenTexture(final Texture tex) {
         /*Required since Any graphics operations directly
         involving OpenGL need to be executed on the rendering thread. */
-
-//        Gdx.app.postRunnable(new Runnable() {
-//            @Override
-//            public void run() {
-                myImageTexture.dispose();
-                myImageTexture = tex;
-                TextureRegion region = new TextureRegion(myImageTexture);
-                region.flip(false,true);
-                myImage.setDrawable(new SpriteDrawable(new Sprite(region)));
-                Gdx.app.log(TAG, "OpenTexture:" + myImageTexture.getWidth()+"," + myImageTexture.getHeight() +","+ myImageTexture.getDepth());
-                Gdx.app.log(TAG, "OpenTexture (widget):"+myImage.getWidth()+","+myImage.getHeight() );
-//            }
-//        });
+        myImageTexture.dispose();
+        myImageTexture = tex;
+        Gdx.app.log(TAG, "OpenTexture:" + myImageTexture.getWidth()+"," + myImageTexture.getHeight() +","+ myImageTexture.getDepth());
     }
 
     /* update current selected template's unicode
