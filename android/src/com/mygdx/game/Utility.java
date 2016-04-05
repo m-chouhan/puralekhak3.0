@@ -132,12 +132,15 @@ public class Utility {
                 Texture texture = new Texture(bitmap.getWidth(), bitmap.getHeight(), Pixmap.Format.RGBA8888);
                 texture.draw(pixmap, 0, 0);
                 pixmap.dispose();
-//                Texture tex = new Texture(bitmap.getWidth(), bitmap.getHeight(), Pixmap.Format.RGBA8888);
-//                GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, tex.getTextureObjectHandle());
-//                GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, bitmap, 0);
-//                GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
+
+                /*Direct conversion code */
+                /*
+                Texture tex = new Texture(bitmap.getWidth(), bitmap.getHeight(), Pixmap.Format.RGBA8888);
+                GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, tex.getTextureObjectHandle());
+                GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, bitmap, 0);
+                GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
+                */
                 cvInterface.OpenTexture(texture);
-                //bitmap.recycle();
             }
         });
         return null;

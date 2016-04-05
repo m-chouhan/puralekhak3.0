@@ -82,7 +82,10 @@ public class MyImageViewer extends ApplicationAdapter implements ControllerViewI
 
         mCustomWidgetStage.addActor(myImage);
         myImage.setDrawable(new SpriteDrawable(new Sprite(region)));
-        camera = (OrthographicCamera) mCustomWidgetStage.getCamera();
+        camera = new OrthographicCamera(Width,Height);
+        camera.position.set(camera.viewportWidth / 2f, camera.viewportHeight / 2f, 0);
+        camera.update();
+        //OrthographicCamera) mCustomWidgetStage.getCamera();
         /*To match the libgdx coordinate system with android coordinate system */
         camera.setToOrtho(true);
 
@@ -135,7 +138,6 @@ public class MyImageViewer extends ApplicationAdapter implements ControllerViewI
         imStyle.up = imStyle.down = imStyle.checked =
                 new TextureRegionDrawable(new TextureRegion(new Texture("plus.png")));
         ImageButton plusButton = new ImageButton(imStyle);
-//        plusButton.setPosition(100, Height - 100);
         plusButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
@@ -211,15 +213,6 @@ public class MyImageViewer extends ApplicationAdapter implements ControllerViewI
         return rect;
     }
 
-    //    private Vector2 TransformToCameraCoordinates(Vector2 point) {
-//
-//        float horizontalRatio = myImageTexture.getWidth()/myImage.getWidth();
-//        float verticalRatio = myImageTexture.getHeight()/myImage.getHeight();
-//        /*calculating actual pixel coordinates */
-//        point.x = point.x/horizontalRatio;
-//        point.y = point.y/verticalRatio;
-//        return point;
-//    }
     /*Sends message to the controller to update template and adds a new selection box*/
     void CreateSelectionBoxAt( float x,float y,float width ,float height,String unicode ) {
 
@@ -296,15 +289,16 @@ public class MyImageViewer extends ApplicationAdapter implements ControllerViewI
         Gdx.app.postRunnable(new Runnable() {
             @Override
             public void run() {
-                Pixmap pixels = new Pixmap(Gdx.files.absolute(imagePath));
-                Gdx.app.log(TAG, "Pixmap Format:" + pixels.getFormat().toString());
-                pixels.dispose();
+//                Pixmap pixels = new Pixmap(Gdx.files.absolute(imagePath));
+//                Gdx.app.log(TAG, "Pixmap Format:" + pixels.getFormat().toString());
+//                pixels.dispose();
+                myImageTexture.dispose();
                 myImageTexture = new Texture(Gdx.files.absolute(imagePath));
-                TextureRegion region = new TextureRegion(myImageTexture);
-                region.flip(false,true);
-                myImage.setDrawable(new SpriteDrawable(new Sprite(region)));
+//                TextureRegion region = new TextureRegion(myImageTexture);
+//                region.flip(false,true);
+//                myImage.setDrawable(new SpriteDrawable(new Sprite(region)));
                 Gdx.app.log(TAG, "OpenImage:" + myImageTexture.getWidth()+"," + myImageTexture.getHeight() +","+ myImageTexture.getDepth());
-                Gdx.app.log(TAG, "OpenImage (widget):"+myImage.getWidth()+","+myImage.getHeight() );
+//                Gdx.app.log(TAG, "OpenImage (widget):"+myImage.getWidth()+","+myImage.getHeight() );
             }
         });
     }

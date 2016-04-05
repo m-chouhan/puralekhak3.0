@@ -818,7 +818,7 @@ public class OpenCVModule {
         	  double[] data = bw1.get(m, n);
         	  if(data[0] > 0)
         	  {   
-        		  Point p = new Point(m,n); 
+        		  Point p = new Point(m,n);
         		  idx.add(pcntr,p); 
         		  pcntr++;   
         	  }
