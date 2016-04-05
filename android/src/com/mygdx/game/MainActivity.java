@@ -122,10 +122,15 @@ public class MainActivity extends FragmentActivity
     public void onTrimMemory(int level) {
         super.onTrimMemory(level);
         Log.d(TAG, "OnTrim!!");
-        mCurrentBitmap = null;
-        mCurrentBitmapTemplate = null;
-        mDefaultPreview = null;
-
+        if(mCurrentBitmap != null ) {
+            mCurrentBitmap.recycle();
+            mCurrentBitmap = null;
+        }
+        if(mCurrentBitmapTemplate != null) {
+            mCurrentBitmapTemplate.recycle();
+            mCurrentBitmapTemplate = null;
+        }
+        if(mWakeLock.isHeld()) mCvInterface.FreeMemory();
     }
 
     @Override
@@ -156,10 +161,14 @@ public class MainActivity extends FragmentActivity
     public void onLowMemory() {
         super.onLowMemory();
         mCvInterface.FreeMemory();
-        mCurrentBitmap.recycle();
-        mCurrentBitmapTemplate.recycle();
-        mCurrentBitmap = null;
-        mCurrentBitmapTemplate = null;
+        if(mCurrentBitmap != null ) {
+            mCurrentBitmap.recycle();
+            mCurrentBitmap = null;
+        }
+        if(mCurrentBitmapTemplate != null) {
+            mCurrentBitmapTemplate.recycle();
+            mCurrentBitmapTemplate = null;
+        }
         mDefaultPreview = null;
         Log.d(TAG, "OnLowMemory!!");
     }
@@ -210,7 +219,8 @@ public class MainActivity extends FragmentActivity
         Log.d(TAG, mImage_path);
         mCurrentBitmap = BitmapFactory.decodeFile(mImage_path);
         mTempatePreview.setImageDrawable(mDefaultPreview);
-        mCvInterface.OpenImage(mImage_path);
+        //mCvInterface.OpenImage(mImage_path);
+        mCvInterface.OpenTexture(Utility.BitmapToTex(mCurrentBitmap));
         Log.d(TAG, "BitmapSize:" + mCurrentBitmap.getWidth() + "," + mCurrentBitmap.getHeight());
 
         FragmentFactory.getKeyboardFragment().refreshView();
@@ -243,7 +253,7 @@ public class MainActivity extends FragmentActivity
                 for(;mPatchRows <= 4;++mPatchRows) {
                     for (mPatchColumns = prevPatchCol;mPatchColumns <= 4; ++mPatchColumns) {
                         for (mFragmentThreshold = prevfragThresh; mFragmentThreshold <= 0.51f; mFragmentThreshold += 0.05f) {
-                            for(mMatchingThreshold = prevMatchThresh;mMatchingThreshold <= 0.9f;mMatchingThreshold += 0.04f) {
+                            for(mMatchingThreshold = prevMatchThresh;mMatchingThreshold <= 0.91f;mMatchingThreshold += 0.04f) {
                                 Log.d(TAG, "[" + mPatchRows + "," + mPatchColumns + "," + mFragmentThreshold + "," + mMatchingThreshold + "]");
 
                                 OpenCVModule.SpotCharacters(original.clone(), template,
@@ -253,7 +263,7 @@ public class MainActivity extends FragmentActivity
                             }
                             prevMatchThresh = 0.75f;
                         }
-                        prevfragThresh = 0.25f;
+                        prevfragThresh = 0.29f;
                     }
                     prevPatchCol = 2;
                 }
@@ -327,7 +337,7 @@ public class MainActivity extends FragmentActivity
     @Override
     public void SpottingUpdated(ArrayList<item> itemArrayList, String unicode, Mat image) {
         //mCvInterface.SpottingUpdated(Utility.convertToVector(itemArrayList), unicode);
-        Long tsLong = (System.currentTimeMillis()/1000)%1000;
+        Long tsLong = (System.currentTimeMillis()/1000)%100;
         String ts = tsLong.toString();
         String filename = mPatchRows +"_"+ mPatchColumns +"_"+ mFragmentThreshold + "_" +mMatchingThreshold + "_" +
                 "__"+ ts + mImage_path.substring(mImage_path.lastIndexOf("/")+1);
@@ -347,7 +357,7 @@ public class MainActivity extends FragmentActivity
         Mat roi = image.submat(new Rect( (int)mCurrentTemplateRect.getX(),(int) mCurrentTemplateRect.getY(),
                 (int) mCurrentTemplateRect.getWidth(), (int) mCurrentTemplateRect.getHeight() ));
         Mat color = new Mat(roi.size(),image.type(),new Scalar(150,0,0));
-        double alpha = 0.2;
+        double alpha = 0.35;
         Core.addWeighted(color, alpha, roi, 1.0 - alpha, 0.0, roi);
         image.convertTo(image, CvType.CV_8U);
         File file2 = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), filename);

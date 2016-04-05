@@ -5,11 +5,17 @@ import android.content.ClipData;
 import android.content.Context;
 import android.content.CursorLoader;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.net.Uri;
+import android.opengl.GLES20;
+import android.opengl.GLUtils;
 import android.os.Build;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
@@ -108,5 +114,14 @@ public class Utility {
             list.add(rect);
         }
         return list;
+    }
+
+    public static Texture BitmapToTex(Bitmap bitmap) {
+        Texture tex = new Texture(bitmap.getWidth(), bitmap.getHeight(), Pixmap.Format.RGBA8888);
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, tex.getTextureObjectHandle());
+        GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, bitmap, 0);
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
+        bitmap.recycle();
+        return tex;
     }
 }

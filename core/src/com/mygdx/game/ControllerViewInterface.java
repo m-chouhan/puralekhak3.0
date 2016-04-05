@@ -1,5 +1,6 @@
 package com.mygdx.game;
 
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
@@ -14,6 +15,7 @@ public interface ControllerViewInterface {
 
     void SpottingUpdated(ArrayList<Rectangle> points, String unicode);
     void OpenImage(String imagePath);
+    void OpenTexture(Texture tex);
     void UnicodeSelected(String unicode);
     void FreezTemplates();
     void UnFreezTemplates();

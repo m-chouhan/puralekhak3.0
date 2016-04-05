@@ -116,8 +116,14 @@ public class MyImageViewer extends ApplicationAdapter implements ControllerViewI
 
     @Override
     public void FreeMemory() {
+        Gdx.app.log(TAG,"Freeing Memory !!");
         mCustomWidgetStage.clear();
         myImageTexture.dispose();
+        if(myImage != null) {
+            myImage.clear();
+            myImage = null;
+        }
+
         mButtonStage.clear();
     }
 
@@ -294,8 +300,26 @@ public class MyImageViewer extends ApplicationAdapter implements ControllerViewI
                 TextureRegion region = new TextureRegion(myImageTexture);
                 region.flip(false,true);
                 myImage.setDrawable(new SpriteDrawable(new Sprite(region)));
-                Gdx.app.log(TAG, "OpenImage:" + myImageTexture.getWidth() + myImageTexture.getHeight() +","+ myImageTexture.getDepth());
+                Gdx.app.log(TAG, "OpenImage:" + myImageTexture.getWidth()+"," + myImageTexture.getHeight() +","+ myImageTexture.getDepth());
                 Gdx.app.log(TAG, "OpenImage (widget):"+myImage.getWidth()+","+myImage.getHeight() );
+            }
+        });
+    }
+
+    @Override
+    public void OpenTexture(final Texture tex) {
+        /*Required since Any graphics operations directly
+        involving OpenGL need to be executed on the rendering thread. */
+
+        Gdx.app.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                myImageTexture = tex;
+                TextureRegion region = new TextureRegion(myImageTexture);
+                region.flip(false,true);
+                myImage.setDrawable(new SpriteDrawable(new Sprite(region)));
+                Gdx.app.log(TAG, "OpenTexture:" + myImageTexture.getWidth()+"," + myImageTexture.getHeight() +","+ myImageTexture.getDepth());
+                Gdx.app.log(TAG, "OpenTexture (widget):"+myImage.getWidth()+","+myImage.getHeight() );
             }
         });
     }
