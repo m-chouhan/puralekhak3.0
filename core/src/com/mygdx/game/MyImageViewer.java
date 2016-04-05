@@ -296,7 +296,7 @@ public class MyImageViewer extends ApplicationAdapter implements ControllerViewI
         Gdx.app.postRunnable(new Runnable() {
             @Override
             public void run() {
-                myImageTexture = new Texture(Gdx.files.absolute(imagePath));
+                myImageTexture = new Texture(Gdx.files.absolute(imagePath),Pixmap.Format.LuminanceAlpha, true);
                 TextureRegion region = new TextureRegion(myImageTexture);
                 region.flip(false,true);
                 myImage.setDrawable(new SpriteDrawable(new Sprite(region)));
@@ -311,17 +311,18 @@ public class MyImageViewer extends ApplicationAdapter implements ControllerViewI
         /*Required since Any graphics operations directly
         involving OpenGL need to be executed on the rendering thread. */
 
-        Gdx.app.postRunnable(new Runnable() {
-            @Override
-            public void run() {
+//        Gdx.app.postRunnable(new Runnable() {
+//            @Override
+//            public void run() {
+                myImageTexture.dispose();
                 myImageTexture = tex;
                 TextureRegion region = new TextureRegion(myImageTexture);
                 region.flip(false,true);
                 myImage.setDrawable(new SpriteDrawable(new Sprite(region)));
                 Gdx.app.log(TAG, "OpenTexture:" + myImageTexture.getWidth()+"," + myImageTexture.getHeight() +","+ myImageTexture.getDepth());
                 Gdx.app.log(TAG, "OpenTexture (widget):"+myImage.getWidth()+","+myImage.getHeight() );
-            }
-        });
+//            }
+//        });
     }
 
     /* update current selected template's unicode

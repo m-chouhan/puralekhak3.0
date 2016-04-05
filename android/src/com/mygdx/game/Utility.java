@@ -116,12 +116,18 @@ public class Utility {
         return list;
     }
 
-    public static Texture BitmapToTex(Bitmap bitmap) {
-        Texture tex = new Texture(bitmap.getWidth(), bitmap.getHeight(), Pixmap.Format.RGBA8888);
-        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, tex.getTextureObjectHandle());
-        GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, bitmap, 0);
-        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
-        bitmap.recycle();
-        return tex;
+    public static Texture BitmapToTex(final Bitmap bitmap, final ControllerViewInterface cvInterface) {
+        Gdx.app.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                Texture tex = new Texture(bitmap.getWidth(), bitmap.getHeight(), Pixmap.Format.RGBA8888);
+                GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, tex.getTextureObjectHandle());
+                GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, bitmap, 0);
+                GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
+                cvInterface.OpenTexture(tex);
+                //bitmap.recycle();
+            }
+        });
+        return null;
     }
 }

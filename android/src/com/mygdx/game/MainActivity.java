@@ -219,8 +219,8 @@ public class MainActivity extends FragmentActivity
         Log.d(TAG, mImage_path);
         mCurrentBitmap = BitmapFactory.decodeFile(mImage_path);
         mTempatePreview.setImageDrawable(mDefaultPreview);
-        //mCvInterface.OpenImage(mImage_path);
-        mCvInterface.OpenTexture(Utility.BitmapToTex(mCurrentBitmap));
+        mCvInterface.OpenImage(mImage_path);
+        //Utility.BitmapToTex(mCurrentBitmap,mCvInterface);
         Log.d(TAG, "BitmapSize:" + mCurrentBitmap.getWidth() + "," + mCurrentBitmap.getHeight());
 
         FragmentFactory.getKeyboardFragment().refreshView();
