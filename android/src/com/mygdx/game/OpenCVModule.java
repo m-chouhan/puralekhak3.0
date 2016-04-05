@@ -67,19 +67,6 @@ public class OpenCVModule {
         locsPre = new ArrayList<Point>();
         locsCurrent = new ArrayList<Point>();
 
-//        if(firstSpotting){
-//            //Do nothing
-//        }
-//        else {
-//            if(locsPre.size()!=0){
-//                locsCurrent.addAll(locsPre);
-//            }
-//            if(!preUndo){
-//                tmpPre = tmp.clone();
-//                im_selectPre = im_select.clone();
-//            }
-//        }
-
         double Oheight=0;
         double Owidth=0;
         double Theight=0;
@@ -280,11 +267,6 @@ public class OpenCVModule {
         }
 
         System.out.println("This is "+idx.size());
-//        for(int i=0;i<idx.size();i++)
-//        {
-//            System.out.println(idx.get(i).x+","+idx.get(i).y);
-//        }
-
         /**Parts based HOG feature matching starts*/
 
         Mat score = new Mat(TMatg.rows(), TMatg.cols(), CvType.CV_32FC1);
@@ -322,73 +304,6 @@ public class OpenCVModule {
         System.out.println("Points after HOG are "+numberOfMatchings);
         updateViewCallback.UpdateProgress(50);
 
-        /*
-        if(firstSpotting){
-            tmp = OMatg.clone();
-            im_select = OMatg.clone();
-        }
-        else{
-            tmp = tmpPre.clone();
-            im_select = im_selectPre.clone();
-        }
-
-        for(  int m = 0; m < det_imwt.rows(); m++ )
-        {
-            for( int n = 0; n < det_imwt.cols(); n++ )
-            {
-                double[] data = det_imwt.get(m, n);
-                double[] odata = OMatg.get(m,n);
-                if(data[0] > 0.80)
-                {
-                    //Log.d("Background",""+m+","+n);
-                    tmp.put(m, n, data[0] * 55) ;
-                    im_select.put(m, n, odata[0]*55);
-                }
-            }
-        } */
-        /*
-        im_select.convertTo(im_select, CvType.CV_8U);
-        String filename = "im_select.jpg";
-        File file2 = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM), filename);
-        filename = file2.toString();
-        Highgui.imwrite(filename, im_select);*/
-
-//        List<Mat> ch = new ArrayList<Mat>();
-//        fin_img = new Mat();
-//        ch.add(tmp);
-//        ch.add(OMatg);
-//        ch.add(OMatg);
-
-        //Core.merge(ch, fin_img);
-        //fin_img.convertTo(fin_img, CvType.CV_8U);
-
-        /** not required */
-        /*
-        // convert to bitmap:
-        bm2 = Bitmap.createBitmap(fin_img.cols(), fin_img.rows(),Bitmap.Config.ARGB_8888);
-        Utils.matToBitmap(fin_img, bm2);
-
-        OutputStream outStream = null;
-        File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM), "displaySpotted.jpg");
-        try
-        {
-            outStream = new FileOutputStream(file);
-            //saving as a JPEG image
-            bm2.compress(Bitmap.CompressFormat.JPEG, 100, outStream);
-            outStream.flush();
-            outStream.close();
-            //Toast.makeText(this, "Saved", Toast.LENGTH_LONG).show();
-        }
-        catch(FileNotFoundException e)
-        {
-            e.printStackTrace();
-        }
-        catch(IOException e)
-        {
-            e.printStackTrace();
-        }
-        */
-
         ArrayList<item>  stuctpoints = new ArrayList<item>();
 
         for(Point p : locs)
@@ -418,7 +333,6 @@ public class OpenCVModule {
                 Core.addWeighted(color,alpha,roi,1.0-alpha,0.0,roi);
             }
         }
-        //updateViewCallback.SaveFile("OcvTestImage.png",OMat);
         // now starting to write to file
         updateViewCallback.UpdateProgress(80);
 
@@ -454,14 +368,6 @@ public class OpenCVModule {
         // find the imageview and draw it!
         System.out.println("Done!!");
         updateViewCallback.UpdateProgress(100);
-//        undoToDefault=false;
-//        if(firstSpotting){
-//            firstSpotting = false;
-//            undoToDefault = true;
-//        }
-//        if(preUndo){
-//            preUndo = false;
-//        }
     }
 
     /*Converts the symbols into textfile */

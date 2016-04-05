@@ -108,7 +108,7 @@ public class MyImageViewer extends ApplicationAdapter implements ControllerViewI
 
     @Override
     public void FreeMemory() {
-        Gdx.app.log(TAG,"Freeing Memory !!");
+        Gdx.app.log(TAG, "Freeing Memory !!");
         myImageTexture.dispose();
         mButtonStage.clear();
     }
@@ -252,8 +252,6 @@ public class MyImageViewer extends ApplicationAdapter implements ControllerViewI
     @Override
     public void SpottingUpdated(ArrayList<Rectangle> spots_list, String unicode) {
 
-//        Gdx.app.log(TAG,"myImage:"+myImage.getImageWidth()+","+myImage.getImageHeight()
-//                +",\t"+myImage.getWidth()+","+myImage.getHeight());
 //        Gdx.app.log(TAG,"texture:"+myImageTexture.getWidth()+","+myImageTexture.getHeight());
         for( Rectangle rect:spots_list) {
             CreateSelectionBoxAt(rect.x,rect.y,rect.getWidth(),rect.getHeight(),unicode);
@@ -274,25 +272,24 @@ public class MyImageViewer extends ApplicationAdapter implements ControllerViewI
 //                pixels.dispose();
                 myImageTexture.dispose();
                 myImageTexture = new Texture(Gdx.files.absolute(imagePath));
-//                TextureRegion region = new TextureRegion(myImageTexture);
-//                region.flip(false,true);
-//                myImage.setDrawable(new SpriteDrawable(new Sprite(region)));
                 Gdx.app.log(TAG, "OpenImage:" + myImageTexture.getWidth()+"," + myImageTexture.getHeight() +","+ myImageTexture.getDepth());
-//                Gdx.app.log(TAG, "OpenImage (widget):"+myImage.getWidth()+","+myImage.getHeight() );
             }
         });
     }
 
+    /**Execute on redering thread,
+     * @param tex : texture to display
+     * */
     @Override
     public void OpenTexture(final Texture tex) {
         /*Required since Any graphics operations directly
         involving OpenGL need to be executed on the rendering thread. */
         myImageTexture.dispose();
         myImageTexture = tex;
-        Gdx.app.log(TAG, "OpenTexture:" + myImageTexture.getWidth()+"," + myImageTexture.getHeight() +","+ myImageTexture.getDepth());
+        Gdx.app.log(TAG, "OpenTexture:" + myImageTexture.getWidth() + "," + myImageTexture.getHeight() + "," + myImageTexture.getDepth());
     }
 
-    /* update current selected template's unicode
+    /** update current selected template's unicode
     * */
     @Override
     public void UnicodeSelected(String unicode) {
@@ -310,6 +307,9 @@ public class MyImageViewer extends ApplicationAdapter implements ControllerViewI
         for(SelectionBox box:BoxList) box.enable();
     }
 
+    /**show current progress,
+     * TODO: port show progress code here
+     * */
     @Override
     public void UpdateProgress(int progress) {
 
@@ -321,13 +321,13 @@ public class MyImageViewer extends ApplicationAdapter implements ControllerViewI
     }
 
     @Override
-    public void Reset() {
-        BoxList.clear();
+    public void DismissProgressBar() {
+
     }
 
     @Override
-    public void DismissProgressBar() {
-
+    public void Reset() {
+        BoxList.clear();
     }
 
     @Override

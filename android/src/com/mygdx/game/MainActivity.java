@@ -366,7 +366,7 @@ public class MainActivity extends FragmentActivity
     }
     @Override
     public void onDrawerOpened(View drawerView) {
-        if(mCurrentTemplateRect != null ) {
+        if(mCurrentTemplateRect != null && mCurrentBitmap != null ) {
             mCurrentBitmapTemplate = Bitmap.createBitmap(mCurrentBitmap,
                     (int) mCurrentTemplateRect.getX(), (int) mCurrentTemplateRect.getY(), (int) mCurrentTemplateRect.getWidth(), (int) mCurrentTemplateRect.getHeight());
             mTempatePreview.setImageBitmap(mCurrentBitmapTemplate);
