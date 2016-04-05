@@ -120,11 +120,23 @@ public class Utility {
         Gdx.app.postRunnable(new Runnable() {
             @Override
             public void run() {
-                Texture tex = new Texture(bitmap.getWidth(), bitmap.getHeight(), Pixmap.Format.RGBA8888);
-                GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, tex.getTextureObjectHandle());
-                GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, bitmap, 0);
-                GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
-                cvInterface.OpenTexture(tex);
+                //bitmap.getByteCount();
+                int[] pixels = new int[bitmap.getWidth()*bitmap.getHeight()];
+                bitmap.getPixels(pixels, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
+                for (int i = 0; i< pixels.length; i++) {
+                    int pixel = pixels[i];
+                    pixels[i] = (pixel << 8) | ((pixel >> 24) & 0xFF);
+                }
+                Pixmap pixmap = new Pixmap(bitmap.getWidth(), bitmap.getHeight(), Pixmap.Format.RGBA8888);
+                pixmap.getPixels().asIntBuffer().put(pixels);
+                Texture texture = new Texture(bitmap.getWidth(), bitmap.getHeight(), Pixmap.Format.RGBA8888);
+                texture.draw(pixmap, 0, 0);
+                pixmap.dispose();
+//                Texture tex = new Texture(bitmap.getWidth(), bitmap.getHeight(), Pixmap.Format.RGBA8888);
+//                GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, tex.getTextureObjectHandle());
+//                GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, bitmap, 0);
+//                GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
+                cvInterface.OpenTexture(texture);
                 //bitmap.recycle();
             }
         });

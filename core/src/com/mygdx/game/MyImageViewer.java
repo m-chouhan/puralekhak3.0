@@ -296,7 +296,10 @@ public class MyImageViewer extends ApplicationAdapter implements ControllerViewI
         Gdx.app.postRunnable(new Runnable() {
             @Override
             public void run() {
-                myImageTexture = new Texture(Gdx.files.absolute(imagePath),Pixmap.Format.LuminanceAlpha, true);
+                Pixmap pixels = new Pixmap(Gdx.files.absolute(imagePath));
+                Gdx.app.log(TAG, "Pixmap Format:" + pixels.getFormat().toString());
+                pixels.dispose();
+                myImageTexture = new Texture(Gdx.files.absolute(imagePath));
                 TextureRegion region = new TextureRegion(myImageTexture);
                 region.flip(false,true);
                 myImage.setDrawable(new SpriteDrawable(new Sprite(region)));
