@@ -281,7 +281,8 @@ public class OpenCVModule {
             if( (idx.get(i).x>Math.ceil(roi_grad.rows()/2))&&(idx.get(i).x<(image_mag1.rows()-Math.floor(roi_grad.rows()/2)))&&(idx.get(i).y>Math.ceil(roi_grad.cols()/2)) && (idx.get(i).y<(image_mag1.cols()-Math.floor(roi_grad.cols()/2))) )
             {
                 Mat temp = OMatg.submat((int)idx.get(i).x-roi_grad.rows()/2,(int)idx.get(i).x+roi_grad.rows()/2,(int)idx.get(i).y-roi_grad.cols()/2,(int)idx.get(i).y+roi_grad.cols()/2);
-                score = partialhogmatch4frags(temp,TMatg);
+                //score = partialhogmatch4frags(temp,TMatg);
+                score = partialHogMatchFrags(temp,TMatg,patch_rows,patch_columns);
                 double[] data1 = score.get(2,2);
 
                 System.out.println(data1[0]);
@@ -1105,8 +1106,91 @@ public class OpenCVModule {
 		  return second;
 		  
 		}
-    static Mat partialHogMatchFrags(Mat im1,Mat im2,int fragsize) {
-        Mat second = new Mat();
-        return  second;
+    static Mat partialHogMatchFrags(Mat im1,Mat im2,int patch_rows,int patch_cols) {
+
+        System.out.println("Hog begin");
+        if((im1.rows()!=im2.rows())&&(im1.cols()!=im2.cols()))
+        {
+            System.out.println("Image1 and image2 must be of the same size");
+        }
+
+        // initialization of thee matching scores
+        Mat scoreim = new Mat(im1.rows(), im1.cols(), CvType.CV_32FC2);
+        int wins=4;int bins=6;
+        int wincnt = 1;
+
+        System.out.println("Inside Hog function");
+        HOGDescriptor hog = new HOGDescriptor(new Size(16,16),new Size(16,16),new Size(8,8),
+                //winSize  //blocksize //blockStride,
+                new Size(8,8), //cellSize,
+                9, //nbins,
+                0, //derivAper,
+                -1, //winSigma,
+                0, //histogramNormType,
+                0.2, //L2HysThresh,
+                true,//gammal correction,
+                64// //nlevels=64);
+        );
+
+        MatOfFloat hf1 = new MatOfFloat();
+        MatOfFloat hf2 = new MatOfFloat();
+        MatOfPoint loc_hf1 = new MatOfPoint();
+        MatOfPoint loc_hf2 = new MatOfPoint();
+
+        int patch_size_row = im1.rows()/patch_rows,patch_size_col = im1.cols()/patch_cols;
+
+        for(float i = 0; i<patch_rows; i+=0.5f ) {
+            for(float j = 0; j<patch_cols; j+=0.5f) {
+
+                int imin = (int) i*patch_size_row;
+                int imax = Math.min((int)(i+1)*patch_size_row,im1.rows());
+                int jmin = (int) j*patch_size_col;
+                int jmax = Math.min((int)(j+1)*patch_size_col, im1.cols());
+
+                Mat pt1 = im1.submat(imin, imax, jmin, jmax);
+                Mat pt2 = im2.submat(imin, imax, jmin, jmax);
+
+                hog.compute( pt1, hf1, new Size(0,0), new Size(0,0), loc_hf1);
+                hog.compute( pt2, hf2, new Size(0,0), new Size(0,0), loc_hf2);
+
+                Core.divide(hf1, new Scalar(Core.norm(hf1)), hf1, 1.0);
+                Core.divide(hf2, new Scalar(Core.norm(hf2)), hf2, 1.0);
+
+                Mat HF1 =new Mat(1,1,CvType.CV_32FC1);
+                Core.transpose(hf1, hf1);
+                //Mat z = Mat.ones(hf1.rows(),hf1.cols(), CvType.CV_32FC1);
+                Core.gemm(hf1, hf2, 1.0, new Mat(), 0, HF1, 0);
+
+                scoreim.submat(imin,imax,jmin,jmax).setTo(new Scalar(HF1.get(0,0)));
+                wincnt++;
+            }
+        }
+
+        Scalar scsum;
+        //Mat rgba( 100, 100, CV_8UC4, Scalar(1,2,3,4) );
+        Mat first = new Mat( scoreim.rows(), scoreim.cols(), CvType.CV_32FC1 );
+        Mat second = new Mat( scoreim.rows(), scoreim.cols(), CvType.CV_32FC1 );
+        // forming array of matrices is quite efficient operations,
+        // because the matrix data is not copied, only the headers
+        // Mat out[] = { first, second };
+        List<Mat> out=new ArrayList<Mat>();
+        List<Mat> in=new ArrayList<Mat>();
+        out.add(0,first);
+        out.add(1,second);
+        in.add(0,scoreim);
+        int from_to[] = { 0,0, 1,1 };
+        MatOfInt fromto = new MatOfInt(from_to);
+
+        //mixChannels( &scoreim, 1, out, 2, from_to, 2 );
+        Core.mixChannels(in, out, fromto);
+        scsum = Core.mean(first);
+        System.out.println(scsum);
+        second.setTo(scsum);
+
+        System.out.println("Hog end");
+        //cout << "the list mean is  " << scsum << endl;
+        //cout << "the test element in the  image is " << second.at<float>(2,2) << endl;
+        //System.out.println(second.dump());
+        return second;
     }
 }/**/
