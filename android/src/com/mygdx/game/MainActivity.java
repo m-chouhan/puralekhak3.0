@@ -23,7 +23,10 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.android.AndroidFragmentApplication;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Rectangle;
 
 import org.opencv.android.OpenCVLoader;
@@ -34,6 +37,7 @@ import org.opencv.core.Mat;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.highgui.Highgui;
+import org.opencv.imgproc.Imgproc;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -217,12 +221,35 @@ public class MainActivity extends FragmentActivity
 
         mImage_path = Utility.getRealPathFromURI(this, data.getData());
         Log.d(TAG, mImage_path);
-        mCurrentBitmap = BitmapFactory.decodeFile(mImage_path);
-        mTempatePreview.setImageDrawable(mDefaultPreview);
-        mCvInterface.OpenImage(mImage_path);
+        final Mat mat = Highgui.imread(mImage_path);
+        //mat.convertTo(mat, CvType.CV_8U);
+        Imgproc.cvtColor(mat,mat,Imgproc.COLOR_BGR2RGBA,4);
+        mCurrentBitmap = Bitmap.createBitmap(mat.width(), mat.height(), Bitmap.Config.ARGB_8888);
+        //mCurrentBitmap = BitmapFactory.decodeFile(mImage_path);
+//        Utils.matToBitmap(mat, mCurrentBitmap);
+//        mTempatePreview.setImageDrawable(mDefaultPreview);
+
+        if( mat.isContinuous()) {
+            Gdx.app.postRunnable(new Runnable() {
+                @Override
+                public void run() {
+                    byte[] buffer = new byte[(int) mat.total() * mat.channels()];
+                    mat.get(0, 0, buffer);
+                    Pixmap pixmap = new Pixmap(mat.width(), mat.height(), Pixmap.Format.RGBA8888);
+                    //pixmap.getPixels().put(buffer);
+                    Texture texture = new Texture(mat.width(),mat.height(), Pixmap.Format.RGBA8888);
+                    texture.draw(pixmap, 0, 0);
+                    pixmap.dispose();
+                    mCvInterface.OpenTexture(texture);
+                }
+            });
+        }
+        else mCvInterface.OpenImage(mImage_path);
+
         //Utility.BitmapToTex(mCurrentBitmap,mCvInterface);
         Log.d(TAG, "BitmapSize:" + mCurrentBitmap.getWidth() + "," + mCurrentBitmap.getHeight());
         FragmentFactory.getKeyboardFragment().refreshView();
+
 
     }
 

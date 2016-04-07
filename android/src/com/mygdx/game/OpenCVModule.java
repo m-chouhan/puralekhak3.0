@@ -1105,5 +1105,8 @@ public class OpenCVModule {
 		  return second;
 		  
 		}
-
+    static Mat partialHogMatchFrags(Mat im1,Mat im2,int fragsize) {
+        Mat second = new Mat();
+        return  second;
+    }
 }/**/
