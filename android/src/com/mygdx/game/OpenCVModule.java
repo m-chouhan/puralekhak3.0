@@ -136,16 +136,11 @@ public class OpenCVModule {
         Mat cg = template = roi_mag;
         Mat ag = image = image_mag1;
 
-        //int fragsize = (int)(roi_mag.rows()/3);
-
         Size image_size = image_mag1.size();//asz = size(image_mag1)
         Size template_size = roi_mag.size();//csz = size(roi_mag)
 
         Mat corrim = new Mat(image_size,CvType.CV_32FC1);//corrim = zeros(asz(1), asz(2));
         corrim.setTo(new Scalar(0, 0, 0, 0));//corrim.set(0);
-
-        //Size total_iterations = new Size(Math.round(template_size.width/fragsize), Math.round(template_size.height / fragsize));
-        //cszh = round( csz/fragsize ); //no of iterations row nd columns wise
 
         int patch_dim_row = roi_mag.rows()/patch_rows,patch_dim_col = roi_mag.cols()/patch_columns;
 
@@ -178,16 +173,12 @@ public class OpenCVModule {
                 int topPad = (int)(image_mag1.rows() - matchSize.height)/2;
                 int bottomPad = (int)(image_mag1.rows() - matchSize.height - topPad);
 
-                Mat matchResult = new Mat(image_size, CvType.CV_32FC1);
-                Imgproc.matchTemplate(image_mag1, prt1, matchResult.submat(
+                Mat corrim2 = new Mat(image_size, CvType.CV_32FC1);
+                Imgproc.matchTemplate(image_mag1, prt1, corrim2.submat(
                         new Rect(leftPad,topPad,(int)matchSize.width,(int)matchSize.height)), Imgproc.TM_CCOEFF_NORMED);
-                Imgproc.dilate(matchResult, matchResult, dilatekernel, new Point(-1, -1), 5);
-
-                Mat corrim2 = matchResult;
+                Imgproc.dilate(corrim2, corrim2, dilatekernel, new Point(-1, -1), 5);
 
                 Point patch_center = new Point((jmax + jmin)/2, (imax + imin)/2 );
-                //Size prtsz = new Size((jmax - jmin) , (imax - imin));
-                //Size corr2sz = corrim2.size();
 
                 Point translation_vector =
                         new Point(Math.round(template_center.x - patch_center.x) ,Math.round(template_center.y - patch_center.y));
@@ -195,7 +186,6 @@ public class OpenCVModule {
                 affineMat.put(0, 2, translation_vector.x);//0 is x-axis //
                 affineMat.put(1, 2, translation_vector.y);//1 is y-axis //
                 Imgproc.warpAffine(corrim2, corrim2, affineMat, corrim2.size());
-                //corr2sz = corrim2.size();
                 Core.add(corrim, corrim2, corrim);//corrim = corrim+corrim2;
                 fragcount = fragcount + 1;
                 updateViewCallback.UpdateProgress((int)fragcount*4);
@@ -282,14 +272,14 @@ public class OpenCVModule {
             {
                 Mat temp = OMatg.submat((int)idx.get(i).x-roi_grad.rows()/2,(int)idx.get(i).x+roi_grad.rows()/2,(int)idx.get(i).y-roi_grad.cols()/2,(int)idx.get(i).y+roi_grad.cols()/2);
                 //score = partialhogmatch4frags(temp,TMatg);
-                score = partialHogMatchFrags(temp,TMatg,patch_rows,patch_columns);
-                double[] data1 = score.get(2,2);
+                //double data1[] = score.get(2,2);
+                //System.out.println(data1[0]);
+                double data1 = partialHogMatchFrags(temp, TMatg, patch_rows,patch_columns);
 
-                System.out.println(data1[0]);
-                if (data1[0]>= matching_thresh)
+                if (data1 >= matching_thresh)
                 {
-                    System.out.println("inside if");
-                    det_imwt.submat((int)idx.get(i).x-roi_grad.rows()/2,(int)idx.get(i).x+roi_grad.rows()/2,(int)idx.get(i).y-roi_grad.cols()/2,(int)idx.get(i).y+roi_grad.cols()/2).setTo(new Scalar(data1[0],0,0));
+                    Log.d(TAG,"inside if");
+                    det_imwt.submat((int)idx.get(i).x-roi_grad.rows()/2,(int)idx.get(i).x+roi_grad.rows()/2,(int)idx.get(i).y-roi_grad.cols()/2,(int)idx.get(i).y+roi_grad.cols()/2).setTo(new Scalar(data1,0,0));
                     Point p1 = new Point( idx.get(i).x , idx.get(i).y );
                     locs.add(p1);
                 }
@@ -1106,7 +1096,7 @@ public class OpenCVModule {
 		  return second;
 		  
 		}
-    static Mat partialHogMatchFrags(Mat im1,Mat im2,int patch_rows,int patch_cols) {
+    static double partialHogMatchFrags(Mat im1,Mat im2,int patch_rows,int patch_cols) {
 
         System.out.println("Hog begin");
         if((im1.rows()!=im2.rows())&&(im1.cols()!=im2.cols()))
@@ -1115,9 +1105,10 @@ public class OpenCVModule {
         }
 
         // initialization of thee matching scores
-        Mat scoreim = new Mat(im1.rows(), im1.cols(), CvType.CV_32FC2);
+        //Mat scoreim = new Mat(im1.rows(), im1.cols(), CvType.CV_32FC2);
+        double hogmatchvec = 0;
         int wins=4;int bins=6;
-        int wincnt = 1;
+        int wincnt = 0;
 
         System.out.println("Inside Hog function");
         HOGDescriptor hog = new HOGDescriptor(new Size(16,16),new Size(16,16),new Size(8,8),
@@ -1156,41 +1147,46 @@ public class OpenCVModule {
                 Core.divide(hf1, new Scalar(Core.norm(hf1)), hf1, 1.0);
                 Core.divide(hf2, new Scalar(Core.norm(hf2)), hf2, 1.0);
 
-                Mat HF1 =new Mat(1,1,CvType.CV_32FC1);
+                Mat HF1 =new Mat(1, 1,CvType.CV_32FC1);
                 Core.transpose(hf1, hf1);
                 //Mat z = Mat.ones(hf1.rows(),hf1.cols(), CvType.CV_32FC1);
                 Core.gemm(hf1, hf2, 1.0, new Mat(), 0, HF1, 0);
 
-                scoreim.submat(imin,imax,jmin,jmax).setTo(new Scalar(HF1.get(0,0)));
+                //scoreim.submat(imin,imax,jmin,jmax).setTo(new Scalar(HF1.get(0,0)));
+                hogmatchvec += HF1.get(0,0)[0];//[0]--> 1st channel value
                 wincnt++;
+                //Log.d(TAG,"Hf size::"+hf1.size().toString()+","+hf2.size().toString());
             }
         }
 
-        Scalar scsum;
-        //Mat rgba( 100, 100, CV_8UC4, Scalar(1,2,3,4) );
-        Mat first = new Mat( scoreim.rows(), scoreim.cols(), CvType.CV_32FC1 );
-        Mat second = new Mat( scoreim.rows(), scoreim.cols(), CvType.CV_32FC1 );
-        // forming array of matrices is quite efficient operations,
-        // because the matrix data is not copied, only the headers
-        // Mat out[] = { first, second };
-        List<Mat> out=new ArrayList<Mat>();
-        List<Mat> in=new ArrayList<Mat>();
-        out.add(0,first);
-        out.add(1,second);
-        in.add(0,scoreim);
-        int from_to[] = { 0,0, 1,1 };
-        MatOfInt fromto = new MatOfInt(from_to);
-
-        //mixChannels( &scoreim, 1, out, 2, from_to, 2 );
-        Core.mixChannels(in, out, fromto);
-        scsum = Core.mean(first);
-        System.out.println(scsum);
-        second.setTo(scsum);
+//
+//        Scalar scsum;
+//        //Mat rgba( 100, 100, CV_8UC4, Scalar(1,2,3,4) );
+//        Mat first = new Mat( scoreim.rows(), scoreim.cols(), CvType.CV_32FC1 );
+//        Mat second = new Mat( scoreim.rows(), scoreim.cols(), CvType.CV_32FC1 );
+//        // forming array of matrices is quite efficient operations,
+//        // because the matrix data is not copied, only the headers
+//        // Mat out[] = { first, second };
+//        List<Mat> out=new ArrayList<Mat>();
+//        List<Mat> in=new ArrayList<Mat>();
+//        out.add(0,first);
+//        out.add(1,second);
+//        in.add(0,scoreim);
+//        int from_to[] = { 0,0, 1,1 };
+//        MatOfInt fromto = new MatOfInt(from_to);
+//
+//        //mixChannels( &scoreim, 1, out, 2, from_to, 2 );
+//        Core.mixChannels(in, out, fromto);
+//        scsum = Core.mean(first);
+//        System.out.println(scsum);
+//        second.setTo(scsum);
 
         System.out.println("Hog end");
+        hogmatchvec /= wincnt;
+        Log.d(TAG,"new mean:"+hogmatchvec);
         //cout << "the list mean is  " << scsum << endl;
         //cout << "the test element in the  image is " << second.at<float>(2,2) << endl;
         //System.out.println(second.dump());
-        return second;
+        return hogmatchvec;
     }
 }/**/

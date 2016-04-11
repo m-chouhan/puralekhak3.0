@@ -221,36 +221,37 @@ public class MainActivity extends FragmentActivity
 
         mImage_path = Utility.getRealPathFromURI(this, data.getData());
         Log.d(TAG, mImage_path);
-        final Mat mat = Highgui.imread(mImage_path);
+        //final Mat mat = Highgui.imread(mImage_path);
         //mat.convertTo(mat, CvType.CV_8U);
-        Imgproc.cvtColor(mat,mat,Imgproc.COLOR_BGR2RGBA,4);
-        mCurrentBitmap = Bitmap.createBitmap(mat.width(), mat.height(), Bitmap.Config.ARGB_8888);
-        //mCurrentBitmap = BitmapFactory.decodeFile(mImage_path);
-//        Utils.matToBitmap(mat, mCurrentBitmap);
-//        mTempatePreview.setImageDrawable(mDefaultPreview);
+        //Imgproc.cvtColor(mat,mat,Imgproc.COLOR_BGR2RGBA,4);
+        //mCurrentBitmap = Bitmap.createBitmap(mat.width(), mat.height(), Bitmap.Config.ARGB_8888);
+        //Utils.matToBitmap(mat, mCurrentBitmap);
 
-        if( mat.isContinuous()) {
-            Gdx.app.postRunnable(new Runnable() {
-                @Override
-                public void run() {
-                    byte[] buffer = new byte[(int) mat.total() * mat.channels()];
-                    mat.get(0, 0, buffer);
-                    Pixmap pixmap = new Pixmap(mat.width(), mat.height(), Pixmap.Format.RGBA8888);
-                    //pixmap.getPixels().put(buffer);
-                    Texture texture = new Texture(mat.width(),mat.height(), Pixmap.Format.RGBA8888);
-                    texture.draw(pixmap, 0, 0);
-                    pixmap.dispose();
-                    mCvInterface.OpenTexture(texture);
-                }
-            });
-        }
-        else mCvInterface.OpenImage(mImage_path);
+        mCurrentBitmap = BitmapFactory.decodeFile(mImage_path);
+        mTempatePreview.setImageDrawable(mDefaultPreview);
 
+//        if( mat.isContinuous()) {
+//            Gdx.app.postRunnable(new Runnable() {
+//                @Override
+//                public void run() {
+//                    byte[] buffer = new byte[(int) mat.total() * mat.channels()];
+//                    mat.get(0, 0, buffer);
+//                    Pixmap pixmap = new Pixmap(mat.width(), mat.height(), Pixmap.Format.RGBA8888);
+//                    //pixmap.getPixels().put(buffer);
+//                    Texture texture = new Texture(mat.width(),mat.height(), Pixmap.Format.RGBA8888);
+//                    texture.draw(pixmap, 0, 0);
+//                    pixmap.dispose();
+//                    mCvInterface.OpenTexture(texture);
+//                }
+//            });
+//        }
+//        else
         //Utility.BitmapToTex(mCurrentBitmap,mCvInterface);
+
+        mCvInterface.OpenImage(mImage_path);
+
         Log.d(TAG, "BitmapSize:" + mCurrentBitmap.getWidth() + "," + mCurrentBitmap.getHeight());
         FragmentFactory.getKeyboardFragment().refreshView();
-
-
     }
 
     @Override
@@ -261,7 +262,7 @@ public class MainActivity extends FragmentActivity
     @Override
     public void StartSpotting() {
 
-        mWakeLock.acquire();
+        //mWakeLock.acquire();
         Log.d(TAG, mCurrentTemplateRect.toString());
         Log.d(TAG,"Bitmap Size: "+mCurrentBitmap.getWidth()+","+mCurrentBitmap.getHeight());
 
@@ -270,35 +271,24 @@ public class MainActivity extends FragmentActivity
         final Mat original = new Mat(),template = new Mat();
         Utils.bitmapToMat(mCurrentBitmap, original);
         Utils.bitmapToMat(mCurrentBitmapTemplate, template);
-        Thread t = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                /*initial values for starting loop */
-                int prevPatchCol = mPatchColumns;
-                float prevMatchThresh = mMatchingThreshold,prevfragThresh = mFragmentThreshold;
 
-                for(;mPatchRows <= 4;++mPatchRows) {
-                    for (mPatchColumns = prevPatchCol;mPatchColumns <= 4; ++mPatchColumns) {
-                        for (mFragmentThreshold = prevfragThresh; mFragmentThreshold <= 0.51f; mFragmentThreshold += 0.05f) {
-                            for(mMatchingThreshold = prevMatchThresh;mMatchingThreshold <= 0.91f;mMatchingThreshold += 0.04f) {
-                                Log.d(TAG, "[" + mPatchRows + "," + mPatchColumns + "," + mFragmentThreshold + "," + mMatchingThreshold + "]");
-
-                                OpenCVModule.SpotCharacters(original.clone(), template,
-                                        mPatchRows, mPatchColumns, mFragmentThreshold, mMatchingThreshold,
-                                        mUnicode, uvcallback);
-                                //mCvInterface.Reset();
-                            }
-                            prevMatchThresh = 0.75f;
-                        }
-                        prevfragThresh = 0.29f;
-                    }
-                    prevPatchCol = 2;
-                }
-                mWakeLock.release();
-                Log.d(TAG,"Finished!!");
-            }
-        });
-        t.start();
+        BackgroundService.original = original;
+        BackgroundService.template = template;
+        BackgroundService.mFragmentThreshold = mFragmentThreshold;
+        BackgroundService.mMatchingThreshold = mMatchingThreshold;
+        BackgroundService.mPatchColumns = mPatchColumns;
+        BackgroundService.mPatchRows = mPatchRows;
+        BackgroundService.mUnicode = mUnicode;
+        BackgroundService.uvcallback = this;
+//        BackgroundService.appContext = getApplicationContext();
+        Intent i = new Intent(getApplicationContext(),BackgroundService.class);
+        startService(i);
+//        Thread t = new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//            }
+//        });
+//        t.start();
         FragmentFactory.getLibgdxFragment().ShowProgressBar();
     }
 
@@ -364,11 +354,7 @@ public class MainActivity extends FragmentActivity
     @Override
     public void SpottingUpdated(ArrayList<item> itemArrayList, String unicode, Mat image) {
         //mCvInterface.SpottingUpdated(Utility.convertToVector(itemArrayList), unicode);
-        Long tsLong = (System.currentTimeMillis()/1000)%100;
-        String ts = tsLong.toString();
-        String filename = mPatchRows +"_"+ mPatchColumns +"_"+ mFragmentThreshold + "_" +mMatchingThreshold + "_" +
-                "__"+ ts + mImage_path.substring(mImage_path.lastIndexOf("/")+1);
-        SaveFile(filename,image);
+        BackgroundService.SaveFile(mImage_path,image,mCurrentTemplateRect);
     }
 
     @Override

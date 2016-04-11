@@ -267,9 +267,6 @@ public class MyImageViewer extends ApplicationAdapter implements ControllerViewI
         Gdx.app.postRunnable(new Runnable() {
             @Override
             public void run() {
-//                Pixmap pixels = new Pixmap(Gdx.files.absolute(imagePath));
-//                Gdx.app.log(TAG, "Pixmap Format:" + pixels.getFormat().toString());
-//                pixels.dispose();
                 myImageTexture.dispose();
                 myImageTexture = new Texture(Gdx.files.absolute(imagePath));
                 camera.position.set(myImageTexture.getWidth() / 2f, myImageTexture.getHeight() / 2f, 0);
