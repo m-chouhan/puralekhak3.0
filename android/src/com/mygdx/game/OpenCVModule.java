@@ -280,8 +280,25 @@ public class OpenCVModule {
                 {
                     Log.d(TAG,"inside if");
                     det_imwt.submat((int)idx.get(i).x-roi_grad.rows()/2,(int)idx.get(i).x+roi_grad.rows()/2,(int)idx.get(i).y-roi_grad.cols()/2,(int)idx.get(i).y+roi_grad.cols()/2).setTo(new Scalar(data1,0,0));
-                    Point p1 = new Point( idx.get(i).x , idx.get(i).y );
-                    locs.add(p1);
+                    Point p = new Point( idx.get(i).x , idx.get(i).y );
+                    locs.add(p);
+                    item it = new item();
+                    it.setx(p.x);
+                    it.sety(p.y);
+
+                    it.setposx(TMatg.rows());
+                    it.setposy(TMatg.cols());
+
+                    it.setScore(data1);
+                    //stuctpoints.add(it);
+                    System.out.println("Item Added:" + it.getx() + "," + it.gety() +
+                            "," + it.getposx() + "," + it.getposy() + ",score:"+it.getScore());
+
+                    Mat roi = OMat.submat(new Rect((int) (it.gety() - it.getposy() / 2), (int) (it.getx() - it.getposx() / 2),
+                            (int) it.getposy(), (int) it.getposx()));
+                    Mat color = new Mat(roi.size(),OMat.type(),new Scalar(0,125,125));
+                    double alpha = 0.2;
+                    Core.addWeighted(color,alpha,roi,1.0-alpha,0.0,roi);
                 }
             }
         }
@@ -293,37 +310,37 @@ public class OpenCVModule {
 
         numberOfMatchings = locs.size()-locsCurrent.size();
         System.out.println("Points after HOG are "+numberOfMatchings);
-        updateViewCallback.UpdateProgress(50);
+        updateViewCallback.UpdateProgress(60);
 
         ArrayList<item>  stuctpoints = new ArrayList<item>();
 
-        for(Point p : locs)
-        {
-            int m = (int) p.x,n = (int)p.y;
-            double[] data = det_imwt.get(m, n);
-            if ( data != null && data[0]>=0.70 )
-            {
-
-                item it = new item();
-                it.setx(p.x);
-                it.sety(p.y);
-
-                it.setposx(TMatg.rows());
-                it.setposy(TMatg.cols());
-
-                it.setScore(data[0]);
-                stuctpoints.add(it);
-                System.out.println("Item Added:" + it.getx() + "," + it.gety() +
-                        "," + it.getposx() + "," + it.getposy() + ",score:"+it.getScore());
-                //System.out.println("Omat:" + OMat.rows() + "," + OMat.cols());
-
-                Mat roi = OMat.submat(new Rect((int) (it.gety() - it.getposy() / 2), (int) (it.getx() - it.getposx() / 2),
-                        (int) it.getposy(), (int) it.getposx()));
-                Mat color = new Mat(roi.size(),OMat.type(),new Scalar(0,125,125));
-                double alpha = 0.2;
-                Core.addWeighted(color,alpha,roi,1.0-alpha,0.0,roi);
-            }
-        }
+//        for(Point p : locs)
+//        {
+//            int m = (int) p.x,n = (int)p.y;
+//            double[] data = det_imwt.get(m, n);
+//            if ( data != null && data[0]> matching_thresh )
+//            {
+//
+//                item it = new item();
+//                it.setx(p.x);
+//                it.sety(p.y);
+//
+//                it.setposx(TMatg.rows());
+//                it.setposy(TMatg.cols());
+//
+//                it.setScore(data[0]);
+//                stuctpoints.add(it);
+//                System.out.println("Item Added:" + it.getx() + "," + it.gety() +
+//                        "," + it.getposx() + "," + it.getposy() + ",score:"+it.getScore());
+//                //System.out.println("Omat:" + OMat.rows() + "," + OMat.cols());
+//
+//                Mat roi = OMat.submat(new Rect((int) (it.gety() - it.getposy() / 2), (int) (it.getx() - it.getposx() / 2),
+//                        (int) it.getposy(), (int) it.getposx()));
+//                Mat color = new Mat(roi.size(),OMat.type(),new Scalar(0,125,125));
+//                double alpha = 0.2;
+//                Core.addWeighted(color,alpha,roi,1.0-alpha,0.0,roi);
+//            }
+//        }
         // now starting to write to file
         updateViewCallback.UpdateProgress(80);
 
