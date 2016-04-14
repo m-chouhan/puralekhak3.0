@@ -303,12 +303,7 @@ public class OpenCVModule {
             }
         }
 
-        locsPre.clear();
-        locsPre.addAll(locs);
-        if(locsCurrent.size()!=0)
-            locs.addAll(locsCurrent);
-
-        numberOfMatchings = locs.size()-locsCurrent.size();
+        numberOfMatchings = locs.size();
         System.out.println("Points after HOG are "+numberOfMatchings);
         updateViewCallback.UpdateProgress(60);
 

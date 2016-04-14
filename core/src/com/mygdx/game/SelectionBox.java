@@ -173,9 +173,9 @@ public class SelectionBox extends InputAdapter {
 
     public void disable(){
         disabled = true;
-        float r = mTemplateColor.r*0.7f;
-        float g = mTemplateColor.g*0.7f;
-        float b = mTemplateColor.b*0.7f;
+        float r = mTemplateColor.r*0.5f;
+        float g = mTemplateColor.g*0.5f;
+        float b = mTemplateColor.b*0.5f;
         mColor.set(r, g, b, mTemplateColor.a);
 //        Gdx.app.log(TAG, "Disable"+mColor.toString());
     }
@@ -185,9 +185,9 @@ public class SelectionBox extends InputAdapter {
         disabled = !disabled;
 
         if(disabled) {
-            float r = mTemplateColor.r*0.7f;
-            float g = mTemplateColor.g*0.7f;
-            float b = mTemplateColor.b*0.7f;
+            float r = mTemplateColor.r*0.5f;
+            float g = mTemplateColor.g*0.5f;
+            float b = mTemplateColor.b*0.5f;
             mColor.set(r,g,b,mTemplateColor.a);
         }
         else
