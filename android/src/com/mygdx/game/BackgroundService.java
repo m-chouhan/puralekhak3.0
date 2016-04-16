@@ -58,8 +58,8 @@ public class BackgroundService extends IntentService {
                                 mPatchRows, mPatchColumns, mFragmentThreshold, mMatchingThreshold,
                                 mUnicode, uvcallback);
                         Toast.makeText(this,"doing "+mPatchRows+mPatchColumns+"__"+mMatchingThreshold,Toast.LENGTH_SHORT).show();
-//                        mWakeLock.release();
-//                        return;
+                        mWakeLock.release();
+                        return;
                     }
                     prevMatchThresh = 0.75f;
                 }

@@ -193,9 +193,17 @@ public class OpenCVModule {
         }
 
         Mat cf = corrim;
+        //
+        File file2 = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "beforeThresh.jpg");
+        String filename = file2.toString();
+        Highgui.imwrite(filename, corrim);
 
         Mat bw = new Mat(OMatg.rows(), OMatg.cols(), CvType.CV_32FC1 );
-        Imgproc.threshold(cf, bw, fragcount*fragment_thresh, 1, Imgproc.THRESH_BINARY);
+        Imgproc.threshold(cf, bw, fragcount * fragment_thresh, 1, Imgproc.THRESH_BINARY);
+
+        file2 = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "afterThresh.jpg");
+        filename = file2.toString();
+        Highgui.imwrite(filename, bw);
 
         int erosion_size=2;
 
@@ -297,7 +305,7 @@ public class OpenCVModule {
                     Mat roi = OMat.submat(new Rect((int) (it.gety() - it.getposy() / 2), (int) (it.getx() - it.getposx() / 2),
                             (int) it.getposy(), (int) it.getposx()));
                     Mat color = new Mat(roi.size(),OMat.type(),new Scalar(0,125,125));
-                    double alpha = 0.2;
+                    double alpha = 0.4;
                     Core.addWeighted(color,alpha,roi,1.0-alpha,0.0,roi);
                 }
             }
