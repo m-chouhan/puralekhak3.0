@@ -89,20 +89,20 @@ public class LibgdxFragment extends AndroidFragmentApplication
 //        postRunnable(new Runnable() {
 //            @Override
 //            public void run() {
-//                progressBar.show();
+                progressBar.show();
 //            }
 //        });
     }
 
     public void UpdateProgressBar(final int progress) {
         Log.d(TAG,"Progress:"+progress);
-//        postRunnable(new Runnable() {
-//            @Override
-//            public void run() {
-//                if (progress >= 100 ) progressBar.hide();
-//                else progressBar.setProgress(progress);
-//            }
-//        });
+        postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                if (progress >= 100 ) progressBar.hide();
+                else progressBar.setProgress(progress);
+            }
+        });
     }
 
     public String getUnicodeText() {

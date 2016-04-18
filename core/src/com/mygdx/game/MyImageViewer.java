@@ -197,7 +197,7 @@ public class MyImageViewer extends ApplicationAdapter implements ControllerViewI
 //        rect.height = box.getHeight()*verticalRatio;
     }
 
-    /*Sends message to the controller to update template and adds a new selection box*/
+    /**Sends message to the controller to update template and adds a new selection box*/
     void CreateSelectionBoxAt( float x,float y,float width ,float height,String unicode ) {
 
         SelectionBox box = new SelectionBox(x, y, width, height,unicode);

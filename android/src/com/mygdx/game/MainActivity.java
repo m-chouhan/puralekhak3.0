@@ -272,17 +272,29 @@ public class MainActivity extends FragmentActivity
         Utils.bitmapToMat(mCurrentBitmap, original);
         Utils.bitmapToMat(mCurrentBitmapTemplate, template);
 
-        BackgroundService.original = original;
-        BackgroundService.template = template;
-        BackgroundService.mFragmentThreshold = mFragmentThreshold;
-        BackgroundService.mMatchingThreshold = mMatchingThreshold;
-        BackgroundService.mPatchColumns = mPatchColumns;
-        BackgroundService.mPatchRows = mPatchRows;
-        BackgroundService.mUnicode = mUnicode;
-        BackgroundService.uvcallback = this;
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                mWakeLock.acquire();
+                Log.d(TAG, "[" + mPatchRows + "," + mPatchColumns + "," + mFragmentThreshold + "," + mMatchingThreshold + "]");
+                OpenCVModule.SpotCharacters(original.clone(), template,
+                        mPatchRows, mPatchColumns, mFragmentThreshold, mMatchingThreshold,
+                        mUnicode, uvcallback);
+                //Toast.makeText(this,"doing "+mPatchRows+mPatchColumns+"__"+mMatchingThreshold,Toast.LENGTH_SHORT).show();
+                mWakeLock.release();
+            }
+        }).start();
+//        BackgroundService.original = original;
+//        BackgroundService.template = template;
+//        BackgroundService.mFragmentThreshold = mFragmentThreshold;
+//        BackgroundService.mMatchingThreshold = mMatchingThreshold;
+//        BackgroundService.mPatchColumns = mPatchColumns;
+//        BackgroundService.mPatchRows = mPatchRows;
+//        BackgroundService.mUnicode = mUnicode;
+//        BackgroundService.uvcallback = this;
 //        BackgroundService.appContext = getApplicationContext();
-        Intent i = new Intent(getApplicationContext(),BackgroundService.class);
-        startService(i);
+//        Intent i = new Intent(getApplicationContext(),BackgroundService.class);
+//        startService(i);
         FragmentFactory.getLibgdxFragment().ShowProgressBar();
     }
 
@@ -347,8 +359,8 @@ public class MainActivity extends FragmentActivity
 
     @Override
     public void SpottingUpdated(ArrayList<item> itemArrayList, String unicode, Mat image) {
-        //mCvInterface.SpottingUpdated(Utility.convertToVector(itemArrayList), unicode);
-        BackgroundService.SaveFile(mImage_path,image,mCurrentTemplateRect);
+        mCvInterface.SpottingUpdated(Utility.convertToVector(itemArrayList), unicode);
+        //BackgroundService.SaveFile(mImage_path,image,mCurrentTemplateRect);
     }
 
     @Override

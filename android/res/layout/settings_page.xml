@@ -84,7 +84,7 @@
             android:layout_below="@id/frag_thresh"
             android:layout_alignParentRight="true"
             android:max="25"
-            android:progress="16"
+            android:progress="20"
             android:id="@+id/matching_thresh" />
         <TextView
             android:id="@+id/matching_threshold_text"
