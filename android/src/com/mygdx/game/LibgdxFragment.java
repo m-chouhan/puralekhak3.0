@@ -115,7 +115,7 @@ public class LibgdxFragment extends AndroidFragmentApplication
 
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-        cvDelegator.WriteTemplatesToFile("test_android.png");
+        //cvDelegator.WriteTemplatesToFile("test_android.png");
         if( isChecked ) {
             cvDelegator.FreezTemplates();
             Log.d(TAG,"freez templates");

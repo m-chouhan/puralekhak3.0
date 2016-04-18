@@ -4,6 +4,7 @@ package com.mygdx.game;
  * Created by maximus_prime on 12/11/15.
  * Handles input for backend UI
  * TODO: Improve Zoom
+ * TODO: Use States variable
  */
 
 import com.badlogic.gdx.Gdx;
@@ -21,7 +22,8 @@ class GestureProcessor implements GestureListener {
 
     private final String TAG = "GestureProcessor";
     private ArrayList<Integer> ActivePointerList = new ArrayList<Integer>();
-
+    private enum States{IMAGE_MOVE,TEMPLATE_MOVE};
+    private States mCurrentState;
     /** Class for delegating *touchUp event to gesture processor class
      * */
     private class mGestureDetector extends GestureDetector {

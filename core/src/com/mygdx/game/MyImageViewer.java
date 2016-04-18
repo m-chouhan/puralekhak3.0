@@ -204,7 +204,8 @@ public class MyImageViewer extends ApplicationAdapter implements ControllerViewI
         Rectangle rect = TransformToPixelCoordinates(box);
         if( UpdateTemplatePreview(rect)) {
             BoxList.add(box);
-            viewControllerInterface.TemplateSelected((int) rect.x, (int) rect.y, (int) rect.width, (int) rect.height, unicode);
+            InputProcessor.setSelectedBox(box);
+            //viewControllerInterface.TemplateSelected((int) rect.x, (int) rect.y, (int) rect.width, (int) rect.height, box.getSymbol());
         }
     }
 
