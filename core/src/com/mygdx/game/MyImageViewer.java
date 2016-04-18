@@ -35,9 +35,11 @@ public class MyImageViewer extends ApplicationAdapter implements ControllerViewI
 
     private final String TAG = "MyImageViewer";
 
-    /*responsible for buttons */
+    /**responsible for buttons */
     private Stage mButtonStage;
     int Width,Height;
+    /**Size of the world/Image*/
+    private Rectangle mBoundingRectangle;
 
     private String imagePath;
     SpriteBatch mImageDrawingBatch;
@@ -70,6 +72,7 @@ public class MyImageViewer extends ApplicationAdapter implements ControllerViewI
 
         /*Opens internal image in assest/ folder as default */
         myImageTexture = new Texture(imagePath);
+        mBoundingRectangle = new Rectangle(0,0,myImageTexture.getWidth(),myImageTexture.getHeight());
         /*Buttons Initialization */
         loadUI();
         camera = new OrthographicCamera(Width,Height);
@@ -138,6 +141,7 @@ public class MyImageViewer extends ApplicationAdapter implements ControllerViewI
                 RemoveCurrentSelection();
             }
         });
+
         myTemplatePreview = new Image(new TextureRegion(myImageTexture,0,0,100,100));
 
         Table table = new Table();
@@ -236,8 +240,7 @@ public class MyImageViewer extends ApplicationAdapter implements ControllerViewI
      * @return : true if update was successful
      * */
     private boolean UpdateTemplatePreview(final Rectangle rect) {
-        Rectangle imageRect = new Rectangle(0,0,myImageTexture.getWidth(),myImageTexture.getHeight());
-        if( !imageRect.contains(rect) ) return false;
+        if( !mBoundingRectangle.contains(rect) ) return false;
         Gdx.app.postRunnable(new Runnable() {
             @Override
             public void run() {
@@ -269,6 +272,7 @@ public class MyImageViewer extends ApplicationAdapter implements ControllerViewI
             public void run() {
                 myImageTexture.dispose();
                 myImageTexture = new Texture(Gdx.files.absolute(imagePath));
+                mBoundingRectangle.set(0,0,myImageTexture.getWidth(),myImageTexture.getHeight());
                 camera.position.set(myImageTexture.getWidth() / 2f, myImageTexture.getHeight() / 2f, 0);
                 camera.update();
                 Gdx.app.log(TAG, "OpenImage:" + myImageTexture.getWidth()+"," + myImageTexture.getHeight() +","+ myImageTexture.getDepth());
@@ -285,6 +289,7 @@ public class MyImageViewer extends ApplicationAdapter implements ControllerViewI
         involving OpenGL need to be executed on the rendering thread. */
         myImageTexture.dispose();
         myImageTexture = tex;
+        mBoundingRectangle.set(0,0,myImageTexture.getWidth(),myImageTexture.getHeight());
         camera.position.set(myImageTexture.getWidth() / 2f, myImageTexture.getHeight()/2f, 0);
         camera.update();
         Gdx.app.log(TAG, "OpenTexture:" + myImageTexture.getWidth() + "," + myImageTexture.getHeight() + "," + myImageTexture.getDepth());
@@ -344,5 +349,9 @@ public class MyImageViewer extends ApplicationAdapter implements ControllerViewI
         }
         PixmapIO.writePNG(Gdx.files.external(fileName),pixmap);
         pixmap.dispose();
+    }
+
+    public Rectangle getBoundingRectangle() {
+        return mBoundingRectangle;
     }
 }

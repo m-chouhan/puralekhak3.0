@@ -283,12 +283,6 @@ public class MainActivity extends FragmentActivity
 //        BackgroundService.appContext = getApplicationContext();
         Intent i = new Intent(getApplicationContext(),BackgroundService.class);
         startService(i);
-//        Thread t = new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//            }
-//        });
-//        t.start();
         FragmentFactory.getLibgdxFragment().ShowProgressBar();
     }
 

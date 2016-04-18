@@ -171,9 +171,14 @@ class GestureProcessor implements GestureListener {
         Vector3 direction = new Vector3(touch3D);
         direction.sub(InitialTouchPos);//direction vector
         direction.scl(-0.9f); //scale direction vector
-        camera.position.set(direction.add(InitialCameraPos));
-        camera.update();
-        return true;
+        direction.add(InitialCameraPos);
+
+        if( imageViewer.getBoundingRectangle().contains(direction.x,direction.y)) {
+            camera.position.set(direction);
+            camera.update();
+            return true;
+        }
+        return false;
     }
 
     @Override
