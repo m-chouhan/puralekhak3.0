@@ -193,16 +193,9 @@ public class OpenCVModule {
         }
 
         Mat cf = corrim;
-        File file2 = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "beforeThresh.jpg");
-        String filename = file2.toString();
-        Highgui.imwrite(filename, cf);
 
         Mat bw = new Mat(OMatg.rows(), OMatg.cols(), CvType.CV_32FC1 );
         Imgproc.threshold(cf, bw, fragcount * fragment_thresh, 1, Imgproc.THRESH_BINARY);
-
-        file2 = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "afterThresh.jpg");
-        filename = file2.toString();
-        Highgui.imwrite(filename, bw);
 
         int erosion_size=2;
 
@@ -214,9 +207,6 @@ public class OpenCVModule {
 
         bw.convertTo(bw2, CvType.CV_8U);
 
-        file2 = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "afterThreshDilation.jpg");
-        filename = file2.toString();
-        Highgui.imwrite(filename, bw2);
 
         // find contours
         List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
