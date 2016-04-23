@@ -52,7 +52,7 @@ public class LibgdxFragment extends AndroidFragmentApplication
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         vcDelegator = parentActivity;
-        MyImageViewer imageViewer = new MyImageViewer(vcDelegator,"inscription.jpg");
+        MyImageViewer imageViewer = new MyImageViewer(vcDelegator,"bgimage.jpg");
         cvDelegator = imageViewer;
         FrameLayout parent = (FrameLayout)inflater.inflate(R.layout.libgdxview,null);
         parent.addView(initializeForView(imageViewer));
@@ -86,7 +86,7 @@ public class LibgdxFragment extends AndroidFragmentApplication
      * Progress bar to display spotting progress
      */
     public void ShowProgressBar() {
-//        postRunnable(new Runnable() {
+//        runOnUiThread(new Runnable() {
 //            @Override
 //            public void run() {
                 progressBar.show();
@@ -96,7 +96,7 @@ public class LibgdxFragment extends AndroidFragmentApplication
 
     public void UpdateProgressBar(final int progress) {
         Log.d(TAG,"Progress:"+progress);
-        postRunnable(new Runnable() {
+        runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 if (progress >= 100 ) progressBar.hide();

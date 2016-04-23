@@ -1,15 +1,19 @@
 package com.mygdx.game;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.ListIterator;
+import java.util.Scanner;
 
 import org.opencv.android.Utils;
 import org.opencv.core.Core;
@@ -28,7 +32,9 @@ import org.opencv.imgproc.Imgproc;
 import org.opencv.imgproc.Moments;
 import org.opencv.objdetect.HOGDescriptor;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Environment;
 import android.util.Log;
 
@@ -58,7 +64,7 @@ public class OpenCVModule {
     @param patch_rows: no of rows of patches inside template
     @param patch_columns: no of columns of patches inside template
     @param updateViewCallback : callback method to update GUI
-    @param unicode :unicode corresponding to the template*/
+    @param unicode :unicode corresponding to the template */
     static public void SpotCharacters(Mat image,Mat template, int patch_rows,int patch_columns,
                                       float fragment_thresh,float matching_thresh,
                                       String unicode, UpdateViewCallback updateViewCallback) {
@@ -275,6 +281,8 @@ public class OpenCVModule {
         Mat det_imwt = Mat.zeros(OMatg.rows(),OMatg.cols(),CvType.CV_32FC3);
         //Vector<Point> locs;
         ArrayList<Point> locs = new ArrayList<Point>();
+        ArrayList<item>  stuctpoints = new ArrayList<item>();
+
         for(int i=0;i<idx.size();i++)
         {
             System.out.println("now for"+i);
@@ -302,7 +310,7 @@ public class OpenCVModule {
                     it.setposy(TMatg.cols());
 
                     it.setScore(data1);
-                    //stuctpoints.add(it);
+                    stuctpoints.add(it);
                     System.out.println("Item Added:" + it.getx() + "," + it.gety() +
                             "," + it.getposx() + "," + it.getposy() + ",score:"+it.getScore());
 
@@ -319,7 +327,6 @@ public class OpenCVModule {
         System.out.println("Points after HOG are "+numberOfMatchings);
         updateViewCallback.UpdateProgress(60);
 
-        ArrayList<item>  stuctpoints = new ArrayList<item>();
 
 //        for(Point p : locs)
 //        {
@@ -1211,5 +1218,299 @@ public class OpenCVModule {
         //cout << "the test element in the  image is " << second.at<float>(2,2) << endl;
         //System.out.println(second.dump());
         return second;
+    }
+    private static int total_points=0;
+    public static long ConvertText() {
+
+        new_mat = Mat.zeros(OMatg.rows(),OMatg.cols(),CvType.CV_8U);
+        ArrayList<item>  filepoints = new ArrayList<item>();
+
+        try{
+            FileReader fr = new FileReader(new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM),"inscription.txt"));
+            BufferedReader br = new BufferedReader(fr);
+
+            String line;
+            try {
+
+                while ((line = br.readLine()) != null) {
+                    line = br.readLine();
+                    // create a new StringReader
+
+                    Scanner sc = new Scanner(line);
+                    float roix = sc.nextFloat();
+                    float roiy = sc.nextFloat();
+                    float no_of_occur = sc.nextFloat();
+                    String code = sc.next();
+                    // String s2 = sc.next();
+                    //int i1 = sc.nextInt();
+                    //  if(s1.equalsIgnoreCase("$NEW$"))break;
+                    System.out.print(String.format("%.2f\t%.2f\t%.2f%s\n", roix,roiy,no_of_occur,code));
+                    //System.out.print(f1 );//System.out.print("\n" );System.out.print(s1.length() );
+                    total_points = total_points+(int) no_of_occur;
+                    for(int i=0;i<no_of_occur;i++)
+                    {
+
+                        line = br.readLine();
+                        Scanner sc1 = new Scanner(line);
+                        float px = sc1.nextFloat();
+                        float py = sc1.nextFloat();
+                        float scr = sc1.nextFloat();
+                        for(  int m = 0; m < new_mat.rows(); m++ )
+                        {
+                            for( int n = 0; n < new_mat.cols(); n++ )
+                            {
+                                if ( ( px==m )&&( py==n )&& (scr>=0.80))
+                                {
+
+                                    new_mat.put(m, n, scr*100) ;
+                                    System.out.print(String.format("%.2f %.2f %.2f\n", px,py,scr));
+                                    item it2 = new item();
+                                    it2.setposx(roix);
+                                    it2.setposy(roiy);
+                                    it2.setx(m);
+                                    it2.sety(n);
+                                    it2.setScore(scr);
+                                    it2.setunicode(code);
+                                    filepoints.add(it2);
+
+                                }
+                            }
+                        }
+                    }
+                    sc.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+
+        String ptsimage="points.jpg";
+        // now doing the points martix ...to start coding ends
+        Highgui.imwrite(ptsimage, new_mat);
+
+        // finding the local maximum starts
+        int cnt=0;
+        int c1,c2,r1,r2;
+        double maxVal;
+        for( int y = 0; y < new_mat.rows(); y++ )
+        {
+            for( int x = 0; x < new_mat.cols(); x++ )
+            {
+
+                if(cnt<total_points)
+                {
+                    double[] data2 = new_mat.get(y, x);
+                    if(data2[0] > 0)
+                    {
+                        c1=x-43;c2=x+43;
+                        r1=y-43;r2=y+43;
+                        if(x-43<0)
+                        {
+                            c1=0;
+                        }
+                        if(y-43<0)
+                        {
+                            r1=0;
+                        }
+
+                        if(x+43>new_mat.cols())
+                        {
+                            c2=x+(x+43-new_mat.cols())-1;
+                        }
+                        if(y+43>new_mat.rows())
+                        {
+                            r2=y+(y+43-new_mat.rows())-1;
+                        }
+
+                        Mat aux = new_mat.submat(r1,r2,c1,c2);
+
+                        maxVal=Core.minMaxLoc(aux).maxVal;
+                        if(maxVal>data2[0]){
+                            new_mat.put(y, x, 0) ;
+                        }
+                        System.out.println(data2[0]);System.out.println(maxVal );
+
+                        cnt++;
+
+                    }
+
+                }
+
+            }
+
+
+        }
+        System.out.println(cnt);
+
+        // finding the local maximum ends
+        //new_mat.convertTo(new_mat, CvType.CV_8U);
+        String filename1 = "hehe.jpg";
+        File file1 = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM), filename1);
+
+        filename1 = file1.toString();
+        //Imgproc.dilate(new_mat, new_mat, dilatekernel, new Point(-1,-1), 2);
+        Highgui.imwrite(filename1, new_mat);
+        ArrayList<item>  ptsfinal = new ArrayList<item>();
+
+        int indx1=0;
+
+        for(  int m = 0; m < new_mat.rows(); m++ )
+        {
+            for( int n = 0; n < new_mat.cols(); n++ )
+            {
+                double[] data = new_mat.get(m, n);
+                if ( data[0]!=0)
+                {
+                    indx1=0;
+                    while((filepoints.get(indx1).getx()!=m)&&(filepoints.get(indx1).gety()!=n))indx1++;
+                    //item it1 = new item();
+                    // it1.setx(m);
+                    // it1.sety(n);
+                    /// it1.setScore(data[0]);
+                    ptsfinal.add(filepoints.get(indx1));
+                }
+            }
+        }
+
+        System.out.println(ptsfinal.size());
+        System.out.println("Ye0s");
+        for(int i=0;i<ptsfinal.size();i++)
+        {
+            System.out.println(ptsfinal.get(i).getx());System.out.println(ptsfinal.get(i).gety());System.out.println(ptsfinal.get(i).getposx());System.out.println(ptsfinal.get(i).getposy());
+            System.out.println(ptsfinal.get(i).getunicode());System.out.println("\n");
+        }
+//       Collections.sort(ptsfinal, new PointCompare());
+        System.out.println("Yes");
+        for(int i=0;i<ptsfinal.size();i++)
+        {
+            System.out.println(ptsfinal.get(i).getx());System.out.println(ptsfinal.get(i).gety());System.out.println("\n");
+        }
+
+        int i=0;
+        int j=0;
+        while(j<ptsfinal.size()-1)
+        {
+            j=j+1;
+            if((ptsfinal.get(j).getx()-ptsfinal.get(i).getx())<ptsfinal.get(i).getposx()/2){ ptsfinal.get(j).setx(ptsfinal.get(i).getx());   }
+            else i=j;
+
+        }
+//       Collections.sort(ptsfinal, new PointCompare1());
+        for(i=0;i<ptsfinal.size();i++)
+        {
+            System.out.println(ptsfinal.get(i).getx());System.out.println(ptsfinal.get(i).gety());System.out.println("\n");
+        }
+
+        // code to write the unicoode to file starts
+        ListIterator<item> b = ptsfinal.listIterator();
+
+        File uf = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM),"outinscription.txt");
+        FileWriter ufw;
+        try {
+            ufw = new FileWriter(uf,true);
+
+            BufferedWriter ubufwr = new BufferedWriter(ufw);
+
+            String tstr1;
+            String tstr2;
+
+            while(b.hasNext())
+            {
+                tstr1="\\u";
+                item ob = b.next();
+                tstr2=ob. getunicode();
+
+                //tstr1.concat(tstr2);
+                System.out.println(tstr1+tstr2);
+                ubufwr.write(tstr1+tstr2);ubufwr.write("\n");
+
+                tstr1="";
+                tstr2="";
+
+            }
+
+            ubufwr.close();
+
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        File tf;
+        try {
+
+            tf = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM),"out.txt");
+            FileWriter tfw;
+
+            FileReader ufr = new FileReader(uf);
+            BufferedReader ubr = new BufferedReader(ufr);
+
+            tfw = new FileWriter(tf,true);
+
+            BufferedWriter tbufwr = new BufferedWriter(tfw);
+
+            System.out.println("Testing");
+            String myString;
+            while ((myString = ubr.readLine()) != null) {
+
+                //String myString = "\u0cb5";
+                System.out.println(myString);
+
+                String str = myString.split(" ")[0];
+                str = str.replace("\\","");
+                String[] arr = str.split("u");
+                String text1 = "";
+                for(int i1 = 1; i1 < arr.length; i1++){
+                    int hexVal = Integer.parseInt(arr[i1], 16);
+                    text1 += (char)hexVal;
+                    tbufwr.write(text1);
+                    //System.out.println(text1);
+                }
+
+            }
+            tbufwr.close();
+
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+
+        File myFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM),"out.txt");
+
+        Intent intent = new Intent();
+        intent.setAction(Intent.ACTION_VIEW);
+//        intent.setDataAndType(Uri.fromFile(myFile),getMimeType(myFile.getAbsolutePath()));
+//        startActivity(intent);
+
+        //startActivity(intent);
+
+		/*
+			FileInputStream fIn;
+			try {
+				fIn = new FileInputStream(tf);
+				BufferedReader myReader = new BufferedReader(
+    					new InputStreamReader(fIn));
+    			String aDataRow = "";
+    			String aBuffer = "";
+    			while ((aDataRow = myReader.readLine()) != null) {
+    				aBuffer += aDataRow + "\n";
+    			}
+    			txtview.setText(aBuffer);
+    			myReader.close();
+
+			} catch (FileNotFoundException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}*/
+
+        // code to write the unicoode to file ends
+        return 0;
     }
 }/**/

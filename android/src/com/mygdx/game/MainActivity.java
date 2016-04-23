@@ -257,6 +257,7 @@ public class MainActivity extends FragmentActivity
     @Override
     public void ConvertToText() {
         OpenCVModule.ConvertToText();
+        //OpenCVModule.ConvertText();
     }
 
     @Override
