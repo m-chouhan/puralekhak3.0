@@ -50,8 +50,8 @@ public class BackgroundService extends IntentService {
 
         for(;mPatchRows <= 4;++mPatchRows) {
             for (mPatchColumns = prevPatchCol;mPatchColumns <= 4; ++mPatchColumns) {
-                for (mFragmentThreshold = prevfragThresh; mFragmentThreshold <= 0.51f; mFragmentThreshold += 0.05f) {
-                    for(mMatchingThreshold = prevMatchThresh;mMatchingThreshold <= 0.91f;mMatchingThreshold += 0.04f) {
+                for (mFragmentThreshold = prevfragThresh; mFragmentThreshold <= 0.31f; mFragmentThreshold += 0.05f) {
+                    for(mMatchingThreshold = prevMatchThresh;mMatchingThreshold <= 0.751f;mMatchingThreshold += 0.05f) {
                         Log.d(TAG, "[" + mPatchRows + "," + mPatchColumns + "," + mFragmentThreshold + "," + mMatchingThreshold + "]");
 
                         OpenCVModule.SpotCharacters(original.clone(), template,
@@ -61,9 +61,9 @@ public class BackgroundService extends IntentService {
 //                        mWakeLock.release();
 //                        return;
                     }
-                    prevMatchThresh = 0.75f;
+                    prevMatchThresh = 0.5f;
                 }
-                prevfragThresh = 0.29f;
+                prevfragThresh = 0.15f;
             }
             prevPatchCol = 2;
         }

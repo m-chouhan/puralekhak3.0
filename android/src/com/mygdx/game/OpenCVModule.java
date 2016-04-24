@@ -157,7 +157,7 @@ public class OpenCVModule {
         Mat dilatekernel = Imgproc.getStructuringElement(Imgproc.MORPH_CROSS,
                 new Size(2 * maxdilate + 1, 2 * maxdilate + 1), new Point(maxdilate, maxdilate));
         //rows ==> 0th element ==> height,column ==>1st element ==> width
-
+        Mat prevMat = null;
         for (int i = 0; i < patch_rows; ++i) {
             for (int j = 0; j < patch_columns; ++j) {
                 int imin = i*patch_dim_row;//Math.max(0, (i - 1) * fragsize );
@@ -172,8 +172,14 @@ public class OpenCVModule {
                 int rightPad = (int) (image_mag1.cols() - matchSize.width - leftPad);
                 int topPad = (int)(image_mag1.rows() - matchSize.height)/2;
                 int bottomPad = (int)(image_mag1.rows() - matchSize.height - topPad);
+                Mat corrim2 = new Mat(image_size, CvType.CV_32FC1);;
+//                if( prevMat != null && prevMat.size().width == image_size.width
+//                        && prevMat.size().height == image_size.height) {
+//                    corrim2 = prevMat;
+//                    corrim2.setTo(new Scalar(0,0,0,0));
+//                }
+//                else corrim2 = new Mat(image_size, CvType.CV_32FC1);
 
-                Mat corrim2 = new Mat(image_size, CvType.CV_32FC1);
                 Imgproc.matchTemplate(image_mag1, prt1, corrim2.submat(
                         new Rect(leftPad,topPad,(int)matchSize.width,(int)matchSize.height)), Imgproc.TM_CCOEFF_NORMED);
                 Imgproc.dilate(corrim2, corrim2, dilatekernel, new Point(-1, -1), 5);
@@ -189,6 +195,7 @@ public class OpenCVModule {
                 Core.add(corrim, corrim2, corrim);//corrim = corrim+corrim2;
                 fragcount = fragcount + 1;
                 updateViewCallback.UpdateProgress((int)fragcount*4);
+//                prevMat = corrim2;
             }
         }
 
