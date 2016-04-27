@@ -259,7 +259,7 @@ public class MainActivity extends FragmentActivity
     @Override
     public void ConvertToText() {
         //OpenCVModule.ConvertToText();
-        String filename = mImage_path.substring(mImage_path.lastIndexOf("/")+1);
+        String filename = mImage_path.substring(mImage_path.lastIndexOf("/")+1)+"__";
         OpenCVModule.ConvertText(filename);
     }
 
@@ -284,7 +284,7 @@ public class MainActivity extends FragmentActivity
                 OpenCVModule.SpotCharacters(original.clone(), template,
                         mPatchRows, mPatchColumns, mFragmentThreshold, mMatchingThreshold,
                         mUnicode, uvcallback,
-                        mImage_path.substring(mImage_path.lastIndexOf("/")+1));
+                        mImage_path.substring(mImage_path.lastIndexOf("/")+1)+"__");
                 //Toast.makeText(this,"doing "+mPatchRows+mPatchColumns+"__"+mMatchingThreshold,Toast.LENGTH_SHORT).show();
                 mWakeLock.release();
             }

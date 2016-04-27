@@ -118,9 +118,9 @@ public class OpenCVModule {
         /// Gradient Y of the roi image
         Imgproc.Sobel(OMatg, image_grad_y, CvType.CV_32F, 0, 1, 3,1,0);
         /// Gradient X of the original image
-        Imgproc.Sobel(TMatg, roi_grad_x, CvType.CV_32F, 1, 0, 3,1,0);
+        Imgproc.Sobel(TMatg, roi_grad_x, CvType.CV_32F, 1, 0, 3, 1, 0);
         /// Gradient Y of the roi image
-        Imgproc.Sobel(TMatg, roi_grad_y, CvType.CV_32F, 0, 1, 3,1,0);
+        Imgproc.Sobel(TMatg, roi_grad_y, CvType.CV_32F, 0, 1, 3, 1, 0);
 
         Mat image_mag = new Mat();
         Mat roi_mag = new Mat();
@@ -133,10 +133,17 @@ public class OpenCVModule {
         Core.convertScaleAbs(image_mag, image_grad);
         Core.convertScaleAbs(roi_mag, roi_grad );
 
-        Mat image_mag1 = new Mat();Mat image_mag2 = new Mat();
-        image_mag.copyTo( image_mag1 );
-        image_mag.copyTo( image_mag2 );
+        Mat image_mag1 = new Mat();
+        image_mag.copyTo(image_mag1);
 
+        String filename = "preprocess1.jpg";
+        File file2 = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM), filename);
+        filename = file2.toString();
+        Highgui.imwrite(filename, roi_grad);
+        filename = "preprocess2.jpg";
+        file2 = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM), filename);
+        filename = file2.toString();
+        Highgui.imwrite(filename, image_grad);
         // normalized cross correlation starts..
 
         Mat cg = template = roi_mag;
@@ -199,16 +206,16 @@ public class OpenCVModule {
         }
 
         Mat cf = corrim;
-        File file2 = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "beforeThresh.jpg");
-        String filename = file2.toString();
-        Highgui.imwrite(filename, cf);
+//        File file2 = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "beforeThresh.jpg");
+//        String filename = file2.toString();
+//        Highgui.imwrite(filename, cf);
 
         Mat bw = new Mat(OMatg.rows(), OMatg.cols(), CvType.CV_32FC1 );
         Imgproc.threshold(cf, bw, fragcount * fragment_thresh, 1, Imgproc.THRESH_BINARY);
 
-        file2 = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "afterThresh.jpg");
-        filename = file2.toString();
-        Highgui.imwrite(filename, bw);
+//        file2 = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "afterThresh.jpg");
+//        filename = file2.toString();
+//        Highgui.imwrite(filename, bw);
 
         int erosion_size=2;
 
@@ -797,7 +804,6 @@ public class OpenCVModule {
         File file2 = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM), filename);
         filename = file2.toString();
         Highgui.imwrite(filename, im_select);
-        
         List<Mat> ch = new ArrayList<Mat>();
         fin_img = new Mat();
         ch.add(tmp);

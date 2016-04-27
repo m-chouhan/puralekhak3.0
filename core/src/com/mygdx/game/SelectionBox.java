@@ -198,7 +198,7 @@ public class SelectionBox extends InputAdapter {
         symbol = sym;
         //mTemplateColor = Util.Rainbow(Util.UnicodetoInteger(symbol));
         mTemplateColor.set(Util.ColorFromList(Util.UnicodetoInteger(symbol)));
-        mColor.set(mTemplateColor);
+        //mColor.set(mTemplateColor.r,mTemplateColor.g,mTemplateColor.b,mTemplateColor.a/2);
     }
     public String getSymbol() {return symbol; }
 
