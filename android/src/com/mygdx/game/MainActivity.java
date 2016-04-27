@@ -126,15 +126,15 @@ public class MainActivity extends FragmentActivity
     public void onTrimMemory(int level) {
         super.onTrimMemory(level);
         Log.d(TAG, "OnTrim!!");
-        if(mCurrentBitmap != null ) {
-            mCurrentBitmap.recycle();
-            mCurrentBitmap = null;
-        }
-        if(mCurrentBitmapTemplate != null) {
-            mCurrentBitmapTemplate.recycle();
-            mCurrentBitmapTemplate = null;
-        }
-        if(mWakeLock.isHeld()) mCvInterface.FreeMemory();
+//        if(mCurrentBitmap != null ) {
+//            mCurrentBitmap.recycle();
+//            mCurrentBitmap = null;
+//        }
+//        if(mCurrentBitmapTemplate != null) {
+//            mCurrentBitmapTemplate.recycle();
+//            mCurrentBitmapTemplate = null;
+//        }
+//        if(mWakeLock.isHeld()) mCvInterface.FreeMemory();
     }
 
     @Override

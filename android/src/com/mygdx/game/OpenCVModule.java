@@ -206,16 +206,20 @@ public class OpenCVModule {
         }
 
         Mat cf = corrim;
-//        File file2 = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "beforeThresh.jpg");
-//        String filename = file2.toString();
-//        Highgui.imwrite(filename, cf);
+        Mat cf8bit = new Mat();
+        Core.convertScaleAbs(cf,cf8bit );
+        file2 = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "beforeThresh.jpg");
+        filename = file2.toString();
+        Highgui.imwrite(filename, cf8bit);
 
         Mat bw = new Mat(OMatg.rows(), OMatg.cols(), CvType.CV_32FC1 );
         Imgproc.threshold(cf, bw, fragcount * fragment_thresh, 1, Imgproc.THRESH_BINARY);
 
-//        file2 = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "afterThresh.jpg");
-//        filename = file2.toString();
-//        Highgui.imwrite(filename, bw);
+        Mat bw8bit = new Mat();
+        file2 = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "afterThresh.jpg");
+        filename = file2.toString();
+        Core.convertScaleAbs(bw, bw8bit);
+        Highgui.imwrite(filename, bw8bit);
 
         int erosion_size=2;
 
