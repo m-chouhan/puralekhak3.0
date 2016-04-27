@@ -67,7 +67,7 @@ public class OpenCVModule {
     @param unicode :unicode corresponding to the template */
     static public void SpotCharacters(Mat image,Mat template, int patch_rows,int patch_columns,
                                       float fragment_thresh,float matching_thresh,
-                                      String unicode, UpdateViewCallback updateViewCallback) {
+                                      String unicode, UpdateViewCallback updateViewCallback,String TargetFile) {
 
         Mat OMat = image,TMat = template;
         locsPre = new ArrayList<Point>();
@@ -327,40 +327,13 @@ public class OpenCVModule {
         System.out.println("Points after HOG are "+numberOfMatchings);
         updateViewCallback.UpdateProgress(60);
 
-
-//        for(Point p : locs)
-//        {
-//            int m = (int) p.x,n = (int)p.y;
-//            double[] data = det_imwt.get(m, n);
-//            if ( data != null && data[0]> matching_thresh )
-//            {
-//
-//                item it = new item();
-//                it.setx(p.x);
-//                it.sety(p.y);
-//
-//                it.setposx(TMatg.rows());
-//                it.setposy(TMatg.cols());
-//
-//                it.setScore(data[0]);
-//                stuctpoints.add(it);
-//                System.out.println("Item Added:" + it.getx() + "," + it.gety() +
-//                        "," + it.getposx() + "," + it.getposy() + ",score:"+it.getScore());
-//                //System.out.println("Omat:" + OMat.rows() + "," + OMat.cols());
-//
-//                Mat roi = OMat.submat(new Rect((int) (it.gety() - it.getposy() / 2), (int) (it.getx() - it.getposx() / 2),
-//                        (int) it.getposy(), (int) it.getposx()));
-//                Mat color = new Mat(roi.size(),OMat.type(),new Scalar(0,125,125));
-//                double alpha = 0.2;
-//                Core.addWeighted(color,alpha,roi,1.0-alpha,0.0,roi);
-//            }
-//        }
         // now starting to write to file
         updateViewCallback.UpdateProgress(80);
 
-        File f = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM),"inscription.txt");
+        File f = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM),TargetFile+"inscription.txt");
         FileWriter fw;
         try {
+            Log.d(TAG,"Writing!!");
             fw = new FileWriter(f,true);
             BufferedWriter bufwr = new BufferedWriter(fw);
             bufwr.write("$New$");bufwr.write("\n");
@@ -1220,13 +1193,13 @@ public class OpenCVModule {
         return second;
     }
     private static int total_points=0;
-    public static long ConvertText() {
+    public static long ConvertText(String TargetFile) {
 
         new_mat = Mat.zeros(OMatg.rows(),OMatg.cols(),CvType.CV_8U);
         ArrayList<item>  filepoints = new ArrayList<item>();
 
         try{
-            FileReader fr = new FileReader(new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM),"inscription.txt"));
+            FileReader fr = new FileReader(new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM),TargetFile+"inscription.txt"));
             BufferedReader br = new BufferedReader(fr);
 
             String line;
@@ -1272,7 +1245,6 @@ public class OpenCVModule {
                                     it2.setScore(scr);
                                     it2.setunicode(code);
                                     filepoints.add(it2);
-
                                 }
                             }
                         }
@@ -1288,7 +1260,7 @@ public class OpenCVModule {
         }
 
 
-        String ptsimage="points.jpg";
+        String ptsimage=TargetFile+"points.jpg";
         // now doing the points martix ...to start coding ends
         Highgui.imwrite(ptsimage, new_mat);
 
@@ -1348,7 +1320,7 @@ public class OpenCVModule {
 
         // finding the local maximum ends
         //new_mat.convertTo(new_mat, CvType.CV_8U);
-        String filename1 = "hehe.jpg";
+        String filename1 = TargetFile+"points.jpg";
         File file1 = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM), filename1);
 
         filename1 = file1.toString();
@@ -1408,7 +1380,7 @@ public class OpenCVModule {
         // code to write the unicoode to file starts
         ListIterator<item> b = ptsfinal.listIterator();
 
-        File uf = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM),"outinscription.txt");
+        File uf = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM),TargetFile+"outinscription.txt");
         FileWriter ufw;
         try {
             ufw = new FileWriter(uf,true);
@@ -1422,7 +1394,7 @@ public class OpenCVModule {
             {
                 tstr1="\\u";
                 item ob = b.next();
-                tstr2=ob. getunicode();
+                tstr2=ob.getunicode();
 
                 //tstr1.concat(tstr2);
                 System.out.println(tstr1+tstr2);
@@ -1442,7 +1414,7 @@ public class OpenCVModule {
         File tf;
         try {
 
-            tf = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM),"out.txt");
+            tf = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM),TargetFile+"out.txt");
             FileWriter tfw;
 
             FileReader ufr = new FileReader(uf);
@@ -1463,9 +1435,10 @@ public class OpenCVModule {
                 str = str.replace("\\","");
                 String[] arr = str.split("u");
                 String text1 = "";
-                for(int i1 = 1; i1 < arr.length; i1++){
-                    int hexVal = Integer.parseInt(arr[i1], 16);
-                    text1 += (char)hexVal;
+                for(int i1 = 1; i1 < arr.length; i1++) {
+                    //int hexVal = Integer.parseInt(arr[i1], 16);
+                    //text1 += (char)hexVal;
+                    text1 += arr[i1];
                     tbufwr.write(text1);
                     //System.out.println(text1);
                 }
@@ -1479,36 +1452,10 @@ public class OpenCVModule {
         }
 
 
-        File myFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM),"out.txt");
+        File myFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM),TargetFile+"out.txt");
 
         Intent intent = new Intent();
         intent.setAction(Intent.ACTION_VIEW);
-//        intent.setDataAndType(Uri.fromFile(myFile),getMimeType(myFile.getAbsolutePath()));
-//        startActivity(intent);
-
-        //startActivity(intent);
-
-		/*
-			FileInputStream fIn;
-			try {
-				fIn = new FileInputStream(tf);
-				BufferedReader myReader = new BufferedReader(
-    					new InputStreamReader(fIn));
-    			String aDataRow = "";
-    			String aBuffer = "";
-    			while ((aDataRow = myReader.readLine()) != null) {
-    				aBuffer += aDataRow + "\n";
-    			}
-    			txtview.setText(aBuffer);
-    			myReader.close();
-
-			} catch (FileNotFoundException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}*/
 
         // code to write the unicoode to file ends
         return 0;

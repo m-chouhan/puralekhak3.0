@@ -56,7 +56,7 @@ public class BackgroundService extends IntentService {
 
                         OpenCVModule.SpotCharacters(original.clone(), template,
                                 mPatchRows, mPatchColumns, mFragmentThreshold, mMatchingThreshold,
-                                mUnicode, uvcallback);
+                                mUnicode, uvcallback,"");
                         Toast.makeText(this,"doing "+mPatchRows+mPatchColumns+"__"+mMatchingThreshold,Toast.LENGTH_SHORT).show();
                         mWakeLock.release();
                         return;

@@ -164,6 +164,7 @@ public class MainActivity extends FragmentActivity
     @Override
     public void onLowMemory() {
         super.onLowMemory();
+        /*
         mCvInterface.FreeMemory();
         if(mCurrentBitmap != null ) {
             mCurrentBitmap.recycle();
@@ -174,6 +175,7 @@ public class MainActivity extends FragmentActivity
             mCurrentBitmapTemplate = null;
         }
         mDefaultPreview = null;
+        */
         Log.d(TAG, "OnLowMemory!!");
     }
 
@@ -256,8 +258,9 @@ public class MainActivity extends FragmentActivity
 
     @Override
     public void ConvertToText() {
-        OpenCVModule.ConvertToText();
-        //OpenCVModule.ConvertText();
+        //OpenCVModule.ConvertToText();
+        String filename = mImage_path.substring(mImage_path.lastIndexOf("/")+1);
+        OpenCVModule.ConvertText(filename);
     }
 
     @Override
@@ -280,7 +283,8 @@ public class MainActivity extends FragmentActivity
                 Log.d(TAG, "[" + mPatchRows + "," + mPatchColumns + "," + mFragmentThreshold + "," + mMatchingThreshold + "]");
                 OpenCVModule.SpotCharacters(original.clone(), template,
                         mPatchRows, mPatchColumns, mFragmentThreshold, mMatchingThreshold,
-                        mUnicode, uvcallback);
+                        mUnicode, uvcallback,
+                        mImage_path.substring(mImage_path.lastIndexOf("/")+1));
                 //Toast.makeText(this,"doing "+mPatchRows+mPatchColumns+"__"+mMatchingThreshold,Toast.LENGTH_SHORT).show();
                 mWakeLock.release();
             }
