@@ -16,8 +16,8 @@ android {
     }
     defaultConfig {
         applicationId "com.mygdx.game"
-        minSdkVersion 14
-        targetSdkVersion 22
+        minSdkVersion 16
+        targetSdkVersion 16
     }
 }
 // called every time gradle gets executed, takes the native dependencies of
