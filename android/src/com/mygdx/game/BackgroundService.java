@@ -48,10 +48,10 @@ public class BackgroundService extends IntentService {
         int prevPatchCol = mPatchColumns;
         float prevMatchThresh = mMatchingThreshold,prevfragThresh = mFragmentThreshold;
 
-        for(;mPatchRows <= 4;++mPatchRows) {
-            for (mPatchColumns = prevPatchCol;mPatchColumns <= 4; ++mPatchColumns) {
-                for (mFragmentThreshold = prevfragThresh; mFragmentThreshold <= 0.31f; mFragmentThreshold += 0.05f) {
-                    for(mMatchingThreshold = prevMatchThresh;mMatchingThreshold <= 0.751f;mMatchingThreshold += 0.05f) {
+        for(;mPatchRows <= 5;++mPatchRows) {
+            for (mPatchColumns = prevPatchCol;mPatchColumns <= 5; ++mPatchColumns) {
+                for (mFragmentThreshold = prevfragThresh; mFragmentThreshold <= 0.2f; mFragmentThreshold += 0.05f) {
+                    for(mMatchingThreshold = prevMatchThresh;mMatchingThreshold <= 0.55f;mMatchingThreshold += 0.05f) {
                         Log.d(TAG, "[" + mPatchRows + "," + mPatchColumns + "," + mFragmentThreshold + "," + mMatchingThreshold + "]");
 
                         OpenCVModule.SpotCharacters(original.clone(), template,
@@ -61,11 +61,11 @@ public class BackgroundService extends IntentService {
 //                        mWakeLock.release();
 //                        return;
                     }
-                    prevMatchThresh = 0.5f;
+                    prevMatchThresh = 0.45f;
                 }
-                prevfragThresh = 0.15f;
+                prevfragThresh = 0.1f;
             }
-            prevPatchCol = 2;
+            prevPatchCol = 3;
         }
         mWakeLock.release();
         Log.d(TAG, "Finished!!");
